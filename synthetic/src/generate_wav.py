@@ -104,4 +104,3 @@ if __name__ == '__main__':
         generate_files(list_jams, out_folder, fg_path=fg_path_eval, bg_path=bg_path_eval,
                        overwrite_jams=args.overwrite_jams)
         generate_csv_from_jams(list_jams, out_csv)
-        break
