@@ -1,0 +1,274 @@
+{
+  "Alarm_bell_ringing": {
+    "prob" : 0.1,
+    "event_max": 13,
+    "event_mean": 4,
+    "event_class": [
+      "Alarm_bell_ringing",
+      "Cat",
+      "Dishes",
+      "Dog",
+      "Running_water",
+      "Speech"
+    ],
+    "event_prob": [
+      50,
+      2,
+      1,
+      5,
+      2,
+      40
+    ]
+  },
+  "Blender": {
+    "prob" : 0.1,
+    "event_max": 8,
+    "event_mean": 3,
+    "event_class": [
+      "Blender",
+      "Dishes",
+      "Frying",
+      "Running_water",
+      "Speech",
+      "Vacuum_cleaner"
+    ],
+    "event_prob": [
+      27,
+      14,
+      1,
+      2,
+      55,
+      1
+    ]
+  },
+  "Cat": {
+    "prob" : 0.1,
+    "event_max": 9,
+    "event_mean": 4,
+    "event_class": [
+      "Alarm_bell_ringing",
+      "Cat",
+      "Dishes",
+      "Dog",
+      "Running_water",
+      "Speech"
+    ],
+    "event_prob": [
+      2,
+      60,
+      2,
+      5,
+      1,
+      30
+    ]
+  },
+  "Dishes": {
+    "prob" : 0.1,
+    "event_max": 12,
+    "event_mean": 5,
+    "event_class": [
+      "Blender",
+      "Cat",
+      "Dishes",
+      "Frying",
+      "Running_water",
+      "Speech"
+    ],
+    "event_prob": [
+      2,
+      1,
+      53,
+      6,
+      2,
+      36
+    ]
+  },
+  "Dog": {
+    "prob" : 0.1,
+    "event_max": 14,
+    "event_mean": 5,
+    "event_class": [
+      "Alarm_bell_ringing",
+      "Cat",
+      "Dishes",
+      "Dog",
+      "Running_water",
+      "Speech",
+      "Vacuum_cleaner"
+    ],
+    "event_prob": [
+      1,
+      2,
+      1,
+      58,
+      1,
+      36,
+      1
+    ]
+  },
+  "Electric_shaver_toothbrush": {
+    "prob" : 0.1,
+    "event_max": 5,
+    "event_mean": 3,
+    "event_class": [
+      "Alarm_bell_ringing",
+      "Electric_shaver_toothbrush",
+      "Speech"
+    ],
+    "event_prob": [
+      2,
+      27,
+      71
+    ]
+  },
+  "Frying": {
+    "prob" : 0.01,
+    "event_max": 14,
+    "event_mean": 5,
+    "event_class": [
+      "Blender",
+      "Dishes",
+      "Frying",
+      "Speech"
+    ],
+    "event_prob": [
+      1,
+      39,
+      18,
+      42
+    ]
+  },
+  "Frying_nOff": {
+    "prob" : 0.07,
+    "event_max": 14,
+    "event_mean": 5,
+    "event_class": [
+      "Blender",
+      "Dishes",
+      "Frying",
+      "Speech"
+    ],
+    "event_prob": [
+      1,
+      44,
+      8,
+      47
+    ]
+  },
+  "Frying_nOn_nOff": {
+    "prob" : 0.02,
+    "event_max": 14,
+    "event_mean": 5,
+    "event_class": [
+      "Blender",
+      "Dishes",
+      "Speech"
+    ],
+    "event_prob": [
+      2,
+      48,
+      50
+    ]
+  },
+  "Running_water": {
+    "prob" : 0.1,
+    "event_max": 10,
+    "event_mean": 3,
+    "event_class": [
+      "Alarm_bell_ringing",
+      "Blender",
+      "Cat",
+      "Dishes",
+      "Dog",
+      "Running_water",
+      "Speech"
+    ],
+    "event_prob": [
+      2,
+      1,
+      1,
+      14,
+      2,
+      34,
+      46
+    ]
+  },
+  "Speech": {
+    "prob" : 0.1,
+    "event_max": 14,
+    "event_mean": 5,
+    "event_class": [
+      "Alarm_bell_ringing",
+      "Blender",
+      "Cat",
+      "Dishes",
+      "Dog",
+      "Electric_shaver_toothbrush",
+      "Frying",
+      "Running_water",
+      "Speech",
+      "Vacuum_cleaner"
+    ],
+    "event_prob": [
+      5,
+      2,
+      5,
+      16,
+      11,
+      1,
+      3,
+      2,
+      54,
+      1
+    ]
+  },
+  "Vacuum_cleaner": {
+    "prob" : 0.07,
+    "event_max": 5,
+    "event_mean": 3,
+    "event_class": [
+      "Blender",
+      "Dog",
+      "Speech",
+      "Vacuum_cleaner"
+    ],
+    "event_prob": [
+      2,
+      16,
+      55,
+      27
+    ]
+  },
+  "Vacuum_cleaner_nOn": {
+    "prob" : 0.01,
+    "event_max": 5,
+    "event_mean": 3,
+    "event_class": [
+      "Blender",
+      "Dog",
+      "Speech",
+      "Vacuum_cleaner"
+    ],
+    "event_prob": [
+      2,
+      21,
+      65,
+      12
+    ]
+  },
+  "Vacuum_cleaner_nOn_nOff": {
+    "prob" : 0.02,
+    "event_max": 5,
+    "event_mean": 3,
+    "event_class": [
+      "Blender",
+      "Dog",
+      "Speech"
+    ],
+    "event_prob": [
+      3,
+      28,
+      69
+    ]
+  }
+}

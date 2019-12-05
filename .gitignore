@@ -1,0 +1,23 @@
+__pycache__/
+.idea/
+.DS_Store
+
+src/tests/generated/
+
+# In the zenodo repos
+# Audio folder
+*/audio/
+
+# Metadata folder
+synthetic/metadata/
+
+# Specific
+real_data/missing_files/
+*.tar.gz
+synthetic/license_eval.csv
+synthetic/license_training.csv
+synthetic/src/tests/generated/
+
+# Other
+dcase2019/
+create_license.py
