@@ -40,8 +40,8 @@ the download part is explained again.
 Otherwise, follow **Download** and **Generating new synthetic data**.
 
 ## Download
-Link to the zenodo repos: **[DESED_synthetic](https://zenodo.org/record/3550599)**,
-**[DESED_real](https://zenodo.org/record/3562885)**
+Link to the zenodo repos: **[DESED_synthetic](https://zenodo.org/record/3564664)**,
+**[DESED_real](https://zenodo.org/record/3564669)**
 
 Be careful, Zenodo repos do not always contain audio files, but metadata and scripts to download them.
 
