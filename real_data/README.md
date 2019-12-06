@@ -25,13 +25,14 @@ Overview:
 		* Validation data have their labels with time boundaries (strong labels)
 
 ## Download
-To download the **real data set**:
-* Download `real_data.tar.gz` from the DESED_real Zenodo repo.
-* `tar -xzf real_data.tar.gz` to extract it.
-* `cd real_data/src/`
+* Download `DESED_real_dcase2019_meta.tar.gz` from **[DESED_real](https://zenodo.org/record/3565749)**.
+* `tar -xzvf DESED_real_dcase2019_meta.tar.gz` to extract it.
+* `cd dcase2019/src`
 * `python download_real_data.py`
 * Send a mail with the csv files in the `real_data/missing_files` folder to [nicolas](nicolas.turpault@inria.fr) 
 (and [romain](romain.serizel@loria.fr))
+
+*Note: this includes only the training and validation part, the public evaluation will be released soon*
 
 ### After downloading architecture
 **After downloading the data (see below) you should have this tree:**

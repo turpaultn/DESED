@@ -21,3 +21,4 @@ synthetic/src/tests/generated/
 # Other
 dcase2019/
 create_license.py
+*.log

@@ -190,6 +190,7 @@ class MyLogger(object):
 
 
 if __name__ == "__main__":
+    # To be changed for your root folder if needed (if dcase2019 used)
     base_missing_files_folder = ".."
     dataset_folder = ".."
 

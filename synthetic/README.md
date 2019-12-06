@@ -29,21 +29,57 @@ and segmented to remove silences.
 If you want to reproduce dcase 2019 dataset go to [**Desed for DCASE 2019 task 4**](#dcase2019) below, 
 the download part is explained again.
 
-Otherwise, follow **Download** and **Generating new synthetic data**.
+##### Synthetic data (multiple kind of users), this is copied from the README of the repo
 
-## Download
-To download the **synthetic set**, follow the steps:
-* Download `synthetic.tar.gz` from the DESED_synthetic zenodo repo. 
-* `tar -xzf synthetic.tar.gz` to extract it.
-* `cd synthetic/src`
-* `python get_background_training.py`. (Download background files of DESED_synthetic from SINS [[2]](#2))
+* *User who just wants to download dcase2019 dataset*
+	* Download `DESED_synth_dcase2019.tar.gz` from **[DESED_synthetic](https://zenodo.org/record/3565667)**.
+	* `tar -xzvf DESED_synth_dcase2019.tar.gz` to extract it.
 
-*Note: download the bank of audio (foreground and background) + JAMS metadata files used in the DCASE challenge.
-To download the audio used in DCASE2019 see `create_dcase2019_dataset.sh*
+* *User who wants to reproduce dcase2019 dataset* (smaller download)
+	* Download `DESED_synth_dcase2019jams.tar.gz` from **[DESED_synthetic](https://zenodo.org/record/3565667)**.
+	* `tar -xzvf DESED_synth_dcase2019jams.tar.gz` to extract it.
+	* Download `DESED_synth_soundbank.tar.gz` from **[DESED_synthetic](https://zenodo.org/record/3565667)**.
+	* `tar -xzvf DESED_synth_soundbank.tar.gz` to extract it.
+	* `sh create_dcase2019_dataset.sh`. (Recommended to run commands line by line in case of bugs)
+	* Be careful, the distortions done on Matlab are up to you to create, it will be updated later to do it in python.
+	
+* *User who wants to create new synthetic data*
+	* Download `DESED_synth_soundbank.tar.gz ` from **[DESED_synthetic](https://zenodo.org/record/3565667)**.
+	* `tar -xzvf DESED_synth_soundbank.tar.gz ` to extract it.
+	* `cd synthetic/src`
+	* `python get_background_training.py` to download SINS background files.
+	* See examples of code to create files in this repo in `synthetic/src`. 
+	Described in [Generating new synthetic data](#gendata) below.
 
 ### After downloading architecture
 **After downloading the data (see below) you should have this tree:**
 ```
+├── dcase2019
+│   ├── dataset
+│   │   ├── audio
+│   │   │   ├── eval
+│   │   │   │   ├── 500ms
+│   │   │   │   ├── 5500ms
+│   │   │   │   ├── 9500ms
+│   │   │   │   ├── distorted_clipping
+│   │   │   │   ├── distorted_drc
+│   │   │   │   ├── distorted_highpass_filter
+│   │   │   │   ├── distorted_lowpass_filter
+│   │   │   │   ├── distorted_smartphone_playback
+│   │   │   │   ├── distorted_smartphone_recording
+│   │   │   │   ├── fbsnr_0dB
+│   │   │   │   ├── fbsnr_15dB
+│   │   │   │   ├── fbsnr_24dB
+│   │   │   │   ├── fbsnr_30dB
+│   │   │   │   ├── ls_0dB
+│   │   │   │   ├── ls_15dB
+│   │   │   │   └── ls_30dB
+│   │   │   ├── train
+│   │   │   │   └── synthetic
+│   │   └── metadata
+│   │       ├── eval
+│   │       └── train
+│   └── src
 └── synthetic
     ├── audio
     │   ├── eval
@@ -60,7 +96,7 @@ To download the audio used in DCASE2019 see `create_dcase2019_dataset.sh*
     │       │   │   └── sins                    (Has to be downloaded by: get_background_training.py)
     │       │   └── foreground                  (14 subfolders)
     │       └── synthetic
-    ├── metadata                                (Contains the jams corresponding to the files used in DCASE2019)
+    ├── metadata
     │   ├── eval
     │   │   └── soundscapes                     (metadata to reproduce the wav files used in dcase2019)
     │   │       ├── 500ms
@@ -75,12 +111,10 @@ To download the audio used in DCASE2019 see `create_dcase2019_dataset.sh*
     │   │       └── ls_30dB
     │   └── train
     │       └── soundscapes                     (metadata to reproduce the wav files used in dcase2019)
-    ├── src                                     (Source code to regenerate the dcase2019 dataset or generate new mixtures)
-    ├── create_dcase2019_dataset.sh
-    └── README.md
+    └── src                                     (Source code to regenerate the dcase2019 dataset or generate new mixtures)
 ```
 
-## Generating new synthetic data
+## Generating new synthetic data, this is copied from the README of the repo
 <a id="gendata"></a>
  To generate new sounds, in the same way as the Desed_synthetic dataset, you can use these files:
  * `generate_training.py`, uses `event_occurences_train.json` for co-occurrence of events.
@@ -99,16 +133,6 @@ To download the audio used in DCASE2019 see `create_dcase2019_dataset.sh*
 When a script is generating multiple subfolder but only one csv file, it means it is the same csv for the different cases.
 Example: when modifying the FBSNR, we do not change the labels (onset, offsets). 
 
-## Desed for DCASE 2019 task 4:
-<a id="dcase2019"></a>
-10 second audio clips.
-
-* Download `synthetic.tar.gz` of the zenodo repo. 
-* `tar -xzf synthetic.tar.gz` to extract it.
-
-To create the dcase 2019 dataset, you can run the commands in `create_dcase2019_dataset.sh`.
-**It is recommended to launch lines one by one from the script (`create_dcase2019_dataset.sh`)**.
-
 ##### Description of Desed for dcase2019 task 4
 [DCASE 2019 task 4 web page](http://dcase.community/challenge2019/task-sound-event-detection-in-domestic-environments)
 
@@ -126,26 +150,33 @@ Generating different subsets to test robustness against some parameters.
 
 ** After running the script `create_dcase2019_dataset.sh`, you should have a folder called `dcase2019`in that way**
 ```
-dcase2019/
-└── dataset
-    ├── audio
-    │   ├── eval
-    │   │   ├── 500ms
-    │   │   ├── 5500ms
-    │   │   ├── 9500ms
-    │   │   ├── fbsnr_0dB
-    │   │   ├── fbsnr_15dB
-    │   │   ├── fbsnr_24dB
-    │   │   ├── fbsnr_30dB
-    │   │   ├── ls_0dB
-    │   │   ├── ls_15dB
-    │   │   └── ls_30dB
-    │   ├── train
-    │   │   └── synthetic
-    │   └── validation
-    └── metadata
-        ├── eval
-        └── train
+└── dcase2019
+    ├── dataset
+    │   ├── audio
+    │   │   ├── eval
+    │   │   │   ├── 500ms
+    │   │   │   ├── 5500ms
+    │   │   │   ├── 9500ms
+    │   │   │   ├── distorted_clipping
+    │   │   │   ├── distorted_drc
+    │   │   │   ├── distorted_highpass_filter
+    │   │   │   ├── distorted_lowpass_filter
+    │   │   │   ├── distorted_smartphone_playback
+    │   │   │   ├── distorted_smartphone_recording
+    │   │   │   ├── fbsnr_0dB
+    │   │   │   ├── fbsnr_15dB
+    │   │   │   ├── fbsnr_24dB
+    │   │   │   ├── fbsnr_30dB
+    │   │   │   ├── ls_0dB
+    │   │   │   ├── ls_15dB
+    │   │   │   └── ls_30dB
+    │   │   ├── train
+    │   │   │   └── synthetic
+    │   │   └── validation
+    │   └── metadata
+    │       ├── eval
+    │       └── train
+    └── src
 ```
 
 

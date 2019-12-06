@@ -1,4 +1,6 @@
 # Desed dataset
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+
 Mix of real and synthetic data. (used in DCASE 2019 task 4).
 
 This repo allows you: download the real, and synthetic data of Desed dataset + creation of new synthetic data 
@@ -34,47 +36,94 @@ Overview:
 		* Eval: *12* (Freesound) + *5* (Youtube) *background files* and *314 foreground files* (Freesound). 
 
 
-If you want to reproduce dcase 2019 dataset go to [**Desed for DCASE 2019 task 4**](#dcase2019) below, 
-the download part is explained again.
+If you want more information about dcase 2019 dataset go to [Desed for DCASE 2019 task 4](#dcase2019) below, 
+or visit [DCASE 2019 task 4 web page](http://dcase.community/challenge2019/task-sound-event-detection-in-domestic-environments)
 
 Otherwise, follow **Download** and **Generating new synthetic data**.
 
 ## Download
-Link to the zenodo repos: **[DESED_synthetic](https://zenodo.org/record/3564664)**,
-**[DESED_real](https://zenodo.org/record/3564669)**
+We distinguish multiple usages of this dataset.
 
-Be careful, Zenodo repos do not always contain audio files, but metadata and scripts to download them.
+Link to the zenodo repos: **[DESED_synthetic](https://zenodo.org/record/3565667)**,
+**[DESED_real](https://zenodo.org/record/3565749)**
 
-To download the **synthetic set**, follow the steps:
-* Download `synthetic.tar.gz` from the DESD_synthetic Zenodo repo. 
-* `tar -xzf synthetic.tar.gz` to extract it.
-* `cd synthetic/src`
-* `python get_background_training.py`. (Download background files of DESED_synthetic from SINS [[2]](#2))
-
-*Note: download the bank of audio (foreground and background) + JAMS metadata files used in the DCASE challenge.
-To download the audio used in DCASE2019 see `create_dcase2019_dataset.sh*
-
-To download the **real data set**:
-* Download `real_data.tar.gz` from the DESED_real Zenodo repo.
-* `tar -xzf real_data.tar.gz` to extract it.
-* `cd real_data/src/`
+##### Real data (all users)
+* Download `DESED_real_dcase2019_meta.tar.gz` from **[DESED_real](https://zenodo.org/record/3565749)**.
+* `tar -xzvf DESED_real_dcase2019_meta.tar.gz` to extract it.
+* `cd dcase2019/src`
 * `python download_real_data.py`
 * Send a mail with the csv files in the `real_data/missing_files` folder to [nicolas](nicolas.turpault@inria.fr) 
 (and [romain](romain.serizel@loria.fr))
 
+*Note: this includes only the training and validation part, the public evaluation will be released soon*
+
+##### Synthetic data (multiple kind of users)
+
+* *User who just wants to download dcase2019 dataset*
+	* Download `DESED_synth_dcase2019.tar.gz` from **[DESED_synthetic](https://zenodo.org/record/3565667)**.
+	* `tar -xzvf DESED_synth_dcase2019.tar.gz` to extract it.
+
+* *User who wants to reproduce dcase2019 dataset* (smaller download)
+	* Download `DESED_synth_dcase2019jams.tar.gz` from **[DESED_synthetic](https://zenodo.org/record/3565667)**.
+	* `tar -xzvf DESED_synth_dcase2019jams.tar.gz` to extract it.
+	* Download `DESED_synth_soundbank.tar.gz` from **[DESED_synthetic](https://zenodo.org/record/3565667)**.
+	* `tar -xzvf DESED_synth_soundbank.tar.gz` to extract it.
+	* `sh create_dcase2019_dataset.sh`. (Recommended to run commands line by line in case of bugs)
+	* Be careful, the distortions done on Matlab are up to you to create, it will be updated later to do it in python.
+	
+* *User who wants to create new synthetic data*
+	* Download `DESED_synth_soundbank.tar.gz ` from **[DESED_synthetic](https://zenodo.org/record/3565667)**.
+	* `tar -xzvf DESED_synth_soundbank.tar.gz ` to extract it.
+	* `cd synthetic/src`
+	* `python get_background_training.py` to download SINS background files.
+	* See examples of code to create files in this repo in `synthetic/src`. 
+	Described in [Generating new synthetic data](#gendata) below.
+	
+
+
 ### After downloading architecture
 **After downloading the data (see below) you should have this tree:**
 ```
-├── real_data                                   (real data part of the dataset, audio files have to be downloaded)
+├── dcase2019
+│   ├── dataset
+│   │   ├── audio
+│   │   │   ├── eval
+│   │   │   │   ├── 500ms
+│   │   │   │   ├── 5500ms
+│   │   │   │   ├── 9500ms
+│   │   │   │   ├── distorted_clipping
+│   │   │   │   ├── distorted_drc
+│   │   │   │   ├── distorted_highpass_filter
+│   │   │   │   ├── distorted_lowpass_filter
+│   │   │   │   ├── distorted_smartphone_playback
+│   │   │   │   ├── distorted_smartphone_recording
+│   │   │   │   ├── fbsnr_0dB
+│   │   │   │   ├── fbsnr_15dB
+│   │   │   │   ├── fbsnr_24dB
+│   │   │   │   ├── fbsnr_30dB
+│   │   │   │   ├── ls_0dB
+│   │   │   │   ├── ls_15dB
+│   │   │   │   └── ls_30dB
+│   │   │   ├── train
+│   │   │   │   ├── synthetic
+│   │   │   │   ├── unlabel_in_domain
+│   │   │   │   └── weak
+│   │   │   └── validation
+│   │   └── metadata
+│   │       ├── eval
+│   │       ├── train
+│   │       └── validation
+│   └── src
+├── real_data                                   (subpart of dcase2019)
+│   ├── audio
+│   │   ├── train
+│   │   │   ├── unlabel_in_domain
+│   │   │   └── weak
+│   │   └── validation
 │   ├── metadata
 │   │   ├── train
-│   │   │   ├── weak.csv
-│   │   │   └── unlabel_in_domain.csv
 │   │   └── validation
-│   │       ├── eval_dcase2018.csv
-│   │       ├── test_dcase2018.csv
-│   │       └── validation.csv
-│   └── src                                     (Source code to download real data)
+│   └── src
 └── synthetic
     ├── audio
     │   ├── eval
@@ -91,7 +140,7 @@ To download the **real data set**:
     │       │   │   └── sins                    (Has to be downloaded by: get_background_training.py)
     │       │   └── foreground                  (14 subfolders)
     │       └── synthetic
-    ├── metadata                                (Contains the jams corresponding to the files used in DCASE2019)
+    ├── metadata
     │   ├── eval
     │   │   └── soundscapes                     (metadata to reproduce the wav files used in dcase2019)
     │   │       ├── 500ms
@@ -109,8 +158,8 @@ To download the **real data set**:
     └── src                                     (Source code to regenerate the dcase2019 dataset or generate new mixtures)
 ```
 
-## Generating new synthetic data
 <a id="gendata"></a>
+## Generating new synthetic data
  To generate new sounds, in the same way as the Desed_synthetic dataset, you can use these files:
  * `generate_training.py`, uses `event_occurences_train.json` for co-occurrence of events.
  * `generate_eval_FBSNR.py` generates similar subsets with different foreground-background sound to noise ratio (fbsnr): 30dB, 24dB, 15dB, 0dB.
@@ -128,20 +177,7 @@ To download the **real data set**:
 When a script is generating multiple subfolder but only one csv file, it means it is the same csv for the different cases.
 Example: when modifying the FBSNR, we do not change the labels (onset, offsets). 
 
-## Desed for DCASE 2019 task 4:
 <a id="dcase2019"></a>
-10 second audio clips.
-
-* Download `synthetic.tar.gz` of the zenodo repo. 
-* `tar -xzf synthetic.tar.gz` to extract it.
-* Download `real_data.tar.gz` from the zenodo repo DESED_real.
-* `tar -xzf real_data.tar.gz` to extract it.
-
-
-To create the dcase 2019 dataset, you can run the commands in `create_dcase2019_dataset.sh`.
-
-**It is recommended to launch lines one by one from the script (`create_dcase2019_dataset.sh`)**.
-
 ##### Description of Desed for dcase2019 task 4
 [DCASE 2019 task 4 web page](http://dcase.community/challenge2019/task-sound-event-detection-in-domestic-environments)
 

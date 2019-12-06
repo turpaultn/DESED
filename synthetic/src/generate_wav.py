@@ -35,7 +35,7 @@ def generate_files(list_jams, outfolder, fg_path=None, bg_path=None, overwrite_j
     create_folder(outfolder)
     n = 0
     for jam_file in list_jams:
-        print(jam_file)
+        LOG.debug(jam_file)
         audiofile = osp.join(outfolder, f"{osp.splitext(osp.basename(jam_file))[0]}.wav")
         if overwrite_jams:
             jams_outfile = jam_file
