@@ -62,6 +62,7 @@ Link to the zenodo repos: **[DESED_synthetic](https://zenodo.org/record/3565667)
 	* `python download_real_data.py`
 	* Send a mail with the csv files in the `real_data/missing_files` folder to [nicolas](nicolas.turpault@inria.fr) 
 	(and [romain](romain.serizel@loria.fr))
+	* If you want to do the dcase2019 repo, launch `create_dcase2019_dataset.sh` from `real_data` folder
 
 *Note: this includes only the training and validation part, the public evaluation will be released soon*
 
