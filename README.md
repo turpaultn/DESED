@@ -47,7 +47,7 @@ We distinguish multiple usages of this dataset.
 Link to the zenodo repos: **[DESED_synthetic](https://zenodo.org/record/3565667)**,
 **[DESED_real](https://zenodo.org/record/3565749)**
 
-##### Real data (all users)
+#### Real data (all users)
 2 methods:
 * The dcase2019 folder:
 	* Download `DESED_real_dcase2019_meta.tar.gz` from **[DESED_real](https://zenodo.org/record/3565749)**.
@@ -66,7 +66,7 @@ Link to the zenodo repos: **[DESED_synthetic](https://zenodo.org/record/3565667)
 
 *Note: this includes only the training and validation part, the public evaluation will be released soon*
 
-##### Synthetic data (multiple kind of users)
+#### Synthetic data (different depending the user)
 
 * *User who just wants to download dcase2019 dataset*
 	* Download `DESED_synth_dcase2019.tar.gz` from **[DESED_synthetic](https://zenodo.org/record/3565667)**.
