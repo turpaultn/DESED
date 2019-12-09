@@ -56,7 +56,7 @@ Link to the zenodo repos: **[DESED_synthetic](https://zenodo.org/record/3565667)
 	* `python download_real_data.py`
 	* Send a mail with the csv files in the `real_data/missing_files` folder to [nicolas](nicolas.turpault@inria.fr) 
 	(and [romain](romain.serizel@loria.fr))
-* The real_data folder (same as dcase2019, it just makes the difference with the synthetic one)
+* The real_data folder (same as dcase2019, with a different structure)
 	* Clone this repo
 	* `cd real_data/src`
 	* `python download_real_data.py`
