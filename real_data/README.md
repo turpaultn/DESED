@@ -52,7 +52,7 @@ Overview:
    │       ├── test_dcase2018.csv
    │       └── validation.csv
    ├── src                                     (Source code to download real data)
-   ├── create_dcase2019_dataset.sh
+   ├── create_dcase2019_dataset.sh             (Bash command to move the audio files in the dcase2019 folder)
    └── README.md
 ```
 

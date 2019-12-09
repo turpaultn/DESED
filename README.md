@@ -48,12 +48,20 @@ Link to the zenodo repos: **[DESED_synthetic](https://zenodo.org/record/3565667)
 **[DESED_real](https://zenodo.org/record/3565749)**
 
 ##### Real data (all users)
-* Download `DESED_real_dcase2019_meta.tar.gz` from **[DESED_real](https://zenodo.org/record/3565749)**.
-* `tar -xzvf DESED_real_dcase2019_meta.tar.gz` to extract it.
-* `cd dcase2019/src`
-* `python download_real_data.py`
-* Send a mail with the csv files in the `real_data/missing_files` folder to [nicolas](nicolas.turpault@inria.fr) 
-(and [romain](romain.serizel@loria.fr))
+2 methods:
+* The dcase2019 folder:
+	* Download `DESED_real_dcase2019_meta.tar.gz` from **[DESED_real](https://zenodo.org/record/3565749)**.
+	* `tar -xzvf DESED_real_dcase2019_meta.tar.gz` to extract it.
+	* `cd dcase2019/src`
+	* `python download_real_data.py`
+	* Send a mail with the csv files in the `real_data/missing_files` folder to [nicolas](nicolas.turpault@inria.fr) 
+	(and [romain](romain.serizel@loria.fr))
+* The real_data folder (same as dcase2019, it just makes the difference with the synthetic one)
+	* Clone this repo
+	* `cd real_data/src`
+	* `python download_real_data.py`
+	* Send a mail with the csv files in the `real_data/missing_files` folder to [nicolas](nicolas.turpault@inria.fr) 
+	(and [romain](romain.serizel@loria.fr))
 
 *Note: this includes only the training and validation part, the public evaluation will be released soon*
 
