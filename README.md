@@ -1,14 +1,3 @@
----
-title: "DESED"
-author: "Nicolas Turpault"
-date: "11th December 2019"
-output: 
-  html_document:
-     css: html/css/desed.css
-     self_contained: no
-
----
-
 # Desed dataset
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
@@ -30,7 +19,9 @@ reproduce the dataset used in DCASE 2019 task 4 and examples of how you can crea
 (using [Scaper](https://github.com/justinsalamon/scaper) [[1]](#1)).
 
 DESED dataset is for now composed of 10 event classes in domestic environment.
-![DESED_logo|10%](./html/img/DESED_house.png)
+<p align="center">
+<img src="./img/DESED_house_small.png" width="50%">
+</p>
 
 You can find information about this dataset in these papers: [desed description](https://hal.inria.fr/hal-02160855) - 
 [desed eval](https://hal.inria.fr/hal-02355573).

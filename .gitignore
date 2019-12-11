@@ -25,4 +25,5 @@ license_public_eval.csv
 dcase2019/
 dataset/
 create_license.py
+create_tar.sh
 *.log
