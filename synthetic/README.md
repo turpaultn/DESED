@@ -54,32 +54,6 @@ the download part is explained again.
 ### After downloading architecture
 **After downloading the data (see below) you should have this tree:**
 ```
-├── dcase2019
-│   ├── dataset
-│   │   ├── audio
-│   │   │   ├── eval
-│   │   │   │   ├── 500ms
-│   │   │   │   ├── 5500ms
-│   │   │   │   ├── 9500ms
-│   │   │   │   ├── distorted_clipping
-│   │   │   │   ├── distorted_drc
-│   │   │   │   ├── distorted_highpass_filter
-│   │   │   │   ├── distorted_lowpass_filter
-│   │   │   │   ├── distorted_smartphone_playback
-│   │   │   │   ├── distorted_smartphone_recording
-│   │   │   │   ├── fbsnr_0dB
-│   │   │   │   ├── fbsnr_15dB
-│   │   │   │   ├── fbsnr_24dB
-│   │   │   │   ├── fbsnr_30dB
-│   │   │   │   ├── ls_0dB
-│   │   │   │   ├── ls_15dB
-│   │   │   │   └── ls_30dB
-│   │   │   ├── train
-│   │   │   │   └── synthetic
-│   │   └── metadata
-│   │       ├── eval
-│   │       └── train
-│   └── src
 └── synthetic
     ├── audio
     │   ├── eval

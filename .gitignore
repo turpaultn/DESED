@@ -18,7 +18,11 @@ synthetic/license_eval.csv
 synthetic/license_training.csv
 synthetic/src/tests/generated/
 
+license_vimeo.csv
+license_public_eval.csv
+
 # Other
 dcase2019/
+dataset/
 create_license.py
 *.log
