@@ -38,7 +38,7 @@ You can find information about this dataset in these papers:
 		* Unlabel_in_domain data: Unverified data have their label discarded: *14412 files*.
 		* Weakly labeled data: training data have their labels verified at the clip level: *1578 files*.
 		* Validation data have their labels with time boundaries (strong labels): *1168 files*.
-		* Evaluation public files: 699 Youtube files (to be released soon ...) 
+		* Evaluation public files: 692 Youtube files (to be released soon ...) 
 * Synthetic:
 	* Background files are extracted from SINS [[2]](#2), MUSAN [[3]](#3) or Youtube and have been selected because they 
 	contain a very low amount of our sound event classes.
@@ -71,8 +71,8 @@ Link to the zenodo repos: **[DESED_synthetic][desed-synthetic]**, **[DESED publi
 * To reproduce the dcase2019 dataset
 	* Copy `audio/` and `metadata/` in `dcase2019/dataset/` 
 
-* Get the missing files: Send a mail with the csv files in the `missing_files` folder to 
-[Nicolas](nicolas.turpault@inria.fr) (and [Romain](romain.serizel@loria.fr))
+* Get the missing files: Send a mail with the csv files in the `missing_files` folder to
+[Nicolas](<nicolas.turpault@inria.fr>) (and [Romain](<romain.serizel@loria.fr>))
 
 #### Synthetic data (different depending the user)
 
