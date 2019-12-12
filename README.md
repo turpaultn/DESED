@@ -72,7 +72,7 @@ Link to the zenodo repos: **[DESED_synthetic][desed-synthetic]**, **[DESED publi
 	* Copy `audio/` and `metadata/` in `dcase2019/dataset/` 
 
 * Get the missing files: Send a mail with the csv files in the `missing_files` folder to
-[Nicolas](<nicolas.turpault@inria.fr>) (and [Romain](<romain.serizel@loria.fr>))
+[Nicolas](mailto:nicolas.turpault@inria.fr) (and [Romain](mailto:romain.serizel@loria.fr))
 
 #### Synthetic data (different depending the user)
 
