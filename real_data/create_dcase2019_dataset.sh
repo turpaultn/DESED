@@ -8,10 +8,10 @@ ROOTDIR=../dcase2019/dataset
 mkdir -p ${ROOTDIR}
 
 # If not already done
-#echo "download real data audio files ... ~23GB"
-#cd src
-#${CONDA_ENV} download_real_data.py
-#cd ..
+echo "download real data audio files ... ~23GB"
+cd src
+${CONDA_ENV} download_real_data.py
+cd ..
 
 # Copy or move data
 cp -r metadata ${ROOTDIR}/

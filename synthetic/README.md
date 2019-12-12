@@ -7,88 +7,9 @@ Recreate dcase 2019 task 4 synthetic data or create new mixtures.
 **python >= 3.6**, scaper >= 1.0.3,
 numpy >= 1.15.4, pandas >= 0.24.0
 
-## Description
-This repository gives the information and the code to download the synthetic data, 
-reproduce the dataset used in DCASE 2019 task 4 and examples of how you can create your own data 
-(using [Scaper](https://github.com/justinsalamon/scaper) [[1]](#1)).
+See Desed [root README][readme-root] for description and download.
 
-You can find information about this dataset in this paper: [link](https://hal.inria.fr/hal-02160855).
-The evaluation part was submitted to ICASSP and will be updated later.
-
-Overview:
-* Background files are extracted from SINS [[2]](#2), MUSAN [[3]](#3) or Youtube and have been selected because they 
-contain a very low amount of our sound event classes.
-* Foreground files are extracted from Freesound [[4]](#4)[[5]](#5) and manually verified to check the quality 
-and segmented to remove silences.
-* Mixtures are described in [Generating new synthetic data](#gendata) below.
-* Sound bank:
-	* Training: *2060 background files* (SINS) and *1009 foreground files* (Freesound).
-	* Eval: *12* (Freesound) + *5* (Youtube) *background files* and *314 foreground files* (Freesound). 
-
-
-If you want to reproduce dcase 2019 dataset go to [**Desed for DCASE 2019 task 4**](#dcase2019) below, 
-the download part is explained again.
-
-##### Synthetic data (multiple kind of users), this is copied from the README of the repo
-
-* *User who just wants to download dcase2019 dataset*
-	* Download `DESED_synth_dcase2019.tar.gz` from **[DESED_synthetic](https://zenodo.org/record/3565667)**.
-	* `tar -xzvf DESED_synth_dcase2019.tar.gz` to extract it.
-
-* *User who wants to reproduce dcase2019 dataset* (smaller download)
-	* Download `DESED_synth_dcase2019jams.tar.gz` from **[DESED_synthetic](https://zenodo.org/record/3565667)**.
-	* `tar -xzvf DESED_synth_dcase2019jams.tar.gz` to extract it.
-	* Download `DESED_synth_soundbank.tar.gz` from **[DESED_synthetic](https://zenodo.org/record/3565667)**.
-	* `tar -xzvf DESED_synth_soundbank.tar.gz` to extract it.
-	* `sh create_dcase2019_dataset.sh`. (Recommended to run commands line by line in case of bugs)
-	* Be careful, the distortions done on Matlab are up to you to create, it will be updated later to do it in python.
-	
-* *User who wants to create new synthetic data*
-	* Download `DESED_synth_soundbank.tar.gz ` from **[DESED_synthetic](https://zenodo.org/record/3565667)**.
-	* `tar -xzvf DESED_synth_soundbank.tar.gz ` to extract it.
-	* `cd synthetic/src`
-	* `python get_background_training.py` to download SINS background files.
-	* See examples of code to create files in this repo in `synthetic/src`. 
-	Described in [Generating new synthetic data](#gendata) below.
-
-### After downloading architecture
-**After downloading the data (see below) you should have this tree:**
-```
-└── synthetic
-    ├── audio
-    │   ├── eval
-    │   │   ├── distorted_fbsnr_30dB            (6 subfolders for each distortion, audio are directly given because a matlab code has been used to generate them) 
-    │   │   └── soundbank                       (Raw (bank of) data that can be used to create synthetic data)
-    │   │       ├── background                  (2 subfolders, youtube and freesound)
-    │   │       ├── background_long             (5 subfolders)
-    │   │       ├── foreground                  (18 subfolders)
-    │   │       ├── foreground_on_off           (10 subfolders)
-    │   │       └── foreground_short            (5 subfolders)
-    │   └── train
-    │       ├── soundbank                       (Raw (bank of) data that can be used to create synthetic data)
-    │       │   ├── background
-    │       │   │   └── sins                    (Has to be downloaded by: get_background_training.py)
-    │       │   └── foreground                  (14 subfolders)
-    │       └── synthetic
-    ├── metadata
-    │   ├── eval
-    │   │   └── soundscapes                     (metadata to reproduce the wav files used in dcase2019)
-    │   │       ├── 500ms
-    │   │       ├── 5500ms
-    │   │       ├── 9500ms
-    │   │       ├── fbsnr_0dB
-    │   │       ├── fbsnr_15dB
-    │   │       ├── fbsnr_24dB
-    │   │       ├── fbsnr_30dB
-    │   │       ├── ls_0dB
-    │   │       ├── ls_15dB
-    │   │       └── ls_30dB
-    │   └── train
-    │       └── soundscapes                     (metadata to reproduce the wav files used in dcase2019)
-    └── src                                     (Source code to regenerate the dcase2019 dataset or generate new mixtures)
-```
-
-## Generating new synthetic data, this is copied from the README of the repo
+## Generating new synthetic data, (copied from the README of the repo)
 <a id="gendata"></a>
  To generate new sounds, in the same way as the Desed_synthetic dataset, you can use these files:
  * `generate_training.py`, uses `event_occurences_train.json` for co-occurrence of events.
@@ -107,8 +28,12 @@ the download part is explained again.
 When a script is generating multiple subfolder but only one csv file, it means it is the same csv for the different cases.
 Example: when modifying the FBSNR, we do not change the labels (onset, offsets). 
 
+## DCASE 2019
+See `create_dcase2019_dataset.sh` for download.
+
 ##### Description of Desed for dcase2019 task 4
-[DCASE 2019 task 4 web page](http://dcase.community/challenge2019/task-sound-event-detection-in-domestic-environments)
+[DCASE 2019 task 4 web page][website-dcase]
+
 
 * **Training**: There are 2060 background files from SINS and 1009 foreground from Freesound.
 We generated 2045 10s files with a FBSNR between 6dB to 30dB.
@@ -187,3 +112,6 @@ In Proceedings of the 18th International Society for Music Information Retrieval
  <a id="5">[6]</a> M. Mauch and S. Ewert, “The Audio Degradation Toolbox and its Application to Robustness Evaluation”. 
 In Proceedings of the 14th International Society for Music Information Retrieval Conference (ISMIR 2013), Curitiba, Brazil, 2013.
 
+[readme-root]: ../README.md
+
+[website-dcase]: http://dcase.community/challenge2019/task-sound-event-detection-in-domestic-environments

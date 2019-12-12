@@ -1,34 +1,40 @@
 # Desed dataset
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
-Domestic environment sound event detection (DESED)
-
+Domestic environment sound event detection (DESED). 
 Mix of real and synthetic data. (used in DCASE 2019 task 4).
 
-This repo allows you: download the real, and synthetic data of Desed dataset + creation of new synthetic data 
-(by generating new mixtures).
+*If you use this dataset, do not hesitate to update [the list](#listpapers) of papers below with your paper by doing 
+a pull request. 
+And please cite our papers in your work*
 
 #### Requirements:
 **python >= 3.6**, scaper >= 1.0.3, dcase-util >= 0.2.5, youtube-dl >= 2019.4.30, pysoundfile >= 0.10.1, 
 numpy >= 1.15.4, pandas >= 0.24.0
 
+### Links
+Website: [https://project.inria.fr/desed/][website]
+
+Zenodo datasets: [DESED_synthetic][desed-synthetic], [DESED_public_eval][desed-public-eval]
 
 ## Description
-This repository gives the information and the code to download the data (real + synthetic), 
-reproduce the dataset used in DCASE 2019 task 4 and examples of how you can create your own data 
-(using [Scaper](https://github.com/justinsalamon/scaper) [[1]](#1)).
+This repo allows you: 
+* Download real data.
+* Download synthetic data of Desed dataset (+ generated for dcase 2019 task 4) 
+* Create new synthetic data (by generating new mixtures using [Scaper][scaper] [[1]](#1)).
 
 DESED dataset is for now composed of 10 event classes in domestic environment.
 <p align="center">
 <img src="./img/DESED_house_small.png" width="50%">
 </p>
 
-You can find information about this dataset in these papers: [desed description](https://hal.inria.fr/hal-02160855) - 
-[desed eval](https://hal.inria.fr/hal-02355573).
+You can find information about this dataset in these papers: 
+* [Turpault et al.][paper-description] Description of DESED dataset + official results of DCASE 2019 task 4. 
+* [Serizel et al.][paper-eval] Robustness of DCASE 2019 systems on synthetic evaluation set.
 
-Overview:
+**Overview**:
 * Real Data:
-	* Verified and unverfied subset of [Audioset](https://research.google.com/audioset/index.html).
+	* Verified and unverfied subset of [Audioset][audioset].
 		* Unlabel_in_domain data: Unverified data have their label discarded: *14412 files*.
 		* Weakly labeled data: training data have their labels verified at the clip level: *1578 files*.
 		* Validation data have their labels with time boundaries (strong labels): *1168 files*.
@@ -38,61 +44,67 @@ Overview:
 	contain a very low amount of our sound event classes.
 	* Foreground files are extracted from Freesound [[4]](#4)[[5]](#5) and manually verified to check the quality 
 	and segmented to remove silences.
-	* Mixtures are described in [Generating new synthetic data](#gendata) below.
+	* Mixtures are described in [Generating new synthetic data](#generating-new-synthetic-data) below.
 	* Sound bank:
 		* Training: *2060 background files* (SINS) and *1009 foreground files* (Freesound).
 		* Eval: *12* (Freesound) + *5* (Youtube) *background files* and *314 foreground files* (Freesound). 
 
 * DCASE 2019
 	* It uses synthetic data, real data, and public evaluation data (known as youtube eval) during the challenge.
-	* If you want more information about dcase 2019 dataset visit [DCASE 2019 task 4 web page](http://dcase.community/challenge2019/task-sound-event-detection-in-domestic-environments)
-
-Otherwise, follow **Download** and **Generating new synthetic data**.
+	* If you want more information about dcase 2019 dataset visit [DCASE 2019 task 4 web page][website-dcase]
 
 ## Download
-We distinguish multiple usages of this dataset.
+There are 3 different datasets: Real data, synthetic data, and evaluation data.
 
-Link to the zenodo repos: **[DESED_synthetic](https://zenodo.org/record/3567927)**,
-**[DESED_real](https://zenodo.org/record/3567925)**
+If you only want to download dcase2019 files, go to [dcase2019 task 4](#dcase2019-task-4).
 
-**The common point of the different datasets: contain an audio folder and a metadata folder associated (they can all be grouped together)**
+Link to the zenodo repos: **[DESED_synthetic][desed-synthetic]**, **[DESED public eval][desed-public-eval]**
+
+*Common point of the different datasets: contain an audio folder and a metadata folder associated 
+(they can all be grouped together)*
 
 #### Real data (all users)
-* Just download the real data
+* Download the real data
 	* Clone this repo
 	* `cd real_data/src`
 	* `python download_real_data.py`
-* Reproduce the dcase2019 dataset
-	* launch `create_dcase2019_dataset.sh` from `real_data` folder (reorganisation of folder, download can be uncommented)
+* To reproduce the dcase2019 dataset
+	* Copy `audio/` and `metadata/` in `dcase2019/dataset/` 
 
-* Get the missing files: Send a mail with the csv files in the `missing_files` folder to [nicolas](nicolas.turpault@inria.fr) 
-	(and [romain](romain.serizel@loria.fr))
+* Get the missing files: Send a mail with the csv files in the `missing_files` folder to 
+[Nicolas](nicolas.turpault@inria.fr) (and [Romain](romain.serizel@loria.fr))
 
 #### Synthetic data (different depending the user)
 
 * *User who just wants to download the dcase2019 synthetic evaluation set*
-	* Download `DESED_synth_eval_dcase2019.tar.gz` from **[DESED_synthetic](https://zenodo.org/record/3567927)**.
+	* Download `DESED_synth_eval_dcase2019.tar.gz` from **[DESED_synthetic][desed-synthetic]**.
 	* `DESED_synth_eval_dcase2019.tar.gz` to extract it.
 
-* *User who wants to reproduce dcase2019 dataset* (smaller download)
-	* Download `DESED_synth_dcase2019jams.tar.gz` and `DESED_synth_soundbank.tar.gz` from **[DESED_synthetic](https://zenodo.org/record/3567927)**.
-	* `tar -xzvf DESED_synth_dcase2019jams.tar.gz` and `tar -xzvf DESED_synth_soundbank.tar.gz` to extract them.
+* *User who wants to reproduce dcase2019 dataset* (smaller download (when distortion would be in python))
+	* clone this repo
+	* `cd synthetic/`
 	* `sh create_dcase2019_dataset.sh`. (Recommended to run commands line by line in case of bugs)
-	* Be careful, the distortions done on Matlab are up to you to create, it will be updated later to do it in python.
+	* Be careful, the distortions done on Matlab are up to you to create, it will be updated later to do it in python. 
+	For now, uncomment corresponding lines in `create_dcase2019_dataset.sh` to download the eval set 
+	to get the distortions data. 
 	
 * *User who wants to create new synthetic data*
-	* Download `DESED_synth_soundbank.tar.gz ` from **[DESED_synthetic](https://zenodo.org/record/3567927)**.
-	* `tar -xzvf DESED_synth_soundbank.tar.gz ` to extract it.
+	* Download `DESED_synth_soundbank.tar.gz` from **[DESED_synthetic][desed-synthetic]**.
+	* `tar -xzvf DESED_synth_soundbank.tar.gz` to extract it.
 	* `cd synthetic/src`
 	* `python get_background_training.py` to download SINS background files.
 	* See examples of code to create files in this repo in `synthetic/src`. 
 	Described in [Generating new synthetic data](#gendata) below.
 	
-#### Evaluation data (real data)
+#### Evaluation data (real data, users wanting to compare their results)
 
-The evaluation data are in the following repo: **[DESED_public_eval](https://zenodo.org/record/3571050)**.
+The evaluation data are in the following repo: **[DESED_public_eval][desed-public-eval]**.
 
-It corresponds to "youtube" subset in the [desed eval paper](https://hal.inria.fr/hal-02355573) 
+It corresponds to "youtube" subset in the [desed eval paper][paper-description]
+
+* Download DESED_public_eval.tar.gz
+* `tar -xzvf DESED_public_eval.tar.gz`
+* To move it to dcase2019, merge `dataset/` with `dcase2019/dataset`.
 
 ### After downloading architecture
 **After downloading the data (see below) you should have this tree:**
@@ -160,13 +172,19 @@ It corresponds to "youtube" subset in the [desed eval paper](https://hal.inria.f
 When a script is generating multiple subfolder but only one csv file, it means it is the same csv for the different cases.
 Example: when modifying the FBSNR, we do not change the labels (onset, offsets). 
 
-<a id="dcase2019"></a>
-##### Description of Desed for dcase2019 task 4
-[DCASE 2019 task 4 web page](http://dcase.community/challenge2019/task-sound-event-detection-in-domestic-environments)
+## DCASE2019 task 4
+#### Download
+Recommended to open `synthetic/create_dcase2019_dataset.sh` and 
+`real_data/create_dcase2019_dataset.sh` and launch line by line in case of bugs.
+
+Otherwise launch `sh create_dcase2019_dataset.sh`.
+
+#### Description of Desed for dcase2019 task 4
+[DCASE 2019 task 4 web page][website-dcase]
 
 * **Real data**
 	* **Training**: 1578 weakly labeled clips, 14412 unlabeled clips
-	* **Public Evaluation**: 692 Youtube files (reported as eval youtube in papers)
+	* **Public Evaluation**: 692 Youtube files (reported as "eval youtube" in papers)
 	* **Challenge Evaluation**: Youtube and Vimeo files.
 
 * **Synthetic**
@@ -209,6 +227,28 @@ dcase2019/
         └── validation
 ```
 
+## FAQ
+* Why don't we have a single dataset repository ?
+
+The synthetic data or real data can be used independently for different purposes. One can create new synthetic data and
+evaluate his system on synthetic data only to focus on a specific problem.
+
+* Why audio is not always included in the repository ?
+
+Because of licenses issues. (Example of SINS in the training soundbank)
+We do not have the problem for evaluation data because we try to overcome the problem after running into this issue.
+
+* How do I evaluate and compare my system with other methods using this dataset ?
+
+In [this paper][paper-description] you can refer to the column 'Youtube' and for further study, you can
+cite the DESED public evaluation set. 
+
+Feel free to add your paper in the list below if you use the dataset and have a result on the public evaluation set:
+
+<a id="listpapers">List of papers using the dataset:</a>
+* [Turpault et al.][paper-description]
+* [Serizel et al.][paper-eval]
+
 
 ## Licenses
 The python code is publicly available under the MIT license, see the LICENSE file. 
@@ -242,3 +282,12 @@ In Proceedings of the 18th International Society for Music Information Retrieval
 
  <a id="5">[6]</a> M. Mauch and S. Ewert, “The Audio Degradation Toolbox and its Application to Robustness Evaluation”. 
 In Proceedings of the 14th International Society for Music Information Retrieval Conference (ISMIR 2013), Curitiba, Brazil, 2013.
+
+[audioset]: https://research.google.com/audioset/index.html
+[desed-synthetic]: https://zenodo.org/record/3571305
+[desed-public-eval]: https://zenodo.org/record/3571050
+[paper-eval]: https://hal.inria.fr/hal-02355573
+[paper-description]: https://hal.inria.fr/hal-02160855
+[scaper]: https://github.com/justinsalamon/scaper
+[website]: https://project.inria.fr/desed/
+[website-dcase]: http://dcase.community/challenge2019/task-sound-event-detection-in-domestic-environments

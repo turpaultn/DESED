@@ -1,5 +1,16 @@
 #!/bin/bash
 
+wget -O DESED_synth_soundbank.tar.gz https://zenodo.org/record/3571305/files/DESED_synth_soundbank.tar.gz?download=1
+tar -xzvf DESED_synth_soundbank.tar.gz
+
+wget -O DESED_synth_dcase2019jams.tar.gz https://zenodo.org/record/3571305/files/DESED_synth_dcase2019jams.tar.gz?download=1
+tar -xzvf DESED_synth_dcase2019jams.tar.gz
+
+# To download distortions evaluation data.
+#echo "Temporary... everything except distortions will be overwritten, comment the 2 next lines if distortions not needed"
+#wget -O DESED_synth_eval_dcase2019.tar.gz https://zenodo.org/record/3571305/files/DESED_synth_eval_dcase2019.tar.gz?download=1
+#tar -xzvf DESED_synth_eval_dcase2019.tar.gz
+
 # Change with your own environment
 CONDA_ENV=python
 
@@ -8,10 +19,11 @@ ROOTDIR=../dcase2019/dataset
 mkdir -p ${ROOTDIR}
 
 # Download and generate synthetic
-echo "generate synthetic ... ~30min"
 cd src
 # If you did not downlaod the synthetic training background yet
+"Download SINS..."
 ${CONDA_ENV} get_background_training.py
+echo "generate synthetic ... ~30min"
 ${CONDA_ENV} generate_wav.py
 cd ..
 

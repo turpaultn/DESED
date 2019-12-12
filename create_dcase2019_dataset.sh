@@ -4,3 +4,5 @@ cd real_data
 
 cd ../synthetic/
 ./create_dcase2019_dataset.sh
+
+cd ../

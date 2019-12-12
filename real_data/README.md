@@ -3,45 +3,25 @@ Real data. (used in DCASE task 4 2018 and 2019).
 
 Contains the metadata to download the real data.
 
-**If having a problem with the download (missing files folder or something else) please contact me**
-
 #### Requirements:
 **python >= 3.6**, 
 dcase-util >= 0.2.5, youtube-dl >= 2019.4.30, pysoundfile >= 0.10.1, 
 numpy >= 1.15.4, pandas >= 0.24.0
 
 ## Description
-This repository gives the information and the [code](https://github.com/turpaultn/DESED) to download the real data 
-used in DCASE 2019 task 4 (and 2018).
-
-You can find information about this dataset in this paper: [link](https://hal.inria.fr/hal-02160855).
-The evaluation part was submitted to ICASSP and will be updated later.
-
-Overview:
-* Real Data:
-	* Verified and unverfied subset of [Audioset](https://research.google.com/audioset/index.html).
-		* Unverified data have their label discarded (unlabel_in_domain data).
-		* Training data have their labels verified at the clip level (weak labels)
-		* Validation data have their labels with time boundaries (strong labels)
+See [DESED README][desed-readme] in previous folder.
 
 ## Download
-2 methods:
-* The dcase2019 folder:
-	* Download `DESED_real_dcase2019_meta.tar.gz` from **[DESED_real](https://zenodo.org/record/3565749)**.
-	* `tar -xzvf DESED_real_dcase2019_meta.tar.gz` to extract it.
-	* `cd dcase2019/src`
-	* `python download_real_data.py`
-	* Send a mail with the csv files in the `real_data/missing_files` folder to [nicolas](nicolas.turpault@inria.fr) 
-	(and [romain](romain.serizel@loria.fr))
-* The real_data folder (same as dcase2019, it just makes the difference with the synthetic one)
+#### Real data (all users)
+* Download the real data
 	* Clone this repo
-	* `cd src` (from real_data)
+	* `cd real_data/src`
 	* `python download_real_data.py`
-	* Send a mail with the csv files in the `missing_files` folder to [nicolas](nicolas.turpault@inria.fr) 
-	(and [romain](romain.serizel@loria.fr))
-	* If you want to do the dcase2019 repo, launch `create_dcase2019_dataset.sh` from `real_data` folder
+* To reproduce the dcase2019 dataset
+	* Copy `audio/` and `metadata/` in `dcase2019/dataset/` 
 
-*Note: this includes only the training and validation part, the public evaluation will be released soon*
+* Get the missing files: Send a mail with the csv files in the `missing_files` folder to 
+[nicolas](nicolas.turpault@inria.fr) (and [romain](romain.serizel@loria.fr))
 
 ### After downloading architecture
 **After downloading the data (see below) you should have this tree:**
@@ -65,6 +45,14 @@ Overview:
    └── README.md
 ```
 
+## DCASE2019 task 4
+#### Download
+Recommended to open [create_dcase2019_dataset.sh][create2019] and launch line by line in case of bugs.
+
+Otherwise launch `sh create_dcase2019_dataset.sh`.
+
+See previous folder for more info.
+
 ## Licenses
 The python code is publicly available under the MIT license, see the LICENSE file. 
 
@@ -77,3 +65,6 @@ Workshop on Detectionand Classification of Acoustic Scenes and Events, Oct 2019,
 ## References
 <a id="1">[1]</a> J. Salamon, D. MacConnell, M. Cartwright, P. Li, and J. P. Bello. Scaper: A library for soundscape synthesis and augmentation
 In IEEE Workshop on Applications of Signal Processing to Audio and Acoustics (WASPAA), New Paltz, NY, USA, Oct. 2017.
+
+[create2019]: ./create_dcase2019_dataset.sh
+[desed-readme]: ../README.md#description
