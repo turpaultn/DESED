@@ -1,0 +1,338 @@
+{
+  "annotations": [
+    {
+      "annotation_metadata": {
+        "curator": {
+          "name": "",
+          "email": ""
+        },
+        "annotator": {},
+        "version": "",
+        "corpus": "",
+        "annotation_tools": "",
+        "annotation_rules": "",
+        "validation": "",
+        "data_source": ""
+      },
+      "namespace": "scaper",
+      "data": [
+        {
+          "time": 0.0,
+          "duration": 10.0,
+          "value": {
+            "label": "sins",
+            "source_file": "../training/soundbank/background/sins/DevNode2_ex111_8.wav",
+            "source_time": 0,
+            "event_time": 0,
+            "event_duration": 10.0,
+            "snr": 0,
+            "role": "background",
+            "pitch_shift": null,
+            "time_stretch": null
+          },
+          "confidence": 1.0
+        },
+        {
+          "time": 2.18322413540704,
+          "duration": 0.304399,
+          "value": {
+            "label": "Dishes",
+            "source_file": "../training/soundbank/foreground/Dishes/412389.wav",
+            "source_time": 0.0,
+            "event_time": 2.18322413540704,
+            "event_duration": 0.304399,
+            "snr": 12.998720376497221,
+            "role": "foreground",
+            "pitch_shift": -2.917577441949698,
+            "time_stretch": 1.0
+          },
+          "confidence": 1.0
+        },
+        {
+          "time": 3.099455923795556,
+          "duration": 0.260272,
+          "value": {
+            "label": "Dishes",
+            "source_file": "../training/soundbank/foreground/Dishes/221791.wav",
+            "source_time": 0.0,
+            "event_time": 3.099455923795556,
+            "event_duration": 0.260272,
+            "snr": 29.72904342387568,
+            "role": "foreground",
+            "pitch_shift": -0.7887769779949805,
+            "time_stretch": 1.0
+          },
+          "confidence": 1.0
+        },
+        {
+          "time": 3.6836814737920003,
+          "duration": 1.940204,
+          "value": {
+            "label": "Dishes",
+            "source_file": "../training/soundbank/foreground/Dishes/82048.wav",
+            "source_time": 0.0,
+            "event_time": 3.6836814737920003,
+            "event_duration": 1.940204,
+            "snr": 15.066971872449633,
+            "role": "foreground",
+            "pitch_shift": 2.6527689194468715,
+            "time_stretch": 1.0
+          },
+          "confidence": 1.0
+        },
+        {
+          "time": 6.406035666504631,
+          "duration": 3.593964333495369,
+          "value": {
+            "label": "Frying",
+            "source_file": "../training/soundbank/foreground/Frying/388092.wav",
+            "source_time": 0.0,
+            "event_time": 6.406035666504631,
+            "event_duration": 3.593964333495369,
+            "snr": 14.690798510429424,
+            "role": "foreground",
+            "pitch_shift": -2.380858513691508,
+            "time_stretch": 1.0
+          },
+          "confidence": 1.0
+        }
+      ],
+      "sandbox": {
+        "scaper": {
+          "duration": 10.0,
+          "fg_path": "../training/soundbank/foreground",
+          "bg_path": "../training/soundbank/background",
+          "fg_spec": [
+            [
+              [
+                "const",
+                "Dishes"
+              ],
+              [
+                "const",
+                "../training/soundbank/foreground/Dishes/82048.wav"
+              ],
+              [
+                "const",
+                0.0
+              ],
+              [
+                "const",
+                3.6836814737920003
+              ],
+              [
+                "const",
+                1.940204
+              ],
+              [
+                "uniform",
+                6,
+                30
+              ],
+              "foreground",
+              [
+                "uniform",
+                -3.0,
+                3.0
+              ],
+              [
+                "uniform",
+                1,
+                1
+              ]
+            ],
+            [
+              [
+                "const",
+                "Frying"
+              ],
+              [
+                "const",
+                "../training/soundbank/foreground/Frying/388092.wav"
+              ],
+              [
+                "const",
+                0.0
+              ],
+              [
+                "const",
+                6.406035666504631
+              ],
+              [
+                "const",
+                3.593964333495369
+              ],
+              [
+                "uniform",
+                6,
+                30
+              ],
+              "foreground",
+              [
+                "uniform",
+                -3.0,
+                3.0
+              ],
+              [
+                "uniform",
+                1,
+                1
+              ]
+            ],
+            [
+              [
+                "const",
+                "Dishes"
+              ],
+              [
+                "const",
+                "../training/soundbank/foreground/Dishes/412389.wav"
+              ],
+              [
+                "const",
+                0.0
+              ],
+              [
+                "const",
+                2.18322413540704
+              ],
+              [
+                "const",
+                0.304399
+              ],
+              [
+                "uniform",
+                6,
+                30
+              ],
+              "foreground",
+              [
+                "uniform",
+                -3.0,
+                3.0
+              ],
+              [
+                "uniform",
+                1,
+                1
+              ]
+            ],
+            [
+              [
+                "const",
+                "Dishes"
+              ],
+              [
+                "const",
+                "../training/soundbank/foreground/Dishes/221791.wav"
+              ],
+              [
+                "const",
+                0.0
+              ],
+              [
+                "const",
+                3.099455923795556
+              ],
+              [
+                "const",
+                0.260272
+              ],
+              [
+                "uniform",
+                6,
+                30
+              ],
+              "foreground",
+              [
+                "uniform",
+                -3.0,
+                3.0
+              ],
+              [
+                "uniform",
+                1,
+                1
+              ]
+            ]
+          ],
+          "bg_spec": [
+            [
+              [
+                "choose",
+                []
+              ],
+              [
+                "choose",
+                []
+              ],
+              [
+                "const",
+                0
+              ],
+              [
+                "const",
+                0
+              ],
+              [
+                "const",
+                10.0
+              ],
+              [
+                "const",
+                0
+              ],
+              "background",
+              null,
+              null
+            ]
+          ],
+          "fg_labels": [
+            "Alarm_bell_ringing",
+            "Blender",
+            "Cat",
+            "Dishes",
+            "Dog",
+            "Electric_shaver_toothbrush",
+            "Frying",
+            "Frying_nOff",
+            "Frying_nOn_nOff",
+            "Running_water",
+            "Speech",
+            "Vacuum_cleaner",
+            "Vacuum_cleaner_nOn",
+            "Vacuum_cleaner_nOn_nOff"
+          ],
+          "bg_labels": [
+            "sins",
+            "sins_keep"
+          ],
+          "protected_labels": [],
+          "sr": 44100,
+          "ref_db": -50,
+          "n_channels": 1,
+          "fade_in_len": 0.01,
+          "fade_out_len": 0.01,
+          "n_events": 4,
+          "polyphony_max": 1,
+          "polyphony_gini": 0.6100006393432141,
+          "allow_repeated_label": true,
+          "allow_repeated_source": true,
+          "reverb": 0.1,
+          "scaper_version": "1.0.3"
+        }
+      },
+      "time": 0,
+      "duration": 10.0
+    }
+  ],
+  "file_metadata": {
+    "title": "",
+    "artist": "",
+    "release": "",
+    "duration": 10.0,
+    "identifiers": {},
+    "jams_version": "0.3.4"
+  },
+  "sandbox": {}
+}
