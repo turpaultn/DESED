@@ -14,7 +14,7 @@ import jams
 import pandas as pd
 from pprint import pformat
 
-from utils import create_folder, rm_high_polyphony, post_processing_annotations
+from utils import create_folder, rm_high_polyphony, post_processing_annotations, generate_multi_common
 from Logger import LOG
 
 
@@ -65,11 +65,13 @@ def generate_new_fg_onset_files(added_value, in_dir, out_dir):
 if __name__ == '__main__':
     LOG.info(__file__)
     t = time.time()
+    absolute_dir_path = osp.abspath(osp.dirname(__file__))
+    base_path_eval = osp.join(absolute_dir_path, '..', 'audio', 'eval')
     parser = argparse.ArgumentParser()
-    parser.add_argument('--outfolder', type=str, default=osp.join('..', 'eval', 'soundscapes_generated_var_onset'))
+    parser.add_argument('--outfolder', type=str, default=osp.join(base_path_eval, 'soundscapes_generated_var_onset'))
     parser.add_argument('--number', type=int, default=1000)
-    parser.add_argument('--fgfolder', type=str, default=osp.join("..", "eval", "soundbank", "foreground_on_off"))
-    parser.add_argument('--bgfolder', type=str, default=osp.join("..", "eval", "soundbank", "background"))
+    parser.add_argument('--fgfolder', type=str, default=osp.join(base_path_eval, "soundbank", "foreground_on_off"))
+    parser.add_argument('--bgfolder', type=str, default=osp.join(base_path_eval, "soundbank", "background"))
     args = parser.parse_args()
     pformat(vars(args))
 
@@ -116,45 +118,20 @@ if __name__ == '__main__':
 
     out_folder_500 = osp.join(out_folder, "500ms")
     create_folder(out_folder_500)
-    # Generate 1000 soundscapes using a truncated normal distribution of start times
-    for n in range(n_soundscapes):
-        LOG.debug('Generating soundscape: {:d}/{:d}'.format(n+1, n_soundscapes))
-        # create a scaper
-        sc = scaper.Scaper(duration, fg_folder, bg_folder)
-        sc.protected_labels = []
-        sc.ref_db = ref_db
 
-        # add background
-        sc.add_background(label=('choose', []),
-                          source_file=('choose', []),
-                          source_time=('const', 0))
-
-        # add a single foreground event to the file
-        sc.add_event(label=('choose', []),
-                     source_file=('choose', []),
-                     source_time=(source_time_dist, source_time),
-                     event_time=(event_time_dist, event_time_mean, event_time_std, event_time_min, event_time_max),
-                     event_duration=(event_duration_dist, event_duration_min, event_duration_max),
-                     snr=(snr_dist, snr_min, snr_max),
-                     pitch_shift=(pitch_dist, pitch_min, pitch_max),
-                     time_stretch=(time_stretch_dist, time_stretch_min, time_stretch_max))
-
-        # generate
-        audiofile = osp.join(out_folder_500, f"{n}.wav")
-        jamsfile = osp.join(out_folder_500, f"{n}.jams")
-        txtfile = osp.join(out_folder_500, f"{n}.txt")
-
-        sc.generate(audiofile, jamsfile,
-                    allow_repeated_label=True,
-                    allow_repeated_source=True,
-                    reverb=0.1,
-                    disable_sox_warnings=True,
-                    no_audio=False,
-                    txt_path=txtfile)
+    generate_multi_common(n_soundscapes, ref_db, duration, fg_folder, bg_folder, out_folder_500,
+                          min_events=1, max_events=1, labels=('choose', []), source_files=('choose', []),
+                          sources_time=(source_time_dist, source_time),
+                          events_time=(
+                          event_time_dist, event_time_mean, event_time_std, event_time_min, event_time_max),
+                          events_duration=(event_duration_dist, event_duration_min, event_duration_max),
+                          snrs=(snr_dist, snr_min, snr_max),
+                          pitch_shifts=(pitch_dist, pitch_min, pitch_max),
+                          time_stretches=(time_stretch_dist, time_stretch_min, time_stretch_max),
+                          txt_file=True)
 
     rm_high_polyphony(out_folder_500, 3)
-    out_csv = osp.join('..', 'eval', 'soundscapes_generated_var_onset',
-                                                    "500ms.csv")
+    out_csv = osp.join(base_path_eval, 'soundscapes_generated_var_onset', "500ms.csv")
     post_processing_annotations(out_folder_500, output_folder=out_folder_500,
                                 output_csv=out_csv)
     df = pd.read_csv(out_csv, sep="\t")
@@ -166,7 +143,7 @@ if __name__ == '__main__':
     df["onset"] += add_onset
     df["offset"] = df["offset"].apply(lambda x: min(x, add_onset))
     generate_new_fg_onset_files(add_onset, out_folder_500, out_folder_5500)
-    df.to_csv(osp.join('..', 'eval', 'soundscapes_generated_var_onset', "5500ms.csv"),
+    df.to_csv(osp.join(base_path_eval, 'soundscapes_generated_var_onset', "5500ms.csv"),
               sep="\t", float_format="%.3f", index=False)
 
     out_folder_9500 = osp.join(out_folder, "9500ms")
@@ -176,5 +153,5 @@ if __name__ == '__main__':
     df["onset"] += add_onset
     df["offset"] = df["offset"].apply(lambda x: min(x, add_onset))
     generate_new_fg_onset_files(add_onset, out_folder_500, out_folder_9500)
-    df.to_csv(osp.join('..', 'eval', 'soundscapes_generated_var_onset', "9500ms.csv"),
+    df.to_csv(osp.join(base_path_eval, 'soundscapes_generated_var_onset', "9500ms.csv"),
               sep="\t", float_format="%.3f", index=False)

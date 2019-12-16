@@ -7,15 +7,14 @@
 import time
 import argparse
 import scaper
-import numpy as np
 import os
 import os.path as osp
-import json
 import glob
 import jams
 from pprint import pformat
 
-from utils import choose_class, add_event, create_folder, rm_high_polyphony, post_processing_annotations
+import generate_training
+from utils import create_folder, rm_high_polyphony, post_processing_annotations
 from Logger import LOG
 
 
@@ -61,12 +60,14 @@ def generate_new_bg_snr_files(new_snr, in_dir, out_dir):
 if __name__ == '__main__':
     LOG.info(__file__)
     t = time.time()
+    absolute_dir_path = osp.abspath(osp.dirname(__file__))
+    base_path_eval = osp.join(absolute_dir_path, '..', 'audio', 'eval')
     parser = argparse.ArgumentParser()
-    parser.add_argument('--outfolder', type=str, default=osp.join('..', 'audio', 'eval', 'soundscapes_generated_fbsnr'))
-    parser.add_argument('--outcsv', type=str, default=osp.join('..', 'audio', 'eval', "soundscapes_generated_fbsnr", "XdB.csv"))
+    parser.add_argument('--outfolder', type=str, default=osp.join(base_path_eval, 'soundscapes_generated_fbsnr'))
+    parser.add_argument('--outcsv', type=str, default=osp.join(base_path_eval, "soundscapes_generated_fbsnr", "XdB.csv"))
     parser.add_argument('--number', type=int, default=1000)
-    parser.add_argument('--fgfolder', type=str, default=osp.join("..", 'audio', "eval", "soundbank", "foreground"))
-    parser.add_argument('--bgfolder', type=str, default=osp.join("..", 'audio', "eval", "soundbank", "background"))
+    parser.add_argument('--fgfolder', type=str, default=osp.join(base_path_eval, "soundbank", "foreground"))
+    parser.add_argument('--bgfolder', type=str, default=osp.join(base_path_eval, "soundbank", "background"))
     args = parser.parse_args()
     pformat(vars(args))
 
@@ -75,18 +76,15 @@ if __name__ == '__main__':
     create_folder(out_folder)
 
     # SCAPER SETTINGS
-    fg_folder = args.fgfolder
-    bg_folder = args.bgfolder
+    fg_dir = args.fgfolder
+    bg_dir = args.bgfolder
     # JSON file
-    param_file = osp.join("event_occurences", 'event_occurences_eval.json')
+    param_json = osp.join("event_occurences", 'event_occurences_eval.json')
 
     # Default parameters
     n_soundscapes = args.number
-    ref_db = -50
-    duration = 10.0
-
-    with open(param_file) as json_file:
-        params = json.load(json_file)
+    db_ref = -50
+    clip_duration = 10.0
 
     # ########
     # FBSNR
@@ -94,45 +92,13 @@ if __name__ == '__main__':
     # Generate events same way as the training set
     out_folder_30 = osp.join(out_folder, "30dB")
     create_folder(out_folder_30)
-    n=0
-    for class_lbl in params.keys():
-        class_params = params[class_lbl]
-        for i in range(int(n_soundscapes * class_params['prob'])):
 
-            LOG.debug('Generating soundscape: {:d}/{:d}'.format(n+1, n_soundscapes))
-
-            # create a scaper
-            sc = scaper.Scaper(duration, fg_folder, bg_folder)
-            sc.protected_labels = []
-            sc.ref_db = ref_db
-
-            # add background
-            sc.add_background(label=('choose', []),
-                              source_file=('choose', []),
-                              source_time=('const', 0))
-
-            # add main event
-            sc = add_event(sc, class_lbl, duration, fg_folder)
-
-            # add random number of foreground events
-            n_events = np.random.randint(0, class_params['event_max'])
-            for _ in range(n_events):
-                chosen_class = choose_class(class_params)
-                sc = add_event(sc, chosen_class, duration, fg_folder)
-
-            # generate
-            audiofile = osp.join(out_folder_30, f"{n}.wav")
-            jamsfile = osp.join(out_folder_30, f"{n}.jams")
-            txtfile = osp.join(out_folder_30, f"{n}.txt")
-
-            sc.generate(audiofile, jamsfile,
-                        allow_repeated_label=True,
-                        allow_repeated_source=True,
-                        reverb=0.1,
-                        disable_sox_warnings=True,
-                        no_audio=False,
-                        txt_path=txtfile)
-            n += 1
+    generate_training.generate_files(param_json, n_soundscapes,
+                                     ref_db=db_ref,
+                                     duration=clip_duration,
+                                     fg_folder=fg_dir,
+                                     bg_folder=bg_dir,
+                                     outfolder=out_folder_30)
 
     rm_high_polyphony(out_folder_30, 3)
     post_processing_annotations(out_folder_30, output_folder=out_folder_30, output_csv=args.outcsv)

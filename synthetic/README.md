@@ -75,7 +75,7 @@ Generating different subsets to test robustness against some parameters.
     │   └── metadata
     │       ├── eval
     │       └── train
-    └── src
+    └── desed_synthetic
 ```
 
 

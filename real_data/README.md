@@ -15,7 +15,7 @@ See [DESED README][desed-readme] in previous folder.
 #### Real data (all users)
 * Download the real data
 	* Clone this repo
-	* `cd real_data/src`
+	* `cd real_data/desed_real`
 	* `python download_real_data.py`
 * To reproduce the dcase2019 dataset
 	* Copy `audio/` and `metadata/` in `dcase2019/dataset/` 
@@ -26,7 +26,7 @@ See [DESED README][desed-readme] in previous folder.
 ### After downloading architecture
 **After downloading the data (see below) you should have this tree:**
 ```
-└── real_data                                   (real data part of the dataset, audio files have to be downloaded)
+└── real_data                                  (real data part of the dataset, audio files have to be downloaded)
    ├── audio                                   (Audio downloaded by `python download_real_data.py`)
    │   ├── train
    │   │   ├── weak
@@ -40,7 +40,7 @@ See [DESED README][desed-readme] in previous folder.
    │       ├── eval_dcase2018.csv
    │       ├── test_dcase2018.csv
    │       └── validation.csv
-   ├── src                                     (Source code to download real data)
+   ├── desed_real                              (Source code to download real data)
    ├── create_dcase2019_dataset.sh             (Bash command to move the audio files in the dcase2019 folder)
    └── README.md
 ```

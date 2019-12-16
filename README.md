@@ -66,7 +66,7 @@ Link to the zenodo repos: **[DESED_synthetic][desed-synthetic]**, **[DESED publi
 #### Real data (all users)
 * Download the real data
 	* Clone this repo
-	* `cd real_data/src`
+	* `cd real_data/desed_real`
 	* `python download_real_data.py`
 * To reproduce the dcase2019 dataset
 	* Copy `audio/` and `metadata/` in `dcase2019/dataset/` 
@@ -91,9 +91,9 @@ Link to the zenodo repos: **[DESED_synthetic][desed-synthetic]**, **[DESED publi
 * *User who wants to create new synthetic data*
 	* Download `DESED_synth_soundbank.tar.gz` from **[DESED_synthetic][desed-synthetic]**.
 	* `tar -xzvf DESED_synth_soundbank.tar.gz` to extract it.
-	* `cd synthetic/src`
+	* `cd synthetic/desed_synthetic`
 	* `python get_background_training.py` to download SINS background files.
-	* See examples of code to create files in this repo in `synthetic/src`. 
+	* See examples of code to create files in this repo in `synthetic/desed_synthetic`. 
 	Described in [Generating new synthetic data](#gendata) below.
 	
 #### Evaluation data (real data, users wanting to compare their results)
@@ -118,7 +118,7 @@ It corresponds to "youtube" subset in the [desed eval paper][paper-description]
 │   ├── metadata
 │   │   ├── train
 │   │   └── validation
-│   └── src
+│   └── desed_real
 └── synthetic
     ├── audio
     │   ├── eval
@@ -150,7 +150,7 @@ It corresponds to "youtube" subset in the [desed eval paper][paper-description]
     │   │       └── ls_30dB
     │   └── train
     │       └── soundscapes                     (metadata to reproduce the wav files used in dcase2019)
-    └── src                                     (Source code to regenerate the dcase2019 dataset or generate new mixtures)
+    └── desed_synthetic                         (Source code to regenerate the dcase2019 dataset or generate new mixtures)
 ```
 
 <a id="gendata"></a>

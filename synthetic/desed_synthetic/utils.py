@@ -4,6 +4,7 @@
 # Copyright Nicolas Turpault, Romain Serizel, Justin Salamon, Ankit Parag Shah, 2019, v1.0
 # This software is distributed under the terms of the License MIT
 #########################################################################
+from os import path as osp
 
 import jams
 import numpy as np
@@ -11,6 +12,8 @@ import os
 import os.path as osp
 import shutil
 import glob
+
+import scaper
 import soundfile as sf
 import pprint
 import pandas as pd
@@ -40,7 +43,7 @@ def choose_class(class_params):
         tmp += class_params['event_prob'][i]
         inter.append(tmp)
     ind = np.random.uniform()*100
-    return class_params['event_class'][np.argmax(np.asarray(inter)>ind)]
+    return class_params['event_class'][np.argmax(np.asarray(inter) > ind)]
 
 
 def choose_file(class_path):
@@ -214,15 +217,13 @@ def post_process_df(df, length_sec, min_dur_event=0.250, min_dur_inter=0.150):
                     df.loc[indexes[i], 'offset'] = df.loc[indexes[j], 'offset']
                     ref_offset = df.loc[indexes[j], 'offset']
                     df = df.drop(indexes[j])
-                    LOG.debug("Merging consecutive annotation with pause" +
-                          "<150ms")
+                    LOG.debug("Merging consecutive annotation with pause" + "<150ms")
                     fix_count += 1
                 elif df.loc[indexes[j], 'onset'] - ref_onset < min_dur_event + min_dur_inter:
                     df.loc[indexes[i], 'offset'] = df.loc[indexes[j], 'offset']
                     ref_offset = df.loc[indexes[j], 'offset']
                     df = df.drop(indexes[j])
-                    LOG.debug("Merging consecutive annotations" +
-                          " with onset diff<400ms")
+                    LOG.debug("Merging consecutive annotations" + " with onset diff<400ms")
                     fix_count += 1
                 else:
                     # Quitting the loop
@@ -235,7 +236,7 @@ def post_process_df(df, length_sec, min_dur_event=0.250, min_dur_inter=0.150):
     return df, fix_count
 
 
-def post_processing_annotations(dir, wavdir=None, output_folder=None, output_csv=None, min_dur_event=0.250,
+def post_processing_annotations(folder, wavdir=None, output_folder=None, output_csv=None, min_dur_event=0.250,
                                 min_dur_inter=0.150, background_label=False):
     """ clean the .txt files of each file. It is the same processing as the real data
     - overlapping events of the same class are mixed
@@ -243,22 +244,23 @@ def post_processing_annotations(dir, wavdir=None, output_folder=None, output_csv
     - if event < 250ms, the event lasts 250ms
 
     Args:
-        dir: str, directory path where the XXX.txt files are.
+        folder: str, directory path where the XXX.txt files are.
         wavdir: str, directory path where the associated XXX.wav audio files are (associated with .txt files)
         output_folder: str, optional, folder in which to put the checked files
         output_csv: str, optional, csv with all the annotations concatenated
         min_dur_event: float, optional in sec, minimum duration of an event
         min_dur_inter: float, optional in sec, minimum duration between 2 events
+        background_label: bool, whether to include the background label in the annotations.
 
     Returns:
         None
     """
     if wavdir is None:
-        wavdir = dir
+        wavdir = folder
     fix_count = 0
-    LOG.info("Correcting annotations ... \n"
-          "* annotations with negative duration will be removed\n" +
-          "* annotations with duration <250ms will be extended on the offset side)")
+    LOG.info("Correcting annotations ... \n" 
+             "* annotations with negative duration will be removed\n" +
+             "* annotations with duration <250ms will be extended on the offset side)")
 
     if output_folder is not None:
         create_folder(output_folder)
@@ -267,11 +269,14 @@ def post_processing_annotations(dir, wavdir=None, output_folder=None, output_csv
         df_single = pd.DataFrame()
 
     if background_label:
-        pattern = '*.jams'
+        list_files = glob.glob(osp.join(folder, "*.jams"))
     else:
-        pattern = '*.txt'
+        list_files = glob.glob(osp.join(folder, "*.txt"))
+        if len(list_files) == 0:
+            list_files = glob.glob(osp.join(folder, '*.jams'))
 
-    for fn in glob.glob(osp.join(dir, pattern)):
+    out_extension = '.txt'
+    for fn in list_files:
         LOG.debug(fn)
         df, length_sec = get_data(fn, osp.join(wavdir, osp.splitext(osp.basename(fn))[0] + '.wav'),
                                   background_label=background_label)
@@ -280,8 +285,9 @@ def post_processing_annotations(dir, wavdir=None, output_folder=None, output_csv
         fix_count += fc
 
         if output_folder is not None:
-            df[['onset', 'offset', 'event_label']].to_csv(osp.join(output_folder, os.path.basename(fn)),
-                header=False, index=False, sep="\t")
+            filepath = os.path.splitext(os.path.basename(fn))[0] + out_extension
+            df[['onset', 'offset', 'event_label']].to_csv(osp.join(output_folder, filepath),
+                                                          header=False, index=False, sep="\t")
         if output_csv is not None:
             df['filename'] = osp.join(osp.splitext(fn)[0] + '.wav')
             df_single = df_single.append(df[['filename', 'onset', 'offset', 'event_label']], ignore_index=True)
@@ -327,6 +333,85 @@ def generate_csv_from_jams(list_jams, csv_out, post_process=True, background_lab
 
     final_df = final_df.sort_values(by=["filename", "onset"])
     final_df.to_csv(csv_out, sep="\t", index=False, float_format="%.3f")
+
+
+def generate_one_bg_multi_fg(ref_db, duration, fg_folder, bg_folder, out_folder, filename, n_events,
+                             labels=('choose', []), source_files=('choose', []), sources_time=('const', 0),
+                             events_time=('truncnorm', 5.0, 2.0, 0.0, 10.0), events_duration=("uniform", 0.25, 10.0),
+                             snrs=("const", 30), pitch_shifts=('uniform', -3.0, 3.0),
+                             time_stretches=('uniform', 1, 1), txt_file=True):
+    sc = scaper.Scaper(duration, fg_folder, bg_folder)
+    sc.protected_labels = []
+    sc.ref_db = ref_db
+
+    # add background
+    sc.add_background(label=('choose', []),
+                      source_file=('choose', []),
+                      source_time=('const', 0))
+
+    params = {"label": labels, "source_file": source_files, "source_time": sources_time, "event_time": events_time,
+              "event_duration": events_duration, "snr": snrs, "pitch_shift": pitch_shifts,
+              "time_stretch": time_stretches}
+    for i in range(n_events):
+        event_params = {}
+        for key in params:
+            if type(params[key]) is tuple:
+                param = params[key]
+            elif type(params[key]) is list:
+                assert len(params[key]) == n_events
+                param = params[key][i]
+            else:
+                NotImplementedError("Params of events is tuple(same for all) or list (different for each event)")
+            event_params[key] = param
+
+        sc.add_event(**event_params)
+
+    # generate
+    audiofile = osp.join(out_folder, f"{filename}.wav")
+    jamsfile = osp.join(out_folder, f"{filename}.jams")
+    if txt_file:
+        # Can be useless if you want background annotation as well, see post_processing_annotations.
+        txtfile = osp.join(out_folder, f"{filename}.txt")
+    else:
+        txtfile = None
+    sc.generate(audio_path=audiofile, jams_path=jamsfile,
+                allow_repeated_label=True,
+                allow_repeated_source=True,
+                reverb=0.1,
+                disable_sox_warnings=True,
+                no_audio=False,
+                txt_path=txtfile)
+
+
+def generate_multi_common(number, ref_db, duration, fg_folder, bg_folder, outfolder, min_events, max_events,
+                          labels=('choose', []), source_files=('choose', []), sources_time=('const', 0),
+                          events_time=('truncnorm', 5.0, 2.0, 0.0, 10.0), events_duration=('uniform', 0.25, 10.0),
+                          snrs=('const', 30), pitch_shifts=('uniform', -3.0, 3.0), time_stretches=('uniform', 1, 1),
+                          txt_file=True):
+    params = {
+        'labels': labels,
+        'source_files': source_files,
+        'sources_time': sources_time,
+        'events_time': events_time,
+        'events_duration': events_duration,
+        'snrs': snrs,
+        'pitch_shifts': pitch_shifts,
+        'time_stretches': time_stretches
+    }
+
+    for n in range(number):
+        LOG.debug('Generating soundscape: {:d}/{:d}'.format(n + 1, number))
+        # create a scaper
+        n_events = np.random.randint(min_events, max_events + 1)
+        generate_one_bg_multi_fg(ref_db=ref_db,
+                                 duration=duration,
+                                 fg_folder=fg_folder,
+                                 bg_folder=bg_folder,
+                                 out_folder=outfolder,
+                                 filename=n,
+                                 n_events=n_events,
+                                 **params,
+                                 txt_file=txt_file)
 
 
 if __name__ == '__main__':
