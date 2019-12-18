@@ -12,6 +12,8 @@ And please cite our papers in your work*
 **python >= 3.6**, scaper >= 1.0.3, dcase-util >= 0.2.5, youtube-dl >= 2019.4.30, pysoundfile >= 0.10.1, 
 numpy >= 1.15.4, pandas >= 0.24.0
 
+To use the code, clone the repo, and launch `python setup.py` in the `desed/` folder.
+
 ### Links
 Website: [https://project.inria.fr/desed/][website]
 
@@ -66,7 +68,7 @@ Link to the zenodo repos: **[DESED_synthetic][desed-synthetic]**, **[DESED publi
 #### Real data (all users)
 * Download the real data
 	* Clone this repo
-	* `cd real_data/desed_real`
+	* `cd real_data/code`
 	* `python download_real_data.py`
 * To reproduce the dcase2019 dataset
 	* Copy `audio/` and `metadata/` in `dcase2019/dataset/` 
@@ -91,9 +93,9 @@ Link to the zenodo repos: **[DESED_synthetic][desed-synthetic]**, **[DESED publi
 * *User who wants to create new synthetic data*
 	* Download `DESED_synth_soundbank.tar.gz` from **[DESED_synthetic][desed-synthetic]**.
 	* `tar -xzvf DESED_synth_soundbank.tar.gz` to extract it.
-	* `cd synthetic/desed_synthetic`
+	* `cd synthetic/code`
 	* `python get_background_training.py` to download SINS background files.
-	* See examples of code to create files in this repo in `synthetic/desed_synthetic`. 
+	* See examples of code to create files in this repo in `synthetic/code`. 
 	Described in [Generating new synthetic data](#gendata) below.
 	
 #### Evaluation data (real data, users wanting to compare their results)
@@ -118,7 +120,7 @@ It corresponds to "youtube" subset in the [desed eval paper][paper-description]
 │   ├── metadata
 │   │   ├── train
 │   │   └── validation
-│   └── desed_real
+│   └── code
 └── synthetic
     ├── audio
     │   ├── eval
@@ -150,7 +152,7 @@ It corresponds to "youtube" subset in the [desed eval paper][paper-description]
     │   │       └── ls_30dB
     │   └── train
     │       └── soundscapes                     (metadata to reproduce the wav files used in dcase2019)
-    └── desed_synthetic                         (Source code to regenerate the dcase2019 dataset or generate new mixtures)
+    └── code                         (Source code to regenerate the dcase2019 dataset or generate new mixtures)
 ```
 
 <a id="gendata"></a>

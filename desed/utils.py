@@ -18,7 +18,7 @@ import soundfile as sf
 import pprint
 import pandas as pd
 
-from Logger import LOG
+from .Logger import create_logger
 
 
 def create_folder(folder, delete_if_exists=False):
@@ -54,6 +54,7 @@ def choose_file(class_path):
 
 
 def add_event(sc, class_lbl, duration, fg_folder):
+    LOG = create_logger(__name__)
     source_time_dist = 'const'
     source_time = 0.0
     event_duration_min = 0.25
@@ -131,6 +132,7 @@ def rm_high_polyphony(folder, max_polyphony=3, save_csv_associated=None):
         None
 
     """
+    LOG = create_logger(__name__)
     # Select training
     i = 0
     df = pd.DataFrame(columns=['scaper', 'bg', 'fg'])
@@ -187,6 +189,7 @@ def get_data(file, wav_file=None, background_label=False):
 
 
 def post_process_df(df, length_sec, min_dur_event=0.250, min_dur_inter=0.150):
+    LOG = create_logger(__name__)
     fix_count = 0
     df = sanity_check(df, length_sec)
     df = df.sort_values('onset')
@@ -255,6 +258,7 @@ def post_processing_annotations(folder, wavdir=None, output_folder=None, output_
     Returns:
         None
     """
+    LOG = create_logger(__name__)
     if wavdir is None:
         wavdir = folder
     fix_count = 0
@@ -322,6 +326,7 @@ def generate_csv_from_jams(list_jams, csv_out, post_process=True, background_lab
     """
     final_df = pd.DataFrame()
     for jam_file in list_jams:
+        print(jam_file)
         fbase = osp.basename(jam_file)
         df, length = get_df_from_jams(jam_file, background_label=background_label, return_length=True)
 
@@ -388,6 +393,7 @@ def generate_multi_common(number, ref_db, duration, fg_folder, bg_folder, outfol
                           events_time=('truncnorm', 5.0, 2.0, 0.0, 10.0), events_duration=('uniform', 0.25, 10.0),
                           snrs=('const', 30), pitch_shifts=('uniform', -3.0, 3.0), time_stretches=('uniform', 1, 1),
                           txt_file=True):
+    LOG = create_logger(__name__)
     params = {
         'labels': labels,
         'source_files': source_files,

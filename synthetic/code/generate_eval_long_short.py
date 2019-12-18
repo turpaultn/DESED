@@ -4,26 +4,28 @@
 # Copyright Nicolas Turpault, Romain Serizel, Justin Salamon, Ankit Parag Shah, 2019, v1.0
 # This software is distributed under the terms of the License MIT
 #########################################################################
+import logging
 import time
 import argparse
 import os.path as osp
 from pprint import pformat
 
-from utils import create_folder, rm_high_polyphony, post_processing_annotations, generate_multi_common
-from generate_eval_FBSNR import generate_new_bg_snr_files
-from Logger import LOG
+from desed.utils import create_folder, rm_high_polyphony, post_processing_annotations, generate_multi_common
+from desed.generate_synthetic import generate_new_bg_snr_files
+from desed.Logger import create_logger
+import config as cfg
+
 
 if __name__ == '__main__':
+    LOG = create_logger(__name__, "Desed.log", terminal_level=logging.INFO)
     LOG.info(__file__)
     t = time.time()
-    absolute_dir_path = osp.abspath(osp.dirname(__file__))
-    base_path_eval = osp.join(absolute_dir_path, '..', 'audio', 'eval')
     parser = argparse.ArgumentParser()
-    parser.add_argument('--outfolder', type=str, default=osp.join(base_path_eval, 'soundscapes_generated_ls'))
-    parser.add_argument('--outcsv', type=str, default=osp.join(base_path_eval, "soundscapes_generated_ls", "XdB.csv"))
+    parser.add_argument('--outfolder', type=str, default=osp.join(cfg.base_path_eval, 'soundscapes_generated_ls'))
+    parser.add_argument('--outcsv', type=str, default=osp.join(cfg.base_path_eval, "soundscapes_generated_ls", "XdB.csv"))
     parser.add_argument('--number', type=int, default=1000)
-    parser.add_argument('--fgfolder', type=str, default=osp.join(base_path_eval, "soundbank", "foreground_short"))
-    parser.add_argument('--bgfolder', type=str, default=osp.join(base_path_eval, "soundbank", "background_long"))
+    parser.add_argument('--fgfolder', type=str, default=osp.join(cfg.base_path_eval, "soundbank", "foreground_short"))
+    parser.add_argument('--bgfolder', type=str, default=osp.join(cfg.base_path_eval, "soundbank", "background_long"))
     args = parser.parse_args()
     pformat(vars(args))
 

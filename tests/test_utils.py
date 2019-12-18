@@ -8,7 +8,7 @@ import os.path as osp
 import pandas as pd
 import shutil
 import glob
-from utils import post_processing_annotations, rm_high_polyphony
+from desed.utils import post_processing_annotations, rm_high_polyphony
 
 
 def test_postprocessing(folder, checked_folder, out_csv):

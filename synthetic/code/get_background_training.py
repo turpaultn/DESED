@@ -10,17 +10,18 @@ import pandas as pd
 import glob
 import os
 import shutil
+import logging
 
 import requests
 import zipfile
 import io
 from pprint import pformat
 
-from utils import create_folder
-from Logger import LOG
-
+from desed.utils import create_folder
+from desed.Logger import create_logger
 
 if __name__ == '__main__':
+    LOG = create_logger("DESED", "Desed.log", terminal_level=logging.INFO, file_level=logging.INFO)
     t = time.time()
     parser = argparse.ArgumentParser()
     parser.add_argument('--keep-sins', action="store_true", default=False)
@@ -61,7 +62,7 @@ if __name__ == '__main__':
     
         if not args.keep_sins:
             shutil.rmtree(os.path.join(extract_path, "audio"))
-        break
+
     if not args.keep_sins:
         shutil.rmtree(extract_path)
     LOG.info(f"time of the program: {time.time() - t}")
