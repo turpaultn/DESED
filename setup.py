@@ -15,7 +15,7 @@ setup(
         "pandas >= 0.24.0",
         "dcase-util >= 0.2.5",
         "youtube-dl >= 2019.4.30",
-        "pysoundfile",
+        "soundfile >= 0.10.1",
     ],
     packages=find_packages()
 )

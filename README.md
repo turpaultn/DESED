@@ -12,7 +12,7 @@ And please cite our papers in your work*
 **python >= 3.6**, scaper >= 1.0.3, dcase-util >= 0.2.5, youtube-dl >= 2019.4.30, pysoundfile >= 0.10.1, 
 numpy >= 1.15.4, pandas >= 0.24.0
 
-To use the code, clone the repo, and launch `python setup.py` in the `desed/` folder.
+**To use the code, clone the repo, and launch `pip install -e .` in the `Desed/` folder.**
 
 ### Links
 Website: [https://project.inria.fr/desed/][website]

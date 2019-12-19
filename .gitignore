@@ -17,13 +17,15 @@ synthetic/metadata/
 
 # Specific
 real_data/missing_files/
-*.tar.gz
 synthetic/license_eval.csv
 synthetic/license_training.csv
 synthetic/src/tests/generated/
 
 license_vimeo.csv
 license_public_eval.csv
+
+tar.gz/
+*.tar.gz
 
 # Other
 dcase2019/
