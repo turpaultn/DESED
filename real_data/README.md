@@ -5,7 +5,7 @@ Contains the metadata to download the real data.
 
 #### Requirements:
 **python >= 3.6**, 
-dcase-util >= 0.2.5, youtube-dl >= 2019.4.30, pysoundfile >= 0.10.1, 
+dcase-util >= 0.2.5, youtube-dl >= 2019.4.30, soundfile >= 0.10.1, 
 numpy >= 1.15.4, pandas >= 0.24.0
 
 ## Description
@@ -15,6 +15,7 @@ See [DESED README][desed-readme] in previous folder.
 #### Real data (all users)
 * Download the real data
 	* Clone this repo
+	* `pip install -e .`
 	* `cd real_data/desed_real`
 	* `python download_real_data.py`
 * To reproduce the dcase2019 dataset
