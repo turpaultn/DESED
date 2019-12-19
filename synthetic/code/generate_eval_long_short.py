@@ -10,8 +10,8 @@ import argparse
 import os.path as osp
 from pprint import pformat
 
-from desed.utils import create_folder, rm_high_polyphony, post_processing_annotations, generate_multi_common
-from desed.generate_synthetic import generate_new_bg_snr_files
+from desed.utils import create_folder, rm_high_polyphony, post_processing_annotations
+from desed.generate_synthetic import generate_new_bg_snr_files, generate_multi_common
 from desed.Logger import create_logger
 import config as cfg
 

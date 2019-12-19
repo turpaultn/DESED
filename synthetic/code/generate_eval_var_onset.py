@@ -11,8 +11,8 @@ import os.path as osp
 import pandas as pd
 from pprint import pformat
 
-from desed.generate_synthetic import generate_new_fg_onset_files
-from desed.utils import create_folder, rm_high_polyphony, post_processing_annotations, generate_multi_common
+from desed.generate_synthetic import generate_new_fg_onset_files, generate_multi_common
+from desed.utils import create_folder, rm_high_polyphony, post_processing_annotations
 from desed.Logger import create_logger
 import config as cfg
 

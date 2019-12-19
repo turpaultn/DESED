@@ -4,8 +4,12 @@ from os import path as osp
 
 import jams
 import numpy as np
+import pandas as pd
 import scaper
 from scaper import generate_from_jams
+
+from desed.Logger import create_logger
+from desed.utils import get_df_from_jams, post_process_df
 
 from .utils import add_event, choose_class, create_folder
 from .Logger import create_logger
@@ -163,3 +167,105 @@ def generate_files_from_jams(list_jams, outfolder, fg_path=None, bg_path=None, o
         if n % 500 == 0:
             LOG.debug(f"generating {n} / {len(list_jams)} files")
     LOG.info("Done")
+
+
+def generate_multi_common(number, ref_db, duration, fg_folder, bg_folder, outfolder, min_events, max_events,
+                          labels=('choose', []), source_files=('choose', []), sources_time=('const', 0),
+                          events_time=('truncnorm', 5.0, 2.0, 0.0, 10.0), events_duration=('uniform', 0.25, 10.0),
+                          snrs=('const', 30), pitch_shifts=('uniform', -3.0, 3.0), time_stretches=('uniform', 1, 1),
+                          txt_file=True):
+    LOG = create_logger(__name__)
+    params = {
+        'labels': labels,
+        'source_files': source_files,
+        'sources_time': sources_time,
+        'events_time': events_time,
+        'events_duration': events_duration,
+        'snrs': snrs,
+        'pitch_shifts': pitch_shifts,
+        'time_stretches': time_stretches
+    }
+
+    for n in range(number):
+        LOG.debug('Generating soundscape: {:d}/{:d}'.format(n + 1, number))
+        # create a scaper
+        n_events = np.random.randint(min_events, max_events + 1)
+        generate_one_bg_multi_fg(ref_db=ref_db,
+                                 duration=duration,
+                                 fg_folder=fg_folder,
+                                 bg_folder=bg_folder,
+                                 out_folder=outfolder,
+                                 filename=n,
+                                 n_events=n_events,
+                                 **params,
+                                 txt_file=txt_file)
+
+
+def generate_csv_from_jams(list_jams, csv_out, post_process=True, background_label=False):
+    """ In scaper generate, they create txt files, using the same idea, we create a single csv file.
+
+    Returns:
+
+    """
+    final_df = pd.DataFrame()
+    for jam_file in list_jams:
+        print(jam_file)
+        fbase = osp.basename(jam_file)
+        df, length = get_df_from_jams(jam_file, background_label=background_label, return_length=True)
+
+        if post_process:
+            df, _ = post_process_df(df, length)
+
+        df["filename"] = fbase
+        final_df = final_df.append(df[['filename', 'onset', 'offset', 'event_label']], ignore_index=True)
+
+    final_df = final_df.sort_values(by=["filename", "onset"])
+    final_df.to_csv(csv_out, sep="\t", index=False, float_format="%.3f")
+
+
+def generate_one_bg_multi_fg(ref_db, duration, fg_folder, bg_folder, out_folder, filename, n_events,
+                             labels=('choose', []), source_files=('choose', []), sources_time=('const', 0),
+                             events_time=('truncnorm', 5.0, 2.0, 0.0, 10.0), events_duration=("uniform", 0.25, 10.0),
+                             snrs=("const", 30), pitch_shifts=('uniform', -3.0, 3.0),
+                             time_stretches=('uniform', 1, 1), txt_file=True):
+    sc = scaper.Scaper(duration, fg_folder, bg_folder)
+    sc.protected_labels = []
+    sc.ref_db = ref_db
+
+    # add background
+    sc.add_background(label=('choose', []),
+                      source_file=('choose', []),
+                      source_time=('const', 0))
+
+    params = {"label": labels, "source_file": source_files, "source_time": sources_time, "event_time": events_time,
+              "event_duration": events_duration, "snr": snrs, "pitch_shift": pitch_shifts,
+              "time_stretch": time_stretches}
+    for i in range(n_events):
+        event_params = {}
+        for key in params:
+            if type(params[key]) is tuple:
+                param = params[key]
+            elif type(params[key]) is list:
+                assert len(params[key]) == n_events
+                param = params[key][i]
+            else:
+                NotImplementedError("Params of events is tuple(same for all) or list (different for each event)")
+            event_params[key] = param
+
+        sc.add_event(**event_params)
+
+    # generate
+    audiofile = osp.join(out_folder, f"{filename}.wav")
+    jamsfile = osp.join(out_folder, f"{filename}.jams")
+    if txt_file:
+        # Can be useless if you want background annotation as well, see post_processing_annotations.
+        txtfile = osp.join(out_folder, f"{filename}.txt")
+    else:
+        txtfile = None
+    sc.generate(audio_path=audiofile, jams_path=jamsfile,
+                allow_repeated_label=True,
+                allow_repeated_source=True,
+                reverb=0.1,
+                disable_sox_warnings=True,
+                no_audio=False,
+                txt_path=txtfile)

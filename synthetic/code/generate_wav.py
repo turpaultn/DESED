@@ -12,8 +12,7 @@ import glob
 from pprint import pformat
 import logging
 
-from desed.generate_synthetic import generate_files_from_jams
-from desed.utils import generate_csv_from_jams
+from desed.generate_synthetic import generate_files_from_jams, generate_csv_from_jams
 from desed.Logger import create_logger
 
 
