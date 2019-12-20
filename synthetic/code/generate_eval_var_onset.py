@@ -24,7 +24,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--outfolder', type=str,
                         default=osp.join(cfg.audio_path_eval, 'soundscapes_generated_var_onset'))
-    parser.add_argument('--outcsvfolder', type=str,
+    parser.add_argument('--outtsvfolder', type=str,
                         default=osp.join(cfg.meta_path_eval, 'soundscapes_generated_var_onset'))
     parser.add_argument('--number', type=int, default=1000)
     parser.add_argument('--fgfolder', type=str, default=osp.join(cfg.audio_path_eval, "soundbank", "foreground_on_off"))
@@ -36,8 +36,8 @@ if __name__ == '__main__':
     out_folder = args.outfolder
     create_folder(out_folder)
 
-    out_csv_folder = args.outcsvfolder
-    create_folder(out_csv_folder)
+    out_tsv_folder = args.outtsvfolder
+    create_folder(out_tsv_folder)
 
     # Default parameters
     n_soundscapes = args.number
@@ -91,10 +91,10 @@ if __name__ == '__main__':
                           txt_file=True)
 
     rm_high_polyphony(out_folder_500, 3)
-    out_csv = osp.join(out_csv_folder, "500ms.csv")
+    out_tsv = osp.join(out_tsv_folder, "500ms.tsv")
     post_processing_annotations(out_folder_500, output_folder=out_folder_500,
-                                output_csv=out_csv)
-    df = pd.read_csv(out_csv, sep="\t")
+                                output_tsv=out_tsv)
+    df = pd.read_csv(out_tsv, sep="\t")
     # Be careful, if changing the values of the added onset value,
     # you maybe want to rerun the post_processing_annotations to be sure there is no inconsistency
     out_folder_5500 = osp.join(out_folder, "5500ms")
@@ -103,15 +103,15 @@ if __name__ == '__main__':
     df["onset"] += add_onset
     df["offset"] = df["offset"].apply(lambda x: min(x, add_onset))
     generate_new_fg_onset_files(add_onset, out_folder_500, out_folder_5500)
-    df.to_csv(osp.join(out_csv_folder, "5500ms.csv"),
+    df.to_csv(osp.join(out_tsv_folder, "5500ms.tsv"),
               sep="\t", float_format="%.3f", index=False)
 
     out_folder_9500 = osp.join(out_folder, "9500ms")
     create_folder(out_folder_9500)
     add_onset = 9.0
-    df = pd.read_csv(out_csv, sep="\t")
+    df = pd.read_csv(out_tsv, sep="\t")
     df["onset"] += add_onset
     df["offset"] = df["offset"].apply(lambda x: min(x, add_onset))
     generate_new_fg_onset_files(add_onset, out_folder_500, out_folder_9500)
-    df.to_csv(osp.join(out_csv_folder, "9500ms.csv"),
+    df.to_csv(osp.join(out_tsv_folder, "9500ms.tsv"),
               sep="\t", float_format="%.3f", index=False)

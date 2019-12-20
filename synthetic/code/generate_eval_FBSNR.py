@@ -24,8 +24,8 @@ if __name__ == '__main__':
     t = time.time()
     parser = argparse.ArgumentParser()
     parser.add_argument('--outfolder', type=str, default=osp.join(cfg.audio_path_eval, 'soundscapes_generated_fbsnr'))
-    parser.add_argument('--outcsv', type=str,
-                        default=osp.join(cfg.meta_path_eval, "soundscapes_generated_fbsnr", "XdB.csv"))
+    parser.add_argument('--outtsv', type=str,
+                        default=osp.join(cfg.meta_path_eval, "soundscapes_generated_fbsnr", "XdB.tsv"))
     parser.add_argument('--number', type=int, default=1000)
     parser.add_argument('--fgfolder', type=str, default=osp.join(cfg.audio_path_eval, "soundbank", "foreground"))
     parser.add_argument('--bgfolder', type=str, default=osp.join(cfg.audio_path_eval, "soundbank", "background"))
@@ -35,6 +35,7 @@ if __name__ == '__main__':
     # General output folder, in args
     out_folder = args.outfolder
     create_folder(out_folder)
+    create_folder(osp.dirname(args.outtsv))
 
     # SCAPER SETTINGS
     fg_dir = args.fgfolder
@@ -62,7 +63,7 @@ if __name__ == '__main__':
                                      out_folder=out_folder_30)
 
     rm_high_polyphony(out_folder_30, 3)
-    post_processing_annotations(out_folder_30, output_folder=out_folder_30, output_csv=args.outcsv)
+    post_processing_annotations(out_folder_30, output_folder=out_folder_30, output_tsv=args.outtsv)
 
     # We create the same dataset with different background SNR
     # Be careful, 6 means the background SNR is 6,

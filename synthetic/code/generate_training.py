@@ -45,7 +45,7 @@ if __name__ == "__main__":
     t = time.time()
     parser = argparse.ArgumentParser()
     parser.add_argument("--outfolder", type=str, default=osp.join(cfg.audio_path_train, "soundscapes_generated"))
-    parser.add_argument("--outcsv", type=str, default=osp.join(cfg.meta_path_train, "synthetic_generated.csv"))
+    parser.add_argument("--outtsv", type=str, default=osp.join(cfg.meta_path_train, "synthetic_generated.tsv"))
     parser.add_argument("--fgfolder", type=str, default=osp.join(cfg.audio_path_train, "soundbank", "foreground"))
     parser.add_argument("--bgfolder", type=str, default=osp.join(cfg.audio_path_train, "soundbank", "background"))
     parser.add_argument("--number", type=int, default=1000)
@@ -55,7 +55,7 @@ if __name__ == "__main__":
     # Output folder, in args
     outfolder = args.outfolder
     create_folder(outfolder)
-    out_csv = args.outcsv
+    out_tsv = args.outtsv
 
     # SCAPER SETTINGS
     fg_dir = args.fgfolder
@@ -76,5 +76,5 @@ if __name__ == "__main__":
                    out_folder=outfolder)
 
     rm_high_polyphony(outfolder, 3)
-    post_processing_annotations(outfolder, output_folder=outfolder, output_csv=out_csv)
+    post_processing_annotations(outfolder, output_folder=outfolder, output_tsv=out_tsv)
     LOG.info(f"time of the program: {time.time() - t}")

@@ -104,8 +104,8 @@ def download_file(result_dir, filename):
 
 
 def download(filenames, result_dir, n_jobs=1, chunk_size=10, base_dir_missing_files=".."):
-    """ download files in parallel from youtube given a csv file listing files to download. It also stores not downloaded
-    files with their associated error in "missing_files_[csv_file].csv"
+    """ download files in parallel from youtube given a tsv file listing files to download. It also stores not downloaded
+    files with their associated error in "missing_files_[tsv_file].tsv"
 
        Parameters
        ----------
@@ -158,7 +158,7 @@ def download(filenames, result_dir, n_jobs=1, chunk_size=10, base_dir_missing_fi
 
             missing_files.columns = ["filename", "error"]
             missing_files.to_csv(os.path.join(base_dir_missing_files,
-                                              "missing_files_" + result_dir.split('/')[-1] + ".csv"),
+                                              "missing_files_" + result_dir.split('/')[-1] + ".tsv"),
                                  index=False, sep="\t")
 
     except KeyboardInterrupt:

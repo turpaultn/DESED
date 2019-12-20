@@ -1,6 +1,0 @@
-2.183	2.488	Dishes
-2.406	5.2	Speech
-3.099	3.36	Dishes
-3.406	6.2	Cat
-3.684	5.624	Dishes
-6.406	10.0	Frying

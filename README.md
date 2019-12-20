@@ -290,8 +290,8 @@ In Proceedings of the 18th International Society for Music Information Retrieval
 In Proceedings of the 14th International Society for Music Information Retrieval Conference (ISMIR 2013), Curitiba, Brazil, 2013.
 
 [audioset]: https://research.google.com/audioset/index.html
-[desed-synthetic]: https://zenodo.org/record/3571305
-[desed-public-eval]: https://zenodo.org/record/3571050
+[desed-synthetic]: https://zenodo.org/record/3588151
+[desed-public-eval]: https://zenodo.org/record/3588172
 [paper-eval]: https://hal.inria.fr/hal-02355573
 [paper-description]: https://hal.inria.fr/hal-02160855
 [scaper]: https://github.com/justinsalamon/scaper

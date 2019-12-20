@@ -152,13 +152,13 @@ def add_event(sc, class_lbl, duration, fg_folder):
     return sc
 
 
-def rm_high_polyphony(folder, max_polyphony=3, save_csv_associated=None):
+def rm_high_polyphony(folder, max_polyphony=3, save_tsv_associated=None):
     """ Remove the files having a too high polyphony in the deignated folder
 
     Args:
         folder: str, path to the folder containing scaper generated sounds (JAMS files) in which to remove the files.
         max_polyphony: int, the maximum number of sounds that can be hear at the same time (polyphony).
-        save_csv_associated: str, optional, the path to generate the csv files of associated sounds.
+        save_tsv_associated: str, optional, the path to generate the tsv files of associated sounds.
 
     Returns:
         None
@@ -181,8 +181,8 @@ def rm_high_polyphony(folder, max_polyphony=3, save_csv_associated=None):
             i += 1
         else:
             fnames_to_rmv.append(jam_file)
-    if save_csv_associated is not None:
-        df.to_csv(save_csv_associated, sep="\t", index=False)
+    if save_tsv_associated is not None:
+        df.to_csv(save_tsv_associated, sep="\t", index=False)
 
     logger.info(f"{i} files with less than {max_polyphony} overlapping events. Deleting others...")
     for fname in fnames_to_rmv:
@@ -301,7 +301,7 @@ def post_process_df(df, length_sec, min_dur_event=0.250, min_dur_inter=0.150):
     return df, fix_count
 
 
-def post_processing_annotations(folder, wavdir=None, output_folder=None, output_csv=None, min_dur_event=0.250,
+def post_processing_annotations(folder, wavdir=None, output_folder=None, output_tsv=None, min_dur_event=0.250,
                                 min_dur_inter=0.150, background_label=False):
     """ clean the .txt files of each file. It is the same processing as the real data
     - overlapping events of the same class are mixed
@@ -312,7 +312,7 @@ def post_processing_annotations(folder, wavdir=None, output_folder=None, output_
         folder: str, directory path where the XXX.txt files are.
         wavdir: str, directory path where the associated XXX.wav audio files are (associated with .txt files)
         output_folder: str, optional, folder in which to put the checked files
-        output_csv: str, optional, csv with all the annotations concatenated
+        output_tsv: str, optional, tsv with all the annotations concatenated
         min_dur_event: float, optional in sec, minimum duration of an event
         min_dur_inter: float, optional in sec, minimum duration between 2 events
         background_label: bool, whether to include the background label in the annotations.
@@ -331,7 +331,7 @@ def post_processing_annotations(folder, wavdir=None, output_folder=None, output_
     if output_folder is not None:
         create_folder(output_folder)
 
-    if output_csv is not None:
+    if output_tsv is not None:
         df_single = pd.DataFrame()
 
     if background_label:
@@ -354,25 +354,25 @@ def post_processing_annotations(folder, wavdir=None, output_folder=None, output_
             filepath = os.path.splitext(os.path.basename(fn))[0] + out_extension
             df[['onset', 'offset', 'event_label']].to_csv(osp.join(output_folder, filepath),
                                                           header=False, index=False, sep="\t")
-        if output_csv is not None:
-            df['filename'] = osp.join(osp.splitext(fn)[0] + '.wav')
+        if output_tsv is not None:
+            df['filename'] = osp.join(osp.splitext(osp.basename(fn))[0] + '.wav')
             df_single = df_single.append(df[['filename', 'onset', 'offset', 'event_label']], ignore_index=True)
 
-    if output_csv:
-        df_single.to_csv(output_csv, index=False, sep="\t", float_format="%.3f")
+    if output_tsv:
+        df_single.to_csv(output_tsv, index=False, sep="\t", float_format="%.3f")
 
     logger.info(f"================\nFixed {fix_count} problems\n================")
 
 
 def get_df_from_jams(jam_file, background_label=False, return_length=False):
-    csv_data = []
+    tsv_data = []
     param = jams.load(jam_file)
     ann = param['annotations'][0]
     for obs in ann.data:
         if obs.value['role'] == 'foreground' or (background_label and obs.value['role'] == 'background'):
-            csv_data.append(
+            tsv_data.append(
                 [obs.time, obs.time + obs.duration, obs.value['label']])
-    df = pd.DataFrame(csv_data, columns=["onset", "offset", "event_label"])
+    df = pd.DataFrame(tsv_data, columns=["onset", "offset", "event_label"])
 
     if return_length:
         return df, ann.duration

@@ -11,14 +11,14 @@ import glob
 from desed.utils import post_processing_annotations, rm_high_polyphony
 
 
-def test_postprocessing(folder, checked_folder, out_csv):
+def test_postprocessing(folder, checked_folder, out_tsv):
     """ Test the preprocessing method
     Returns:
     Should output Fixed 3 problems
     """
     post_processing_annotations(folder, output_folder=checked_folder,
-                                output_csv=out_csv)
-    df = pd.read_csv(out_csv, sep="\t")
+                                output_tsv=out_tsv)
+    df = pd.read_csv(out_tsv, sep="\t")
     print(df.to_dict())
     valid_df = pd.DataFrame({'filename': {0: 'material/post_processing/5.wav',
                                               1: 'material/post_processing/5.wav',
@@ -55,4 +55,4 @@ if __name__ == '__main__':
     ll = glob.glob(osp.join(pol_dir, "*.jams"))
     assert len(ll) == 1, f"Problem rm_high_polyphony {len(ll)} != 1"
     test_postprocessing(osp.join("material", "post_processing"), osp.join("generated", "post_processing"),
-                        out_csv=osp.join("generated", "post.csv"))
+                        out_tsv=osp.join("generated", "post.tsv"))

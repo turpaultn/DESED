@@ -238,12 +238,12 @@ def generate_multi_common(number, ref_db, duration, fg_folder, bg_folder, outfol
                                  txt_file=txt_file)
 
 
-def generate_csv_from_jams(list_jams, csv_out, post_process=True, background_label=False):
+def generate_tsv_from_jams(list_jams, tsv_out, post_process=True, background_label=False):
     """ In scaper.generate they create a txt file for each audio file.
-    Using the same idea, we create a single csv file with all the audio files and their labels.
+    Using the same idea, we create a single tsv file with all the audio files and their labels.
     Args:
         list_jams: list, list of paths of JAMS files.
-        csv_out: str, path of the csv to be saved
+        tsv_out: str, path of the tsv to be saved
         post_process: bool, post_process removes small blanks, clean the overlapping same events in the labels and
         make the smallest event 250ms long.
         background_label: bool, include the background label in the annotations.
@@ -260,11 +260,11 @@ def generate_csv_from_jams(list_jams, csv_out, post_process=True, background_lab
         if post_process:
             df, _ = post_process_df(df, length)
 
-        df["filename"] = fbase
+        df["filename"] = osp.basename(fbase)
         final_df = final_df.append(df[['filename', 'onset', 'offset', 'event_label']], ignore_index=True)
 
     final_df = final_df.sort_values(by=["filename", "onset"])
-    final_df.to_csv(csv_out, sep="\t", index=False, float_format="%.3f")
+    final_df.to_csv(tsv_out, sep="\t", index=False, float_format="%.3f")
 
 
 def generate_one_bg_multi_fg(ref_db, duration, fg_folder, bg_folder, out_folder, filename, n_fg_events,

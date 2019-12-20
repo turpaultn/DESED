@@ -17,12 +17,14 @@ synthetic/metadata/
 
 # Specific
 real_data/missing_files/
-synthetic/license_eval.csv
-synthetic/license_training.csv
+synthetic/license_eval.tsv
+synthetic/license_training.tsv
 synthetic/src/tests/generated/
 
-license_vimeo.csv
-license_public_eval.csv
+tests/generated/
+
+license_vimeo.tsv
+license_public_eval.tsv
 
 tar.gz/
 *.tar.gz
