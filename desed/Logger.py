@@ -4,14 +4,14 @@ import logging.config
 
 
 def create_logger(logger_name, log_file=None, terminal_level=logging.DEBUG, file_level=logging.INFO):
-    '''
+    """
     Create a logger.
     The same logger object will be active all through out the python
     interpreter process.
     https://docs.python.org/2/howto/logging-cookbook.html
     Use   logger = logging.getLogger(logger_name) to obtain logging all
     through out
-    '''
+    """
     logging.config.dictConfig({
         'version': 1,
         'disable_existing_loggers': True,

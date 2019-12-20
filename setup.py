@@ -16,6 +16,7 @@ setup(
         "dcase-util >= 0.2.5",
         "youtube-dl >= 2019.4.30",
         "soundfile >= 0.10.1",
+        "jams >= 0.3.4"
     ],
     packages=find_packages()
 )

@@ -23,12 +23,12 @@ if __name__ == '__main__':
     LOG.info(__file__)
     t = time.time()
     parser = argparse.ArgumentParser()
-    parser.add_argument('--outfolder', type=str, default=osp.join(cfg.base_path_eval, 'soundscapes_generated_fbsnr'))
+    parser.add_argument('--outfolder', type=str, default=osp.join(cfg.audio_path_eval, 'soundscapes_generated_fbsnr'))
     parser.add_argument('--outcsv', type=str,
-                        default=osp.join(cfg.base_path_eval, "soundscapes_generated_fbsnr", "XdB.csv"))
+                        default=osp.join(cfg.meta_path_eval, "soundscapes_generated_fbsnr", "XdB.csv"))
     parser.add_argument('--number', type=int, default=1000)
-    parser.add_argument('--fgfolder', type=str, default=osp.join(cfg.base_path_eval, "soundbank", "foreground"))
-    parser.add_argument('--bgfolder', type=str, default=osp.join(cfg.base_path_eval, "soundbank", "background"))
+    parser.add_argument('--fgfolder', type=str, default=osp.join(cfg.audio_path_eval, "soundbank", "foreground"))
+    parser.add_argument('--bgfolder', type=str, default=osp.join(cfg.audio_path_eval, "soundbank", "background"))
     args = parser.parse_args()
     pformat(vars(args))
 

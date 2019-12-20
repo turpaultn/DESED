@@ -4,8 +4,6 @@
 # Copyright Nicolas Turpault, Romain Serizel, Justin Salamon, Ankit Parag Shah, 2019, v1.0
 # This software is distributed under the terms of the License MIT
 #########################################################################
-from os import path as osp
-
 import jams
 import numpy as np
 import os
@@ -21,6 +19,15 @@ from .Logger import create_logger
 
 
 def create_folder(folder, delete_if_exists=False):
+    """ Create folder (and parent folders) if not exists.
+
+    Args:
+        folder: str, path of folder(s) to create.
+        delete_if_exists: bool, True if you want to delete the folder when exists
+
+    Returns:
+        None
+    """
     if delete_if_exists:
         if os.path.exists(folder):
             shutil.rmtree(folder)
@@ -36,6 +43,14 @@ def pprint(x):
 
 
 def choose_class(class_params):
+    """ Choose a class given a dictionary of parameters.
+    Args:
+        class_params: dict, need to define 'event_prob' and 'event_class' attributes.
+        They are lists, and map the probability of having each class.
+
+    Returns:
+        str, the class name.
+    """
     tmp = 0
     inter = []
     for i in range(len(class_params['event_prob'])):
@@ -46,6 +61,13 @@ def choose_class(class_params):
 
 
 def choose_file(class_path):
+    """ Choose randomly a file of a given class.
+    Args:
+        class_path: str, path of the class containing all the files of a certain class.
+
+    Returns:
+        str, path of the file.
+    """
     source_files = sorted(glob.glob(os.path.join(class_path, "*")))
     source_files = [f for f in source_files if os.path.isfile(f)]
     ind = np.random.randint(0, len(source_files))
@@ -53,7 +75,18 @@ def choose_file(class_path):
 
 
 def add_event(sc, class_lbl, duration, fg_folder):
-    LOG = create_logger(__name__)
+    """ add a single event to a scaper object given a class. Take into account if the event has an onset or offset
+    Args:
+        sc: scaper.Scaper, scaper object to add event in.
+        class_lbl: str, label of the event to add.
+        duration: float, the duration of the event to add.
+        fg_folder: str, path of the folders of all events (a subfolder should match the class_lbl)
+
+    Returns:
+        sc, scaper.Scaper object with the event added.
+
+    """
+    logger = create_logger(__name__)
     source_time_dist = 'const'
     source_time = 0.0
     event_duration_min = 0.25
@@ -73,7 +106,7 @@ def add_event(sc, class_lbl, duration, fg_folder):
     chosen_file = choose_file(os.path.join(fg_folder, class_lbl))
     file_duration = round(sf.info(chosen_file).duration, 6)  # round because Scaper uses sox with round 6 digits
     if "_nOn_nOff" in class_lbl:
-        LOG.debug('no onset/offset')
+        logger.debug('no onset/offset')
         sc.add_event(label=('const', class_lbl),
                      source_file=('const', chosen_file),
                      source_time=('uniform', 0, np.maximum(file_duration - duration, 0)),
@@ -83,7 +116,7 @@ def add_event(sc, class_lbl, duration, fg_folder):
                      pitch_shift=(pitch_dist, pitch_min, pitch_max),
                      time_stretch=(time_stretch_dist, time_stretch_min, time_stretch_max))
     elif "_nOn" in class_lbl:
-        LOG.debug('no onset')
+        logger.debug('no onset')
         source_start = np.random.uniform(0, file_duration - event_duration_min)
         sc.add_event(label=('const', class_lbl),
                      source_file=('const', chosen_file),
@@ -94,7 +127,7 @@ def add_event(sc, class_lbl, duration, fg_folder):
                      pitch_shift=(pitch_dist, pitch_min, pitch_max),
                      time_stretch=(time_stretch_dist, time_stretch_min, time_stretch_max))
     elif "_nOf" in class_lbl:
-        LOG.debug('no offset')
+        logger.debug('no offset')
         event_start = np.random.uniform(max(0, duration - file_duration), duration - event_duration_min)
         event_length = duration - event_start
         sc.add_event(label=('const', class_lbl),
@@ -131,7 +164,7 @@ def rm_high_polyphony(folder, max_polyphony=3, save_csv_associated=None):
         None
 
     """
-    LOG = create_logger(__name__)
+    logger = create_logger(__name__)
     # Select training
     i = 0
     df = pd.DataFrame(columns=['scaper', 'bg', 'fg'])
@@ -151,7 +184,7 @@ def rm_high_polyphony(folder, max_polyphony=3, save_csv_associated=None):
     if save_csv_associated is not None:
         df.to_csv(save_csv_associated, sep="\t", index=False)
 
-    LOG.info(f"{i} files with less than {max_polyphony} overlapping events. Deleting others...")
+    logger.info(f"{i} files with less than {max_polyphony} overlapping events. Deleting others...")
     for fname in fnames_to_rmv:
         names = glob.glob(osp.splitext(fname)[0] + ".*")
         for file in names:
@@ -159,6 +192,14 @@ def rm_high_polyphony(folder, max_polyphony=3, save_csv_associated=None):
 
 
 def sanity_check(df, length_sec=None):
+    """ Check that onset and offset are in the boundaries
+    Args:
+        df: pandas.DataFrame, dataframe defining 'onset' and 'offset' columns.
+        length_sec: float, optional, if defined it is the maximum length of a file.
+
+    Returns:
+        pandas.DataFrame, the updated dataframe.
+    """
     if length_sec is not None:
         df['offset'].clip(upper=length_sec, inplace=True)
     df['onset'].clip(lower=0, inplace=True)
@@ -167,6 +208,15 @@ def sanity_check(df, length_sec=None):
 
 
 def get_data(file, wav_file=None, background_label=False):
+    """ Get annotation of a file (txt or JAMS) and check the correspondance with a wav file (created by Scaper).
+    Args:
+        file: str, path of the .txt or .jams file.
+        wav_file: str, path of the wav file associated with the 'file'.
+        background_label: bool, whether to get the background as a label or not.
+
+    Returns:
+
+    """
     if wav_file is not None:
         data, sr = sf.read(wav_file)
         length_sec = data.shape[0] / sr
@@ -188,12 +238,25 @@ def get_data(file, wav_file=None, background_label=False):
 
 
 def post_process_df(df, length_sec, min_dur_event=0.250, min_dur_inter=0.150):
-    LOG = create_logger(__name__)
+    """ Check the annotations,
+        * Merge overlapping annotations of the same class
+        * Merge overlapping annotations having less than 150ms between them (or 400ms between the onsets).
+        * Make minimum length of events = 250ms.
+    Args:
+        df:
+        length_sec:
+        min_dur_event:
+        min_dur_inter:
+
+    Returns:
+
+    """
+    logger = create_logger(__name__)
     fix_count = 0
     df = sanity_check(df, length_sec)
     df = df.sort_values('onset')
     for class_name in df['event_label'].unique():
-        LOG.debug(class_name)
+        logger.debug(class_name)
         i = 0
         while i is not None:
             indexes = df[df['event_label'] == class_name].index
@@ -213,19 +276,19 @@ def post_process_df(df, length_sec, min_dur_event=0.250, min_dur_inter=0.150):
             while j < len(indexes):
                 if df.loc[indexes[j], 'offset'] < ref_offset:
                     df = df.drop(indexes[j])
-                    LOG.debug("Merging overlapping annotations")
+                    logger.debug("Merging overlapping annotations")
                     fix_count += 1
                 elif df.loc[indexes[j], 'onset'] - ref_offset < min_dur_inter:
                     df.loc[indexes[i], 'offset'] = df.loc[indexes[j], 'offset']
                     ref_offset = df.loc[indexes[j], 'offset']
                     df = df.drop(indexes[j])
-                    LOG.debug("Merging consecutive annotation with pause" + "<150ms")
+                    logger.debug("Merging consecutive annotation with pause" + "<150ms")
                     fix_count += 1
                 elif df.loc[indexes[j], 'onset'] - ref_onset < min_dur_event + min_dur_inter:
                     df.loc[indexes[i], 'offset'] = df.loc[indexes[j], 'offset']
                     ref_offset = df.loc[indexes[j], 'offset']
                     df = df.drop(indexes[j])
-                    LOG.debug("Merging consecutive annotations" + " with onset diff<400ms")
+                    logger.debug("Merging consecutive annotations" + " with onset diff<400ms")
                     fix_count += 1
                 else:
                     # Quitting the loop
@@ -257,11 +320,11 @@ def post_processing_annotations(folder, wavdir=None, output_folder=None, output_
     Returns:
         None
     """
-    LOG = create_logger(__name__)
+    logger = create_logger(__name__)
     if wavdir is None:
         wavdir = folder
     fix_count = 0
-    LOG.info("Correcting annotations ... \n" 
+    logger.info("Correcting annotations ... \n" 
              "* annotations with negative duration will be removed\n" +
              "* annotations with duration <250ms will be extended on the offset side)")
 
@@ -280,7 +343,7 @@ def post_processing_annotations(folder, wavdir=None, output_folder=None, output_
 
     out_extension = '.txt'
     for fn in list_files:
-        LOG.debug(fn)
+        logger.debug(fn)
         df, length_sec = get_data(fn, osp.join(wavdir, osp.splitext(osp.basename(fn))[0] + '.wav'),
                                   background_label=background_label)
 
@@ -298,7 +361,7 @@ def post_processing_annotations(folder, wavdir=None, output_folder=None, output_
     if output_csv:
         df_single.to_csv(output_csv, index=False, sep="\t", float_format="%.3f")
 
-    LOG.info(f"================\nFixed {fix_count} problems\n================")
+    logger.info(f"================\nFixed {fix_count} problems\n================")
 
 
 def get_df_from_jams(jam_file, background_label=False, return_length=False):

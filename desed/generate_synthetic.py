@@ -8,10 +8,7 @@ import pandas as pd
 import scaper
 from scaper import generate_from_jams
 
-from desed.Logger import create_logger
-from desed.utils import get_df_from_jams, post_process_df
-
-from .utils import add_event, choose_class, create_folder
+from .utils import add_event, choose_class, create_folder, get_df_from_jams, post_process_df
 from .Logger import create_logger
 
 
@@ -44,14 +41,14 @@ def generate_new_bg_snr_files(new_snr, in_dir, out_dir):
     Returns:
 
     """
-    LOG = create_logger(__name__, "Desed.log")
+    logger = create_logger(__name__, "Desed.log")
     for jam_file in sorted(glob.glob(os.path.join(in_dir, "*.jams"))):
         jams_obj = modify_bg_snr(new_snr, jam_file)
         out_jams = osp.join(out_dir, os.path.basename(jam_file))
         jams_obj.save(out_jams)
 
         audiofile = os.path.join(out_dir, osp.splitext(osp.basename(jam_file))[0] + ".wav")
-        LOG.debug(audiofile)
+        logger.debug(audiofile)
         scaper.generate_from_jams(out_jams, audiofile)
 
 
@@ -89,19 +86,35 @@ def generate_new_fg_onset_files(added_value, in_dir, out_dir):
     Returns:
 
     """
-    LOG = create_logger(__name__, "Desed.log")
+    logger = create_logger(__name__, "Desed.log")
     for jam_file in sorted(glob.glob(os.path.join(in_dir, "*.jams"))):
         jams_obj = modify_fg_onset(added_value, jam_file)
         out_jams = osp.join(out_dir, os.path.basename(jam_file))
         jams_obj.save(out_jams)
 
         audiofile = os.path.join(out_dir, osp.splitext(osp.basename(jam_file))[0] + ".wav")
-        LOG.debug(audiofile)
+        logger.debug(audiofile)
         scaper.generate_from_jams(out_jams, audiofile)
 
 
 def generate_single_file(class_params, class_lbl, ref_db, duration, fg_folder, bg_folder, outfolder, filename,
                          min_events=0):
+    """ Generate a single file, using the information of onset or offset present
+    (see DESED dataset and folders in soundbank foreground)
+    Args:
+        class_params: dict, dict containing information about how to mix classes, and the probability of each class.
+        class_lbl: str, the main foreground label of the generated file.
+        ref_db: float, the reference dB of the clip.
+        duration: float, in seconds, the duration of the generated audio clip.
+        fg_folder: str, path of foreground files (be careful, need subfolders, one per class or group)
+        bg_folder: str, path of background files (be careful, need subfolders, one per group)
+        outfolder: str, path to extract generate file
+        filename: str, name of the generated file, without extension (.wav, .jams and .txt will be created)
+        min_events: int, the minimum number of events to add (on top of the main event), maximum is in class_params.
+
+    Returns:
+        None
+    """
     # create a scaper
     sc = scaper.Scaper(duration, fg_folder, bg_folder)
     sc.protected_labels = []
@@ -171,15 +184,39 @@ def generate_files_from_jams(list_jams, outfolder, fg_path=None, bg_path=None, o
 
 def generate_multi_common(number, ref_db, duration, fg_folder, bg_folder, outfolder, min_events, max_events,
                           labels=('choose', []), source_files=('choose', []), sources_time=('const', 0),
-                          events_time=('truncnorm', 5.0, 2.0, 0.0, 10.0), events_duration=('uniform', 0.25, 10.0),
+                          events_start=('truncnorm', 5.0, 2.0, 0.0, 10.0), events_duration=('uniform', 0.25, 10.0),
                           snrs=('const', 30), pitch_shifts=('uniform', -3.0, 3.0), time_stretches=('uniform', 1, 1),
                           txt_file=True):
-    LOG = create_logger(__name__)
+    """ Generate
+
+    Args:
+        number: int, number of audio clips to create.
+        ref_db: float, the dB reference of the clip
+        duration: float, in seconds, the duration of the clip
+        fg_folder: str, path of foreground files (be careful, need subfolders, one per class or group)
+        bg_folder: str, path of background files (be careful, need subfolders, one per group)
+        outfolder: str, path to extract generate file
+        min_events: int, the minimum number of foreground events to add (pick at random uniformly).
+        max_events: int, the maximum number of foreground events to add (pick at random uniformly).
+        labels: tuple or list, strategy to choose foreground events (see Scaper) or list of events.
+        source_files: tuple or list, strategy to choose source files (see Scaper) or list of source files.
+        sources_time: tuple or list, strategy to choose source start time (see Scaper) or list of sources start time.
+        events_start: tuple or list, strategy to choose events start time (see Scaper) or list of events start time.
+        events_duration: tuple or list, strategy to choose events duation (see Scaper) or list of events duration.
+        snrs: tuple or list, strategy to choose foreground to background SNRs (see Scaper) or list of SNRs.
+        pitch_shifts: tuple or list, strategy to choose pitch shift (see Scaper) or list of pitch shifts.
+        time_stretches: tuple or list, strategy to choose time stretches (see Scaper) or list of time stretches.
+        txt_file: bool, whether or not to save the .txt file.
+
+    Returns:
+        None
+    """
+    logger = create_logger(__name__)
     params = {
         'labels': labels,
         'source_files': source_files,
         'sources_time': sources_time,
-        'events_time': events_time,
+        'events_start': events_start,
         'events_duration': events_duration,
         'snrs': snrs,
         'pitch_shifts': pitch_shifts,
@@ -187,7 +224,7 @@ def generate_multi_common(number, ref_db, duration, fg_folder, bg_folder, outfol
     }
 
     for n in range(number):
-        LOG.debug('Generating soundscape: {:d}/{:d}'.format(n + 1, number))
+        logger.debug('Generating soundscape: {:d}/{:d}'.format(n + 1, number))
         # create a scaper
         n_events = np.random.randint(min_events, max_events + 1)
         generate_one_bg_multi_fg(ref_db=ref_db,
@@ -196,16 +233,23 @@ def generate_multi_common(number, ref_db, duration, fg_folder, bg_folder, outfol
                                  bg_folder=bg_folder,
                                  out_folder=outfolder,
                                  filename=n,
-                                 n_events=n_events,
+                                 n_fg_events=n_events,
                                  **params,
                                  txt_file=txt_file)
 
 
 def generate_csv_from_jams(list_jams, csv_out, post_process=True, background_label=False):
-    """ In scaper generate, they create txt files, using the same idea, we create a single csv file.
+    """ In scaper.generate they create a txt file for each audio file.
+    Using the same idea, we create a single csv file with all the audio files and their labels.
+    Args:
+        list_jams: list, list of paths of JAMS files.
+        csv_out: str, path of the csv to be saved
+        post_process: bool, post_process removes small blanks, clean the overlapping same events in the labels and
+        make the smallest event 250ms long.
+        background_label: bool, include the background label in the annotations.
 
     Returns:
-
+        None
     """
     final_df = pd.DataFrame()
     for jam_file in list_jams:
@@ -223,11 +267,33 @@ def generate_csv_from_jams(list_jams, csv_out, post_process=True, background_lab
     final_df.to_csv(csv_out, sep="\t", index=False, float_format="%.3f")
 
 
-def generate_one_bg_multi_fg(ref_db, duration, fg_folder, bg_folder, out_folder, filename, n_events,
+def generate_one_bg_multi_fg(ref_db, duration, fg_folder, bg_folder, out_folder, filename, n_fg_events,
                              labels=('choose', []), source_files=('choose', []), sources_time=('const', 0),
-                             events_time=('truncnorm', 5.0, 2.0, 0.0, 10.0), events_duration=("uniform", 0.25, 10.0),
+                             events_start=('truncnorm', 5.0, 2.0, 0.0, 10.0), events_duration=("uniform", 0.25, 10.0),
                              snrs=("const", 30), pitch_shifts=('uniform', -3.0, 3.0),
                              time_stretches=('uniform', 1, 1), txt_file=True):
+    """ Generate a clip with a background file and multiple foreground files
+    Args:
+        ref_db: float, the dB reference of the clip
+        duration: float, in seconds, the duration of the clip
+        fg_folder: str, path of foreground files (be careful, need subfolders, one per class or group)
+        bg_folder: str, path of background files (be careful, need subfolders, one per group)
+        out_folder: str, path to extract generate file
+        filename: str, name of the generated file, without extension (.wav, .jams and .txt will be created)
+        n_fg_events: int, the number of foreground events to add
+        labels: tuple or list, strategy to choose foreground events (see Scaper) or list of events.
+        source_files: tuple or list, strategy to choose source files (see Scaper) or list of source files.
+        sources_time: tuple or list, strategy to choose source start time (see Scaper) or list of sources start time.
+        events_start: tuple or list, strategy to choose events start time (see Scaper) or list of events start time.
+        events_duration: tuple or list, strategy to choose events duation (see Scaper) or list of events duration.
+        snrs: tuple or list, strategy to choose foreground to background SNRs (see Scaper) or list of SNRs.
+        pitch_shifts: tuple or list, strategy to choose pitch shift (see Scaper) or list of pitch shifts.
+        time_stretches: tuple or list, strategy to choose time stretches (see Scaper) or list of time stretches.
+        txt_file: bool, whether or not to save the .txt file.
+
+    Returns:
+        None
+    """
     sc = scaper.Scaper(duration, fg_folder, bg_folder)
     sc.protected_labels = []
     sc.ref_db = ref_db
@@ -237,19 +303,19 @@ def generate_one_bg_multi_fg(ref_db, duration, fg_folder, bg_folder, out_folder,
                       source_file=('choose', []),
                       source_time=('const', 0))
 
-    params = {"label": labels, "source_file": source_files, "source_time": sources_time, "event_time": events_time,
+    params = {"label": labels, "source_file": source_files, "source_time": sources_time, "event_time": events_start,
               "event_duration": events_duration, "snr": snrs, "pitch_shift": pitch_shifts,
               "time_stretch": time_stretches}
-    for i in range(n_events):
+    for i in range(n_fg_events):
         event_params = {}
         for key in params:
             if type(params[key]) is tuple:
                 param = params[key]
             elif type(params[key]) is list:
-                assert len(params[key]) == n_events
+                assert len(params[key]) == n_fg_events
                 param = params[key][i]
             else:
-                NotImplementedError("Params of events is tuple(same for all) or list (different for each event)")
+                raise NotImplementedError("Params of events is tuple(same for all) or list (different for each event)")
             event_params[key] = param
 
         sc.add_event(**event_params)

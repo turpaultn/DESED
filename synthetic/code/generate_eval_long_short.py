@@ -21,11 +21,11 @@ if __name__ == '__main__':
     LOG.info(__file__)
     t = time.time()
     parser = argparse.ArgumentParser()
-    parser.add_argument('--outfolder', type=str, default=osp.join(cfg.base_path_eval, 'soundscapes_generated_ls'))
-    parser.add_argument('--outcsv', type=str, default=osp.join(cfg.base_path_eval, "soundscapes_generated_ls", "XdB.csv"))
+    parser.add_argument('--outfolder', type=str, default=osp.join(cfg.audio_path_eval, 'soundscapes_generated_ls'))
+    parser.add_argument('--outcsv', type=str, default=osp.join(cfg.meta_path_eval, "soundscapes_generated_ls", "XdB.csv"))
     parser.add_argument('--number', type=int, default=1000)
-    parser.add_argument('--fgfolder', type=str, default=osp.join(cfg.base_path_eval, "soundbank", "foreground_short"))
-    parser.add_argument('--bgfolder', type=str, default=osp.join(cfg.base_path_eval, "soundbank", "background_long"))
+    parser.add_argument('--fgfolder', type=str, default=osp.join(cfg.audio_path_eval, "soundbank", "foreground_short"))
+    parser.add_argument('--bgfolder', type=str, default=osp.join(cfg.audio_path_eval, "soundbank", "background_long"))
     args = parser.parse_args()
     pformat(vars(args))
 
@@ -76,7 +76,7 @@ if __name__ == '__main__':
     generate_multi_common(n_soundscapes, ref_db, duration, fg_folder, bg_folder, out_folder_ls_30, min_events, max_events,
                           labels=('choose', []), source_files=('choose', []),
                           sources_time=(source_time_dist, source_time),
-                          events_time=(event_time_dist, event_time_mean, event_time_std, event_time_min, event_time_max),
+                          events_start=(event_time_dist, event_time_mean, event_time_std, event_time_min, event_time_max),
                           events_duration=(event_duration_dist, event_duration_min, event_duration_max),
                           snrs=('const', 30), pitch_shifts=('uniform', -3.0, 3.0), time_stretches=('uniform', 1, 1),
                           txt_file=False)

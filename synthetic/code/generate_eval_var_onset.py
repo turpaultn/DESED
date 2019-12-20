@@ -23,16 +23,21 @@ if __name__ == '__main__':
     t = time.time()
     parser = argparse.ArgumentParser()
     parser.add_argument('--outfolder', type=str,
-                        default=osp.join(cfg.base_path_eval, 'soundscapes_generated_var_onset'))
+                        default=osp.join(cfg.audio_path_eval, 'soundscapes_generated_var_onset'))
+    parser.add_argument('--outcsvfolder', type=str,
+                        default=osp.join(cfg.meta_path_eval, 'soundscapes_generated_var_onset'))
     parser.add_argument('--number', type=int, default=1000)
-    parser.add_argument('--fgfolder', type=str, default=osp.join(cfg.base_path_eval, "soundbank", "foreground_on_off"))
-    parser.add_argument('--bgfolder', type=str, default=osp.join(cfg.base_path_eval, "soundbank", "background"))
+    parser.add_argument('--fgfolder', type=str, default=osp.join(cfg.audio_path_eval, "soundbank", "foreground_on_off"))
+    parser.add_argument('--bgfolder', type=str, default=osp.join(cfg.audio_path_eval, "soundbank", "background"))
     args = parser.parse_args()
     pformat(vars(args))
 
     # General output folder, in args
     out_folder = args.outfolder
     create_folder(out_folder)
+
+    out_csv_folder = args.outcsvfolder
+    create_folder(out_csv_folder)
 
     # Default parameters
     n_soundscapes = args.number
@@ -77,7 +82,7 @@ if __name__ == '__main__':
     generate_multi_common(n_soundscapes, ref_db, duration, fg_folder, bg_folder, out_folder_500,
                           min_events=1, max_events=1, labels=('choose', []), source_files=('choose', []),
                           sources_time=(source_time_dist, source_time),
-                          events_time=(
+                          events_start=(
                               event_time_dist, event_time_mean, event_time_std, event_time_min, event_time_max),
                           events_duration=(event_duration_dist, event_duration_min, event_duration_max),
                           snrs=(snr_dist, snr_min, snr_max),
@@ -86,7 +91,7 @@ if __name__ == '__main__':
                           txt_file=True)
 
     rm_high_polyphony(out_folder_500, 3)
-    out_csv = osp.join(cfg.base_path_eval, 'soundscapes_generated_var_onset', "500ms.csv")
+    out_csv = osp.join(out_csv_folder, "500ms.csv")
     post_processing_annotations(out_folder_500, output_folder=out_folder_500,
                                 output_csv=out_csv)
     df = pd.read_csv(out_csv, sep="\t")
@@ -98,7 +103,7 @@ if __name__ == '__main__':
     df["onset"] += add_onset
     df["offset"] = df["offset"].apply(lambda x: min(x, add_onset))
     generate_new_fg_onset_files(add_onset, out_folder_500, out_folder_5500)
-    df.to_csv(osp.join(cfg.base_path_eval, 'soundscapes_generated_var_onset', "5500ms.csv"),
+    df.to_csv(osp.join(out_csv_folder, "5500ms.csv"),
               sep="\t", float_format="%.3f", index=False)
 
     out_folder_9500 = osp.join(out_folder, "9500ms")
@@ -108,5 +113,5 @@ if __name__ == '__main__':
     df["onset"] += add_onset
     df["offset"] = df["offset"].apply(lambda x: min(x, add_onset))
     generate_new_fg_onset_files(add_onset, out_folder_500, out_folder_9500)
-    df.to_csv(osp.join(cfg.base_path_eval, 'soundscapes_generated_var_onset', "9500ms.csv"),
+    df.to_csv(osp.join(out_csv_folder, "9500ms.csv"),
               sep="\t", float_format="%.3f", index=False)
