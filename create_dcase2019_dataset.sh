@@ -1,5 +1,5 @@
 #!/bin/bash
-cd real_data
+cd real
 ./create_dcase2019_dataset.sh
 
 cd ../synthetic/

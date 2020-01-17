@@ -43,13 +43,13 @@ DESED dataset is for now composed of 10 event classes in domestic environment.
 </p>
 
 **Overview**:
-* Real Data:
+* Real data:
 	* Verified and unverfied subset of [Audioset][audioset].
 		* Unlabel_in_domain data: Unverified data have their label discarded: *14412 files*.
 		* Weakly labeled data: training data have their labels verified at the clip level: *1578 files*.
 		* Validation data have their labels with time boundaries (strong labels): *1168 files*.
 		* Evaluation public files: 692 Youtube files (to be released soon ...) 
-* Synthetic:
+* Synthetic data:
 	* Background files are extracted from SINS [[2]](#2), MUSAN [[3]](#3) or Youtube and have been selected because they 
 	contain a very low amount of our sound event classes.
 	* Foreground files are extracted from Freesound [[4]](#4)[[5]](#5) and manually verified to check the quality 
@@ -73,8 +73,8 @@ DESED dataset is for now composed of 10 event classes in domestic environment.
 * Download the real data
 	* Clone this repo
 	* `pip install -e .`
-	* `cd real_data/code`
-	* `python download_real_data.py`
+	* `cd real/code`
+	* `python download_real.py`
 * To reproduce the dcase2019 dataset
 	* Copy `audio/` and `metadata/` in `dcase2019/dataset/` 
 
@@ -144,7 +144,7 @@ Example: when modifying the FBSNR, we do not change the labels (onset, offsets).
 ### After downloading architecture
 **After downloading the data (see below) you should have this tree:**
 ```
-├── real_data                                   
+├── real                                   
 │   ├── audio
 │   │   ├── train
 │   │   │   ├── unlabel_in_domain
@@ -191,7 +191,7 @@ Example: when modifying the FBSNR, we do not change the labels (onset, offsets).
 ## DCASE2019 task 4
 #### Download
 Recommended to open `synthetic/create_dcase2019_dataset.sh` and 
-`real_data/create_dcase2019_dataset.sh` and launch line by line in case of bugs.
+`real/create_dcase2019_dataset.sh` and launch line by line in case of bugs.
 
 Otherwise launch `sh create_dcase2019_dataset.sh`.
 
