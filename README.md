@@ -19,20 +19,28 @@ Website: [https://project.inria.fr/desed/][website]
 
 Zenodo datasets: [DESED_synthetic][desed-synthetic], [DESED_public_eval][desed-public-eval]
 
+Papers:
+* [Turpault et al.][paper-description] Description of DESED dataset + official results of DCASE 2019 task 4. 
+* [Serizel et al.][paper-eval] Robustness of DCASE 2019 systems on synthetic evaluation set.
+
 ## Description
+There are 3 different datasets: Real data, synthetic data, and evaluation data.
+
+Link to the zenodo repos: **[DESED_synthetic][desed-synthetic]**, **[DESED public eval][desed-public-eval]**
+
+*Common point of the different datasets: contain an audio folder and a metadata folder associated 
+(they can all be grouped together)*
+
 This repo allows you: 
 * Download real data.
 * Download synthetic data of Desed dataset (+ generated for dcase 2019 task 4) 
 * Create new synthetic data (by generating new mixtures using [Scaper][scaper] [[1]](#1)).
+* Download the public evaluation set (defined as Youtube in dcase 2019, Vimeo data is not available)
 
 DESED dataset is for now composed of 10 event classes in domestic environment.
 <p align="center">
 <img src="./img/DESED_house_small.png" width="50%">
 </p>
-
-You can find information about this dataset in these papers: 
-* [Turpault et al.][paper-description] Description of DESED dataset + official results of DCASE 2019 task 4. 
-* [Serizel et al.][paper-eval] Robustness of DCASE 2019 systems on synthetic evaluation set.
 
 **Overview**:
 * Real Data:
@@ -54,18 +62,14 @@ You can find information about this dataset in these papers:
 * DCASE 2019
 	* It uses synthetic data, real data, and public evaluation data (known as youtube eval) during the challenge.
 	* If you want more information about dcase 2019 dataset visit [DCASE 2019 task 4 web page][website-dcase]
+	* If you only want to download dcase2019 files, go to [dcase2019 task 4](#dcase2019-task-4).
+	
+![][img-desed2019]
 
-## Download
-There are 3 different datasets: Real data, synthetic data, and evaluation data.
+## 1. Real data
 
-If you only want to download dcase2019 files, go to [dcase2019 task 4](#dcase2019-task-4).
-
-Link to the zenodo repos: **[DESED_synthetic][desed-synthetic]**, **[DESED public eval][desed-public-eval]**
-
-*Common point of the different datasets: contain an audio folder and a metadata folder associated 
-(they can all be grouped together)*
-
-#### Real data (all users)
+### 1.1 Download 
+#### 1.1.1 Training and validation
 * Download the real data
 	* Clone this repo
 	* `pip install -e .`
@@ -77,13 +81,25 @@ Link to the zenodo repos: **[DESED_synthetic][desed-synthetic]**, **[DESED publi
 * Get the missing files: Send a mail with the csv files in the `missing_files` folder to
 [Nicolas](mailto:nicolas.turpault@inria.fr) (and [Romain](mailto:romain.serizel@loria.fr))
 
-#### Synthetic data (different depending the user)
+#### 1.1.2 Public evaluation
+The evaluation data are in the following repo: **[DESED_public_eval][desed-public-eval]**.
 
-* *User who just wants to download the dcase2019 synthetic evaluation set*
+It corresponds to "youtube" subset in the [desed eval paper][paper-description].
+
+* Download DESED_public_eval.tar.gz
+* `tar -xzvf DESED_public_eval.tar.gz`
+* To move it to dcase2019, merge `dataset/` with `dcase2019/dataset`.
+
+*Note: the Vimeo subset in [desed eval paper][paper-description] is not available.*
+
+## 2. Synthetic data
+
+### 2.1 Download
+##### 2.1.1 *User who just wants to download the dcase2019 synthetic evaluation set*
 	* Download `DESED_synth_eval_dcase2019.tar.gz` from **[DESED_synthetic][desed-synthetic]**.
 	* `DESED_synth_eval_dcase2019.tar.gz` to extract it.
 
-* *User who wants to reproduce dcase2019 dataset* (smaller download (when distortion would be in python))
+##### 2.1.2 *User who wants to reproduce dcase2019 dataset* (smaller download (when distortion would be in python))
 	* clone this repo
 	* `pip install -e .` (if not already done)
 	* `cd synthetic/`
@@ -92,7 +108,7 @@ Link to the zenodo repos: **[DESED_synthetic][desed-synthetic]**, **[DESED publi
 	For now, uncomment corresponding lines in `create_dcase2019_dataset.sh` to download the eval set 
 	to get the distortions data. 
 	
-* *User who wants to create new synthetic data*
+##### 2.1.3 *User who wants to create new synthetic data*
 	* clone this repo
 	* `pip install -e .` (if not already done)
 	* Download `DESED_synth_soundbank.tar.gz` from **[DESED_synthetic][desed-synthetic]**.
@@ -102,15 +118,28 @@ Link to the zenodo repos: **[DESED_synthetic][desed-synthetic]**, **[DESED publi
 	* See examples of code to create files in this repo in `synthetic/code`. 
 	Described in [Generating new synthetic data](#gendata) below.
 	
-#### Evaluation data (real data, users wanting to compare their results)
+<a id="gendata"></a>
+### 2.2 Generating new synthetic data
+![generate][img-soundbank]
 
-The evaluation data are in the following repo: **[DESED_public_eval][desed-public-eval]**.
+To generate new sounds, in the same way as the Desed_synthetic dataset, you can use these files:
+ * `generate_training.py`, uses `event_occurences_train.json` for co-occurrence of events.
+ * `generate_eval_FBSNR.py` generates similar subsets with different foreground-background sound to noise ratio (fbsnr): 30dB, 24dB, 15dB, 0dB.
+ Uses `event_occurences_eval.json` for occurence and co-occurrence of events.  
+ * `generate_eval_var_onset.py` generates subsets with a single event per file, the difference between subsets is
+  the onset position:
+    1. Onset between 0.25s and 0.75s. 
+    2. Onset between 5.25s and 5.75s. 
+    3. Onset between 9.25s and 9.75s.
+ * `generate_eval_long_short.py` generates subsets with a long event in the background and short events in the foreground, 
+ the difference beteen subsets is the FBSNR: 30dB, 15dB, 0dB. 
+ * `generate_eval_distortion.py` generates distortion subsets, not yet in python, 
+ see `generate_eval_distortion.m` for matlab code (will be updated later).
 
-It corresponds to "youtube" subset in the [desed eval paper][paper-description]
+When a script is generating multiple subfolder but only one csv file, it means it is the same csv for the different cases.
+Example: when modifying the FBSNR, we do not change the labels (onset, offsets). 
 
-* Download DESED_public_eval.tar.gz
-* `tar -xzvf DESED_public_eval.tar.gz`
-* To move it to dcase2019, merge `dataset/` with `dcase2019/dataset`.
+*Note: The training soundbank can be divided in a training/validation soundbank if you want to create validation data*
 
 ### After downloading architecture
 **After downloading the data (see below) you should have this tree:**
@@ -158,25 +187,6 @@ It corresponds to "youtube" subset in the [desed eval paper][paper-description]
     │       └── soundscapes                     (metadata to reproduce the wav files used in dcase2019)
     └── code                                    (Example of code to regenerate the dcase2019 dataset or generate new mixtures)
 ```
-
-<a id="gendata"></a>
-## Generating new synthetic data
- To generate new sounds, in the same way as the Desed_synthetic dataset, you can use these files:
- * `generate_training.py`, uses `event_occurences_train.json` for co-occurrence of events.
- * `generate_eval_FBSNR.py` generates similar subsets with different foreground-background sound to noise ratio (fbsnr): 30dB, 24dB, 15dB, 0dB.
- Uses `event_occurences_eval.json` for occurence and co-occurrence of events.  
- * `generate_eval_var_onset.py` generates subsets with a single event per file, the difference between subsets is
-  the onset position:
-    1. Onset between 0.25s and 0.75s. 
-    2. Onset between 5.25s and 5.75s. 
-    3. Onset between 9.25s and 9.75s.
- * `generate_eval_long_short.py` generates subsets with a long event in the background and short events in the foreground, 
- the difference beteen subsets is the FBSNR: 30dB, 15dB, 0dB. 
- * `generate_eval_distortion.py` generates distortion subsets, not yet in python, 
- see `generate_eval_distortion.m` for matlab code (will be updated later).
-
-When a script is generating multiple subfolder but only one csv file, it means it is the same csv for the different cases.
-Example: when modifying the FBSNR, we do not change the labels (onset, offsets). 
 
 ## DCASE2019 task 4
 #### Download
@@ -296,6 +306,8 @@ In Proceedings of the 14th International Society for Music Information Retrieval
 [audioset]: https://research.google.com/audioset/index.html
 [desed-synthetic]: https://zenodo.org/record/3588151
 [desed-public-eval]: https://zenodo.org/record/3588172
+[img-desed2019]: ./img/DESED_dcase2019.png
+[img-soundbank]: ./img/Soundbank.png
 [paper-eval]: https://hal.inria.fr/hal-02355573
 [paper-description]: https://hal.inria.fr/hal-02160855
 [scaper]: https://github.com/justinsalamon/scaper
