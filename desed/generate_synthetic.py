@@ -2,13 +2,15 @@ import glob
 import os
 from os import path as osp
 
+import random
 import jams
 import numpy as np
 import pandas as pd
+import soundfile as sf
 import scaper
 from scaper import generate_from_jams
 
-from .utils import add_event, choose_class, create_folder, get_df_from_jams, post_process_df
+from .utils import add_event, choose_class, create_folder, get_df_from_jams, post_process_df, choose_file
 from .Logger import create_logger
 
 
@@ -97,6 +99,42 @@ def generate_new_fg_onset_files(added_value, in_dir, out_dir):
         scaper.generate_from_jams(out_jams, audiofile)
 
 
+def initialize_scaper(duration, fg_folder, bg_folder, ref_db):
+    """ Initialize scaper object with a reference dB.
+    Args:
+        duration: float, in seconds, the duration of the generated audio clip.
+        fg_folder: str, path of foreground files (be careful, need subfolders, one per class or group)
+        bg_folder: str, path of background files (be careful, need subfolders, one per group)
+        ref_db: float, the reference dB of the clip.
+
+    Returns:
+        scaper.Scaper object
+
+    """
+    sc = scaper.Scaper(duration, fg_folder, bg_folder)
+    sc.protected_labels = []
+    sc.ref_db = ref_db
+
+    return sc
+
+
+def add_random_background(scaper_obj):
+    """ Add random background to a scaper object
+    Args:
+        scaper_obj: scaper.Scaper, the scaper object in which to add the background.
+
+    Returns:
+        scaper.Scaper object with background added.
+    """
+    chosen_file = choose_file(osp.join(scaper_obj.bg_path, "*"))
+    file_duration = sf.info(chosen_file).duration
+    starting_source = min(random.random() * file_duration, file_duration - scaper_obj.duration)
+    scaper_obj.add_background(label=('const', chosen_file.split("/")[-2]),
+                              source_file=('const', chosen_file),
+                              source_time=('const', starting_source))
+    return scaper_obj
+
+
 def generate_single_file(class_params, class_lbl, ref_db, duration, fg_folder, bg_folder, outfolder, filename,
                          min_events=0):
     """ Generate a single file, using the information of onset or offset present
@@ -116,14 +154,8 @@ def generate_single_file(class_params, class_lbl, ref_db, duration, fg_folder, b
         None
     """
     # create a scaper
-    sc = scaper.Scaper(duration, fg_folder, bg_folder)
-    sc.protected_labels = []
-    sc.ref_db = ref_db
-
-    # add background
-    sc.add_background(label=('choose', []),
-                      source_file=('choose', []),
-                      source_time=('const', 0))
+    sc = initialize_scaper(duration, fg_folder, bg_folder, ref_db=ref_db)
+    sc = add_random_background(sc)
 
     # add main event
     sc = add_event(sc, class_lbl, duration, fg_folder)
@@ -294,14 +326,8 @@ def generate_one_bg_multi_fg(ref_db, duration, fg_folder, bg_folder, out_folder,
     Returns:
         None
     """
-    sc = scaper.Scaper(duration, fg_folder, bg_folder)
-    sc.protected_labels = []
-    sc.ref_db = ref_db
-
-    # add background
-    sc.add_background(label=('choose', []),
-                      source_file=('choose', []),
-                      source_time=('const', 0))
+    sc = initialize_scaper(duration, fg_folder, bg_folder, ref_db=ref_db)
+    sc = add_random_background(sc)
 
     params = {"label": labels, "source_file": source_files, "source_time": sources_time, "event_time": events_start,
               "event_duration": events_duration, "snr": snrs, "pitch_shift": pitch_shifts,
