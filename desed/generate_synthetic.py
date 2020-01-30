@@ -2,13 +2,15 @@ import glob
 import os
 from os import path as osp
 
+import random
 import jams
 import numpy as np
 import pandas as pd
+import soundfile as sf
 import scaper
 from scaper import generate_from_jams
 
-from .utils import add_event, choose_class, create_folder, get_df_from_jams, post_process_df
+from .utils import add_event, choose_class, create_folder, get_df_from_jams, post_process_df, choose_file
 from .Logger import create_logger
 
 
@@ -124,9 +126,12 @@ def add_random_background(scaper_obj):
     Returns:
         scaper.Scaper object with background added.
     """
-    scaper_obj.add_background(label=('choose', []),
-                              source_file=('choose', []),
-                              source_time=('const', 0))
+    chosen_file = choose_file(osp.join(scaper_obj.bg_path, "*"))
+    file_duration = sf.info(chosen_file).duration
+    starting_source = min(random.random() * file_duration, file_duration - scaper_obj.duration)
+    scaper_obj.add_background(label=('const', chosen_file.split("/")[-2]),
+                              source_file=('const', chosen_file),
+                              source_time=('const', starting_source))
     return scaper_obj
 
 
