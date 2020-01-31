@@ -306,7 +306,7 @@ In Proceedings of the 14th International Society for Music Information Retrieval
 [audioset]: https://research.google.com/audioset/index.html
 [desed-synthetic]: https://zenodo.org/record/3588151
 [desed-public-eval]: https://zenodo.org/record/3588172
-[img-desed2019]: ./img/DESED_dcase2019.png
+[img-desed2019]: ./img/desed_block_diagram.png
 [img-soundbank]: ./img/Soundbank.png
 [paper-eval]: https://hal.inria.fr/hal-02355573
 [paper-description]: https://hal.inria.fr/hal-02160855
