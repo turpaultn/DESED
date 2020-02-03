@@ -6,8 +6,6 @@ __pycache__/
 .idea/
 .DS_Store
 
-src/tests/generated/
-
 # In the zenodo repos
 # Audio folder
 */audio/
@@ -15,17 +13,19 @@ src/tests/generated/
 # Metadata folder
 synthetic/metadata/
 
-# Specific
+# Download real
+tmp/
 real_data/missing_files/
-synthetic/license_eval.tsv
-synthetic/license_training.tsv
-synthetic/src/tests/generated/
 
+# Generated synthetic
+synthetic/src/tests/generated/
 tests/generated/
 
+# Creation Zenodo datasets
+synthetic/license_eval.tsv
+synthetic/license_training.tsv
 license_vimeo.tsv
 license_public_eval.tsv
-
 tar.gz/
 *.tar.gz
 
@@ -35,8 +35,8 @@ dataset/
 create_license.py
 create_tar.sh
 
-tmp/
-
+# Images
+*.key
 
 # Distribution / packaging
 .Python

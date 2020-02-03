@@ -307,7 +307,7 @@ In Proceedings of the 14th International Society for Music Information Retrieval
 [desed-synthetic]: https://zenodo.org/record/3588151
 [desed-public-eval]: https://zenodo.org/record/3588172
 [img-desed2019]: ./img/desed_block_diagram.png
-[img-soundbank]: ./img/Soundbank.png
+[img-soundbank]: ./img/soundbank_diagram.png
 [paper-eval]: https://hal.inria.fr/hal-02355573
 [paper-description]: https://hal.inria.fr/hal-02160855
 [scaper]: https://github.com/justinsalamon/scaper
