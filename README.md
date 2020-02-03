@@ -1,8 +1,8 @@
 # Desed dataset
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-
 Domestic environment sound event detection (DESED). 
-Mix of real and synthetic data. (used in DCASE 2019 task 4).
+Mix of recorded and synthetic data. (used in DCASE 2019 task 4).
+
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 *If you use this dataset, do not hesitate to update [the list](#listpapers) of papers below with your paper by doing 
 a pull request. 
@@ -15,27 +15,26 @@ numpy >= 1.15.4, pandas >= 0.24.0
 **To use the code, clone the repo, and launch `pip install -e .` in the `DESED/` folder.**
 
 ### Links
-Website: [https://project.inria.fr/desed/][website]
-
-Zenodo datasets: [DESED_synthetic][desed-synthetic], [DESED_public_eval][desed-public-eval]
-
-Papers:
-* [Turpault et al.][paper-description] Description of DESED dataset + official results of DCASE 2019 task 4. 
-* [Serizel et al.][paper-eval] Robustness of DCASE 2019 systems on synthetic evaluation set.
+* Website: [https://project.inria.fr/desed/][website]
+* Zenodo datasets: [DESED_synthetic][desed-synthetic], [DESED_public_eval][desed-public-eval]
+* Papers:
+	* [Turpault et al.][paper-description] Description of DESED dataset + official results of DCASE 2019 task 4. 
+	* [Serizel et al.][paper-eval] Robustness of DCASE 2019 systems on synthetic evaluation set.
 
 ## Description
-There are 3 different datasets: Real data, synthetic data, and evaluation data.
+There are 3 different datasets: 
+* Recorded soundscapes (a.k.a., real). 
+* Synthetic soundbank/soundscapes.
+* Public evaluation (recorded soundscapes) used in DCASE19.
 
-Link to the zenodo repos: **[DESED_synthetic][desed-synthetic]**, **[DESED public eval][desed-public-eval]**
-
-*Common point of the different datasets: contain an audio folder and a metadata folder associated 
-(they can all be grouped together)*
+*All these datasets contain an "audio" folder associated with a "metadata" folder 
+so they can all be grouped together by merging them*
 
 This repo allows you: 
-* Download real data.
-* Download synthetic data of Desed dataset (+ generated for dcase 2019 task 4) 
-* Create new synthetic data (by generating new mixtures using [Scaper][scaper] [[1]](#1)).
-* Download the public evaluation set (defined as Youtube in dcase 2019, Vimeo data is not available)
+* Download recorded soundscapes.
+* Download synthetic soundbank. (+ soundscapes for DCASE 2019 task 4): [DESED_synthetic][desed-synthetic]
+* Create new synthetic soundscapes (generate new mixtures using [Scaper][scaper] [[1]](#1)).
+* Download the public evaluation set (a.k.a., Youtube in DCASE19, Vimeo is not available): [DESED public eval][desed-public-eval]
 
 DESED dataset is for now composed of 10 event classes in domestic environment.
 <p align="center">
@@ -43,34 +42,34 @@ DESED dataset is for now composed of 10 event classes in domestic environment.
 </p>
 
 **Overview**:
-* Real data:
+* Recorded soundscapes:
 	* Verified and unverfied subset of [Audioset][audioset].
 		* Unlabel_in_domain data: Unverified data have their label discarded: *14412 files*.
 		* Weakly labeled data: training data have their labels verified at the clip level: *1578 files*.
 		* Validation data have their labels with time boundaries (strong labels): *1168 files*.
 		* Evaluation public files: 692 Youtube files (to be released soon ...) 
-* Synthetic data:
+* Synthetic soundbank:
 	* Background files are extracted from SINS [[2]](#2), MUSAN [[3]](#3) or Youtube and have been selected because they 
 	contain a very low amount of our sound event classes.
 	* Foreground files are extracted from Freesound [[4]](#4)[[5]](#5) and manually verified to check the quality 
 	and segmented to remove silences.
-	* Mixtures are described in [Generating new synthetic data](#generating-new-synthetic-data) below.
-	* Sound bank:
+	* Mixtures are described in [Generating new synthetic soundscapes](#gendata) below.
+	* Soundbank:
 		* Training: *2060 background files* (SINS) and *1009 foreground files* (Freesound).
 		* Eval: *12* (Freesound) + *5* (Youtube) *background files* and *314 foreground files* (Freesound). 
 
 * DCASE 2019
-	* It uses synthetic data, real data, and public evaluation data (known as youtube eval) during the challenge.
-	* If you want more information about dcase 2019 dataset visit [DCASE 2019 task 4 web page][website-dcase]
-	* If you only want to download dcase2019 files, go to [dcase2019 task 4](#dcase2019-task-4).
+	* It uses synthetic soundbank, recorded soundscapes, and public evaluation data (a.k.a., Youtube eval during DCASE19).
+	* If you want more information about DCASE19 dataset visit [DCASE 2019 task 4 web page][website-dcase]
+	* If you only want to download DCASE19 files, go to [dcase2019 task 4](#dcase2019-task-4).
 	
-![][img-desed2019]
+![dcase19-diagram][img-desed2019]
 
-## 1. Real data
+## 1. Recorded soundscapes (a.k.a., Real data)
 
 ### 1.1 Download 
 #### 1.1.1 Training and validation
-* Download the real data
+* Download the recorded soundscapes
 	* Clone this repo
 	* `pip install -e .`
 	* `cd real/code`
@@ -92,35 +91,35 @@ It corresponds to "youtube" subset in the [desed eval paper][paper-description].
 
 *Note: the Vimeo subset in [desed eval paper][paper-description] is not available.*
 
-## 2. Synthetic data
+## 2. Synthetic soundbank/soundscapes
 
 ### 2.1 Download
 ##### 2.1.1 *User who just wants to download the dcase2019 synthetic evaluation set*
-	* Download `DESED_synth_eval_dcase2019.tar.gz` from **[DESED_synthetic][desed-synthetic]**.
-	* `DESED_synth_eval_dcase2019.tar.gz` to extract it.
+* Download `DESED_synth_eval_dcase2019.tar.gz` from **[DESED_synthetic][desed-synthetic]**.
+* `DESED_synth_eval_dcase2019.tar.gz` to extract it.
 
 ##### 2.1.2 *User who wants to reproduce dcase2019 dataset* (smaller download (when distortion would be in python))
-	* clone this repo
-	* `pip install -e .` (if not already done)
-	* `cd synthetic/`
-	* `sh create_dcase2019_dataset.sh`. (Recommended to run commands line by line in case of bugs)
-	* Be careful, the distortions done on Matlab are up to you to create, it will be updated later to do it in python. 
-	For now, uncomment corresponding lines in `create_dcase2019_dataset.sh` to download the eval set 
-	to get the distortions data. 
+* clone this repo
+* `pip install -e .` (if not already done)
+* `cd synthetic/`
+* `sh create_dcase2019_dataset.sh`. (Recommended to run commands line by line in case of bugs)
+* Be careful, the distortions done on Matlab are up to you to create, it will be updated later to do it in python. 
+For now, uncomment corresponding lines in `create_dcase2019_dataset.sh` to download the eval set 
+to get the distortions data. 
 	
 ##### 2.1.3 *User who wants to create new synthetic data*
-	* clone this repo
-	* `pip install -e .` (if not already done)
-	* Download `DESED_synth_soundbank.tar.gz` from **[DESED_synthetic][desed-synthetic]**.
-	* `tar -xzvf DESED_synth_soundbank.tar.gz` to extract it.
-	* `cd synthetic/code`
-	* `python get_background_training.py` to download SINS background files.
-	* See examples of code to create files in this repo in `synthetic/code`. 
-	Described in [Generating new synthetic data](#gendata) below.
+* clone this repo
+* `pip install -e .` (if not already done)
+* Download `DESED_synth_soundbank.tar.gz` from **[DESED_synthetic][desed-synthetic]**.
+* `tar -xzvf DESED_synth_soundbank.tar.gz` to extract it.
+* `cd synthetic/code`
+* `python get_background_training.py` to download SINS background files.
+* See examples of code to create files in this repo in `synthetic/code`. 
+Described in [Generating new synthetic soundscapes](#gendata) below.
 	
 <a id="gendata"></a>
-### 2.2 Generating new synthetic data
-![generate][img-soundbank]
+### 2.2 Generating new synthetic soundscapes
+![soundbank-diagram][img-soundbank]
 
 To generate new sounds, in the same way as the Desed_synthetic dataset, you can use these files:
  * `generate_training.py`, uses `event_occurences_train.json` for co-occurrence of events.
@@ -198,7 +197,7 @@ Otherwise launch `sh create_dcase2019_dataset.sh`.
 #### Description of Desed for dcase2019 task 4
 [DCASE 2019 task 4 web page][website-dcase]
 
-* **Real data**
+* **Recorded soundscapes**
 	* **Training**: 1578 weakly labeled clips, 14412 unlabeled clips
 	* **Public Evaluation**: 692 Youtube files (reported as "eval youtube" in papers)
 	* **Challenge Evaluation**: Youtube and Vimeo files.
@@ -246,15 +245,15 @@ dcase2019/
 ## FAQ
 * Why don't we have a single dataset repository ?
 
-The synthetic data or real data can be used independently for different purposes. One can create new synthetic data and
-evaluate his system on synthetic data only to focus on a specific problem.
+The synthetic sounbank or recorded soundscapes can be used independently for different purposes. 
+For example, one can create new synthetic soundscapes and evaluate his system on synthetic data only to focus on a specific problem.
 
 * Why audio is not always included in the repository ?
 
 Because of licenses issues. (Example of SINS in the training soundbank)
 We do not have the problem for evaluation data because we try to overcome the problem after running into this issue.
 
-* I have a problem downloading the real dataset. How do I do ?
+* I have a problem downloading the recorded soundscapes. How do I do ?
 If you're in a country with youtube restrictions, you can try to use a VPN and the --proxy option from youtube-dl.
 You can also try to upgrade youtube-dl since it is regularly updated. Finally, if you succeeded to download most of the files, you can send the missing files as stated before in this page.
 
