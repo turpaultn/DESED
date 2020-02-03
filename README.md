@@ -24,17 +24,15 @@ numpy >= 1.15.4, pandas >= 0.24.0
 ## Description
 There are 3 different datasets: 
 * Recorded soundscapes (a.k.a., real). 
-* Synthetic soundbank/soundscapes.
-* Public evaluation (recorded soundscapes) used in DCASE19.
+* Synthetic soundbank + DCASE19 task 4 soundscapes: [DESED_synthetic][desed-synthetic]
+* Public evaluation (recorded soundscapes) (a.k.a., Youtube in DCASE19, Vimeo is not available): [DESED public eval][desed-public-eval]
 
 *All these datasets contain an "audio" folder associated with a "metadata" folder 
 so they can all be grouped together by merging them*
 
 This repo allows you: 
-* Download recorded soundscapes.
-* Download synthetic soundbank. (+ soundscapes for DCASE 2019 task 4): [DESED_synthetic][desed-synthetic]
-* Create new synthetic soundscapes (generate new mixtures using [Scaper][scaper] [[1]](#1)).
-* Download the public evaluation set (a.k.a., Youtube in DCASE19, Vimeo is not available): [DESED public eval][desed-public-eval]
+* Download the three datasets (different methods).
+* Create new synthetic soundscapes from synthetic soundbank (generate new mixtures using [Scaper][scaper] [[1]](#1)).
 
 DESED dataset is for now composed of 10 event classes in domestic environment.
 <p align="center">
