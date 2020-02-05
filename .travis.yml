@@ -23,7 +23,7 @@ install:
   - pip install pip
   - pip install pytest
   - pip install codecov
-  - conda install -c conda-forge youtube-dl
+  - conda install -c conda-forge youtube-dl ffmpeg
   - pip install -e .[test] # install package + test dependencies
 script: pytest -s -v # run tests
 after_success:
