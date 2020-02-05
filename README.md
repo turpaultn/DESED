@@ -8,13 +8,31 @@ Mix of recorded and synthetic data. (used in DCASE 2019 task 4).
 a pull request. 
 And please cite our papers in your work*
 
-#### Requirements:
+**Table of contents**
+
+  - [Requirements](#requirements)
+  - [Links](#links)
+  - [Description](#description)
+  - [Recorded soundscapes](#1-recorded-soundscapes-aka-real-data)
+    - [Download](#11-download)
+      - [Training and validation](#111-training-and-validation)
+      - [Public evaluation](#112-public-evaluation)
+  - [Synthetic soundbank/soundscapes](#2-synthetic-soundbanksoundscapes)
+    - [Download](#21-download)
+    - [Generating soundscapes](#22-generating-new-synthetic-soundscapes)
+  - [DCASE19 Task 4](#dcase19-task-4)
+  - [List of papers/code using DESED](#list-of-papers-and-code-using-desed)
+  - [FAQ](#faq)
+  - [Please cite us](#please-cite-us)
+  - [References](#references)
+      
+## Requirements:
 **python >= 3.6**, scaper >= 1.0.3, dcase-util >= 0.2.5, youtube-dl >= 2019.4.30, soundfile >= 0.10.1, 
 numpy >= 1.15.4, pandas >= 0.24.0
 
 **To use the code, clone the repo, and launch `pip install -e .` in the `DESED/` folder.**
 
-### Links
+## Links
 * Website: [https://project.inria.fr/desed/][website]
 * Zenodo datasets: [DESED_synthetic][desed-synthetic], [DESED_public_eval][desed-public-eval]
 * Papers:
@@ -114,31 +132,8 @@ to get the distortions data.
 * `python get_background_training.py` to download SINS background files.
 * See examples of code to create files in this repo in `synthetic/code`. 
 Described in [Generating new synthetic soundscapes](#gendata) below.
-	
-<a id="gendata"></a>
-### 2.2 Generating new synthetic soundscapes
-![soundbank-diagram][img-soundbank]
 
-To generate new sounds, in the same way as the Desed_synthetic dataset, you can use these files:
- * `generate_training.py`, uses `event_occurences_train.json` for co-occurrence of events.
- * `generate_eval_FBSNR.py` generates similar subsets with different foreground-background sound to noise ratio (fbsnr): 30dB, 24dB, 15dB, 0dB.
- Uses `event_occurences_eval.json` for occurence and co-occurrence of events.  
- * `generate_eval_var_onset.py` generates subsets with a single event per file, the difference between subsets is
-  the onset position:
-    1. Onset between 0.25s and 0.75s. 
-    2. Onset between 5.25s and 5.75s. 
-    3. Onset between 9.25s and 9.75s.
- * `generate_eval_long_short.py` generates subsets with a long event in the background and short events in the foreground, 
- the difference beteen subsets is the FBSNR: 30dB, 15dB, 0dB. 
- * `generate_eval_distortion.py` generates distortion subsets, not yet in python, 
- see `generate_eval_distortion.m` for matlab code (will be updated later).
-
-When a script is generating multiple subfolder but only one csv file, it means it is the same csv for the different cases.
-Example: when modifying the FBSNR, we do not change the labels (onset, offsets). 
-
-*Note: The training soundbank can be divided in a training/validation soundbank if you want to create validation data*
-
-### After downloading architecture
+#### Folders structure after download
 **After downloading the data (see below) you should have this tree:**
 ```
 ├── real                                   
@@ -185,14 +180,37 @@ Example: when modifying the FBSNR, we do not change the labels (onset, offsets).
     └── code                                    (Example of code to regenerate the dcase2019 dataset or generate new mixtures)
 ```
 
-## DCASE2019 task 4
-#### Download
+<a id="gendata"></a>
+### 2.2 Generating new synthetic soundscapes
+![soundbank-diagram][img-soundbank]
+
+To generate new sounds, in the same way as the Desed_synthetic dataset, you can use these files:
+ * `generate_training.py`, uses `event_occurences_train.json` for co-occurrence of events.
+ * `generate_eval_FBSNR.py` generates similar subsets with different foreground-background sound to noise ratio (fbsnr): 30dB, 24dB, 15dB, 0dB.
+ Uses `event_occurences_eval.json` for occurence and co-occurrence of events.  
+ * `generate_eval_var_onset.py` generates subsets with a single event per file, the difference between subsets is
+  the onset position:
+    1. Onset between 0.25s and 0.75s. 
+    2. Onset between 5.25s and 5.75s. 
+    3. Onset between 9.25s and 9.75s.
+ * `generate_eval_long_short.py` generates subsets with a long event in the background and short events in the foreground, 
+ the difference beteen subsets is the FBSNR: 30dB, 15dB, 0dB. 
+ * `generate_eval_distortion.py` generates distortion subsets, not yet in python, 
+ see `generate_eval_distortion.m` for matlab code (will be updated later).
+
+When a script is generating multiple subfolder but only one csv file, it means it is the same csv for the different cases.
+Example: when modifying the FBSNR, we do not change the labels (onset, offsets). 
+
+*Note: The training soundbank can be divided in a training/validation soundbank if you want to create validation data*
+
+## DCASE19 task 4
+### Download
 Recommended to open `synthetic/create_dcase2019_dataset.sh` and 
 `real/create_dcase2019_dataset.sh` and launch line by line in case of bugs.
 
 Otherwise launch `sh create_dcase2019_dataset.sh`.
 
-#### Description of Desed for dcase2019 task 4
+### Description of Desed for dcase2019 task 4
 [DCASE 2019 task 4 web page][website-dcase]
 
 * **Recorded soundscapes**
@@ -260,11 +278,15 @@ You can also try to upgrade youtube-dl since it is regularly updated. Finally, i
 In [this paper][paper-description] you can refer to the column 'Youtube' and for further study, you can
 cite the DESED public evaluation set. 
 
+
+## List of papers and code using DESED
 Feel free to add your paper in the list below if you use the dataset and have a result on the public evaluation set:
 
-<a id="listpapers">List of papers using the dataset:</a>
-* [Turpault et al.][paper-description]
-* [Serizel et al.][paper-eval]
+Paper                                                                       | Code
+--------------------------------------------------------------------------- | ---------------------------
+[Turpault et al.][paper-description], DCASE workshop 2019.                  | https://github.com/turpaultn/DCASE2019_task4
+[Serizel et al.][paper-eval], ICASSP 2020                                   | https://github.com/turpaultn/DESED
+[Turpault et al.][paper-turpault-icassp20], ICASSP 2020                     | https://github.com/turpaultn/walle 
 
 
 ## Licenses
@@ -275,11 +297,16 @@ The different datasets contain a license file at their root for the attribution 
 
 The different platform used are: Freesound [[4]](#4)[[5]](#5), Youtube, MUSAN [[3]](#3) and SINS [[2]](#2).  
 
-## Citing
-If you use this repository, please cite this paper:
-N. Turpault, R. Serizel, A. Parag Shah, J. Salamon. 
+## Please cite us
+If you use this repository, please cite these papers:
+
+- N. Turpault, R. Serizel, A. Parag Shah, J. Salamon. 
 Sound event detection indomestic environments with weakly labeled data and soundscape synthesis. 
 Workshop on Detectionand Classification of Acoustic Scenes and Events, Oct 2019, New York City, USA.
+
+- R. Serizel, N. Turpault, A. Shah, J. Salamon. 
+Sound event detection in synthetic domestic environments. 
+ICASSP, May 2020, Barcelona, Spain.
 
 ## References
 <a id="1">[1]</a> J. Salamon, D. MacConnell, M. Cartwright, P. Li, and J. P. Bello. Scaper: A library for soundscape synthesis and augmentation
@@ -305,8 +332,9 @@ In Proceedings of the 14th International Society for Music Information Retrieval
 [desed-public-eval]: https://zenodo.org/record/3588172
 [img-desed2019]: ./img/desed_block_diagram.png
 [img-soundbank]: ./img/soundbank_diagram.png
-[paper-eval]: https://hal.inria.fr/hal-02355573
 [paper-description]: https://hal.inria.fr/hal-02160855
+[paper-eval]: https://hal.inria.fr/hal-02355573
+[paper-turpault-icassp20]: https://hal.inria.fr/hal-02467401
 [scaper]: https://github.com/justinsalamon/scaper
 [website]: https://project.inria.fr/desed/
 [website-dcase]: http://dcase.community/challenge2019/task-sound-event-detection-in-domestic-environments
