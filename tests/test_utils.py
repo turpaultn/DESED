@@ -43,8 +43,8 @@ def test_postprocessing():
                                          4: 3.36, 5: 6.2, 6: 5.624, 7: 10.0},
                                  'event_label': {0: 'Cat', 1: 'Speech', 2: 'Dishes', 3: 'Speech',
                                            4: 'Dishes', 5: 'Cat', 6: 'Dishes', 7: 'Frying'}}
-                            )
-    check = (df.round(3) == valid_df)
+                                )
+    check = (df.round(3).sort_values("onset") == valid_df.sort_values("onset"))
 
     assert check.all(axis=None), "Problem with post_processing_annotations"
 
