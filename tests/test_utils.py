@@ -8,8 +8,12 @@ import os.path as osp
 import pandas as pd
 import shutil
 import glob
+import os
 from desed.utils import post_processing_annotations, rm_high_polyphony
 import pytest
+
+
+absolute_dir_path = os.path.abspath(os.path.dirname(__file__))
 
 
 def test_postprocessing():
@@ -17,9 +21,9 @@ def test_postprocessing():
     Returns:
     Should output Fixed 3 problems
     """
-    folder = osp.join("material", "post_processing")
-    checked_folder = osp.join("generated", "post_processing")
-    out_tsv = osp.join("generated", "post.tsv")
+    folder = osp.join(absolute_dir_path, "material", "post_processing")
+    checked_folder = osp.join(absolute_dir_path, "generated", "post_processing")
+    out_tsv = osp.join(absolute_dir_path, "generated", "post.tsv")
 
     post_processing_annotations(folder, output_folder=checked_folder,
                                 output_tsv=out_tsv)
@@ -46,10 +50,10 @@ def test_postprocessing():
 
 
 def test_high_polyphony():
-    pol_dir = osp.join("generated", "polyphony")
+    pol_dir = osp.join(absolute_dir_path, "generated", "polyphony")
     if osp.exists(pol_dir):
         shutil.rmtree(pol_dir)
-    shutil.copytree(osp.join("material", "post_processing"), pol_dir)
+    shutil.copytree(osp.join(absolute_dir_path, "material", "post_processing"), pol_dir)
     ll = glob.glob(osp.join(pol_dir, "*.jams"))
     assert len(ll) == 2
 
