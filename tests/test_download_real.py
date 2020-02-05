@@ -13,7 +13,7 @@ from desed.download_real import download
 def test_download_multiprocessing(n_jobs, chunk_size, n_download):
     absolute_dir_path = os.path.abspath(os.path.dirname(__file__))
     test = os.path.join(absolute_dir_path, "material", "validation.tsv")
-    result_dir = os.path.join("generated", "audio", "validation")
+    result_dir = os.path.join(absolute_dir_path, "generated", "audio", "validation")
     df = pd.read_csv(test, header=0, sep='\t')
 
     filenames_test = df["filename"].drop_duplicates()[:n_download]
