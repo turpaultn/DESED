@@ -11,7 +11,8 @@ from desed.download_real import download
     (1, 3, 15),
 ])
 def test_download_multiprocessing(n_jobs, chunk_size, n_download):
-    test = os.path.join("material", "validation.tsv")
+    absolute_dir_path = os.path.abspath(os.path.dirname(__file__))
+    test = os.path.join(absolute_dir_path, "material", "validation.tsv")
     result_dir = os.path.join("generated", "audio", "validation")
     df = pd.read_csv(test, header=0, sep='\t')
 
