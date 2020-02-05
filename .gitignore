@@ -15,7 +15,7 @@ synthetic/metadata/
 
 # Download real
 tmp/
-real_data/missing_files/
+real/missing_files/
 
 # Generated synthetic
 synthetic/src/tests/generated/
