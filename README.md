@@ -27,8 +27,8 @@ And please cite our papers in your work*
   - [References](#references)
       
 ## Requirements:
-**python >= 3.6**, scaper >= 1.0.3, dcase-util >= 0.2.5, youtube-dl >= 2019.4.30, soundfile >= 0.10.1, 
-numpy >= 1.15.4, pandas >= 0.24.0
+**python >= 3.6**, dcase-util >= 0.2.5, scaper >= 1.0.3, numpy >= 1.15.4, pandas >= 0.24.0,
+soundfile >= 0.10.1, youtube-dl >= 2019.4.30 (better with conda-forge).
 
 **To use the code, clone the repo, and launch `pip install -e .` in the `DESED/` folder.**
 
