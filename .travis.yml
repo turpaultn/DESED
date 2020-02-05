@@ -6,9 +6,6 @@ python:
   - 3.6
 before_install:
   - python --version
-  - pip install -U pip
-  - pip install -U pytest
-  - pip install codecov
 install:
   - sudo apt-get update
   - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
@@ -23,8 +20,11 @@ install:
   # Replace dep1 dep2 ... with your dependencies
   - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION
   - conda activate test-environment
+  - pip install pip
+  - pip install pytest
+  - pip install codecov
   - conda install -c conda-forge youtube-dl
-  - pip install -e . # install package + test dependencies
+  - pip install -e .[test] # install package + test dependencies
 script: pytest -s -v # run tests
 after_success:
   - codecov # submit coverage
