@@ -11,7 +11,7 @@ before_install:
   - pip install codecov
 install:
   - pip install -e .[test] # install package + test dependencies
-script: pytest -s # run tests
+script: pytest -s -v # run tests
 after_success:
   - codecov # submit coverage
 
