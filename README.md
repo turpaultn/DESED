@@ -280,7 +280,7 @@ cite the DESED public evaluation set.
 
 
 ## List of papers and code using DESED
-Feel free to add your paper in the [list_of_papers][list_papers_md] if you use the dataset and have a result on the public evaluation set:
+Feel free to add your paper in the file [list_papers_using_desed.md][list_papers_md] if you use the dataset and have a result on the public evaluation set:
 
 <!-- embedme list_papers_using_desed.md -->
 ```md
