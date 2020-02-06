@@ -22,7 +22,7 @@ install:
   - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION
   - conda activate test-environment
   - pip install pip
-  - pip install pytest
+  - pip install pytest pytest-cov
   - pip install coverage codecov
   - conda install -c conda-forge youtube-dl pysoundfile ffmpeg
   - pip install -e .[test] # install package + test dependencies
