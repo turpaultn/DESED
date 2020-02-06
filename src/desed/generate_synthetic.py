@@ -10,7 +10,7 @@ import soundfile as sf
 import scaper
 from scaper import generate_from_jams
 
-from .utils import add_event, choose_class, create_folder, get_df_from_jams, post_process_df, choose_file
+from .utils import add_event, choose_cooccurence_class, create_folder, get_df_from_jams, post_process_df, choose_file
 from .Logger import create_logger
 
 
@@ -158,13 +158,13 @@ def generate_single_file(class_params, class_lbl, ref_db, duration, fg_folder, b
     sc = add_random_background(sc)
 
     # add main event
-    sc = add_event(sc, class_lbl, duration, fg_folder)
+    sc = add_event(sc, class_lbl)
 
     # add random number of foreground events
     n_events = np.random.randint(min_events, class_params['event_max'])
     for _ in range(n_events):
-        chosen_class = choose_class(class_params)
-        sc = add_event(sc, chosen_class, duration, fg_folder)
+        chosen_class = choose_cooccurence_class(class_params)
+        sc = add_event(sc, chosen_class)
 
     # generate
     audiofile = osp.join(outfolder, f"{filename}.wav")

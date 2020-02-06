@@ -9,11 +9,54 @@ import pandas as pd
 import shutil
 import glob
 import os
-from desed.utils import post_processing_annotations, rm_high_polyphony
+import json
+import scaper
+from desed.utils import post_processing_annotations, rm_high_polyphony, create_folder, pprint, choose_cooccurence_class,\
+    choose_file, add_event
 import pytest
 
 
 absolute_dir_path = os.path.abspath(os.path.dirname(__file__))
+
+
+@pytest.fixture()
+def rm_folder():
+    os.removedirs(os.path.join(absolute_dir_path, "generated"))
+
+
+def test_create_folder():
+    to_create = os.path.join(absolute_dir_path, "generated", "tmp")
+    create_folder(to_create)
+    create_folder(to_create)
+
+
+def test_pprint():
+    pprint("Bonjour")
+
+
+def test_choose_class():
+    param_json = osp.join(absolute_dir_path, "material",
+                          "event_occurences", "event_occurences_train.json")
+    with open(param_json) as json_file:
+        params = json.load(json_file)
+    assert choose_cooccurence_class(params["Blender"]) in ["Blender", "Cat", "Dishes"], "Wrong class given"
+
+
+def test_choose_file():
+    label_pth = os.path.join(absolute_dir_path, "material", "soundbank", "background", "label")
+    fpath = os.path.join(absolute_dir_path, "material", "soundbank", "background", "label", "noise-free-sound-0055.wav")
+    assert choose_file(label_pth) == fpath
+
+
+def test_add_event():
+    fg_folder = os.path.join(absolute_dir_path, "material", "soundbank", "foreground")
+    bg_folder = os.path.join(absolute_dir_path, "material", "soundbank", "background")
+    sc = scaper.Scaper(1, fg_folder, bg_folder)
+    sc = add_event(sc, "label")
+    sc = add_event(sc, "label_nOff")
+    sc = add_event(sc, "label_nOn")
+    sc = add_event(sc, "label_nOn_nOff")
+    # Todo, check it generates well with the good labels and files
 
 
 def test_postprocessing():
@@ -57,12 +100,12 @@ def test_high_polyphony():
     ll = glob.glob(osp.join(pol_dir, "*.jams"))
     assert len(ll) == 2
 
-    rm_high_polyphony(pol_dir, 2)
+    save_name = os.path.join(absolute_dir_path, "generated", "final.tsv")
+    rm_high_polyphony(pol_dir, 2, save_name)
 
     ll = glob.glob(osp.join(pol_dir, "*.jams"))
     assert len(ll) == 1, f"Problem rm_high_polyphony {len(ll)} != 1"
 
 
 if __name__ == '__main__':
-    test_postprocessing()
-    test_high_polyphony()
+    test_add_event()

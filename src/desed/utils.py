@@ -42,8 +42,8 @@ def pprint(x):
     pp.pprint(x)
 
 
-def choose_class(class_params):
-    """ Choose a class given a dictionary of parameters.
+def choose_cooccurence_class(class_params):
+    """ Choose another class given a dictionary of parameters (from an already specified class).
     Args:
         class_params: dict, need to define 'event_prob' and 'event_class' attributes.
         They are lists, and map the probability of having each class.
@@ -74,18 +74,19 @@ def choose_file(class_path):
     return source_files[ind]
 
 
-def add_event(sc, class_lbl, duration, fg_folder):
+def add_event(sc, class_lbl):
     """ add a single event to a scaper object given a class. Take into account if the event has an onset or offset
     Args:
         sc: scaper.Scaper, scaper object to add event in.
         class_lbl: str, label of the event to add.
-        duration: float, the duration of the event to add.
-        fg_folder: str, path of the folders of all events (a subfolder should match the class_lbl)
 
     Returns:
         sc, scaper.Scaper object with the event added.
 
     """
+    duration = sc.duration
+    fg_folder = sc.fg_path
+
     logger = create_logger(__name__)
     source_time_dist = 'const'
     source_time = 0.0
@@ -126,7 +127,7 @@ def add_event(sc, class_lbl, duration, fg_folder):
                      snr=(snr_dist, snr_min, snr_max),
                      pitch_shift=(pitch_dist, pitch_min, pitch_max),
                      time_stretch=(time_stretch_dist, time_stretch_min, time_stretch_max))
-    elif "_nOf" in class_lbl:
+    elif "_nOff" in class_lbl:
         logger.debug('no offset')
         event_start = np.random.uniform(max(0, duration - file_duration), duration - event_duration_min)
         event_length = duration - event_start
