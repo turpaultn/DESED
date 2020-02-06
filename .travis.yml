@@ -27,7 +27,6 @@ install:
   - conda install -c conda-forge youtube-dl pysoundfile ffmpeg
   - pip install -e .[test] # install package + test dependencies
   - coverage run -m unittest discover
-  - npx embedme --verify README.md
 script:
   - pytest -s -v --color=yes --cov=src --assert=plain  # run tests and code coverage  only test : `pytest -s -v`
 after_success:
