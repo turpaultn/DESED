@@ -282,12 +282,9 @@ cite the DESED public evaluation set.
 ## List of papers and code using DESED
 Feel free to add your paper in the list below if you use the dataset and have a result on the public evaluation set:
 
-Paper                                                                       | Code
---------------------------------------------------------------------------- | ---------------------------
-[Turpault et al.][paper-description], DCASE workshop 2019.                  | https://github.com/turpaultn/DCASE2019_task4
-[Serizel et al.][paper-eval], ICASSP 2020                                   | https://github.com/turpaultn/DESED
-[Turpault et al.][paper-turpault-icassp20], ICASSP 2020                     | https://github.com/turpaultn/walle 
-
+<!-- embedme list_papers_using_desed.md -->
+```md
+```
 
 ## Licenses
 The python code is publicly available under the MIT license, see the LICENSE file. 
