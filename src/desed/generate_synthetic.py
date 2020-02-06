@@ -44,6 +44,7 @@ def generate_new_bg_snr_files(new_snr, in_dir, out_dir):
 
     """
     logger = create_logger(__name__, "Desed.log")
+    create_folder(out_dir)
     for jam_file in sorted(glob.glob(os.path.join(in_dir, "*.jams"))):
         jams_obj = modify_bg_snr(new_snr, jam_file)
         out_jams = osp.join(out_dir, os.path.basename(jam_file))
@@ -89,6 +90,7 @@ def generate_new_fg_onset_files(added_value, in_dir, out_dir):
 
     """
     logger = create_logger(__name__, "Desed.log")
+    create_folder(out_dir)
     for jam_file in sorted(glob.glob(os.path.join(in_dir, "*.jams"))):
         jams_obj = modify_fg_onset(added_value, jam_file)
         out_jams = osp.join(out_dir, os.path.basename(jam_file))

@@ -280,11 +280,18 @@ cite the DESED public evaluation set.
 
 
 ## List of papers and code using DESED
-Feel free to add your paper in the list below if you use the dataset and have a result on the public evaluation set:
+Feel free to add your paper in the [list_of_papers][list_papers_md] if you use the dataset and have a result on the public evaluation set:
 
 <!-- embedme list_papers_using_desed.md -->
 ```md
+Paper                                                                       | Code
+--------------------------------------------------------------------------- | ---------------------------
+[Turpault et al.][paper-description], DCASE workshop 2019.                  | https://github.com/turpaultn/DCASE2019_task4
+[Serizel et al.][paper-eval], ICASSP 2020                                   | https://github.com/turpaultn/DESED
+[Turpault et al.][paper-turpault-icassp20], ICASSP 2020                     | https://github.com/turpaultn/walle
 ```
+
+*Note: do not forget to launch npx embedme README.md before doing the pull request*
 
 ## Licenses
 The python code is publicly available under the MIT license, see the LICENSE file. 
@@ -329,6 +336,7 @@ In Proceedings of the 14th International Society for Music Information Retrieval
 [desed-public-eval]: https://zenodo.org/record/3588172
 [img-desed2019]: ./img/desed_block_diagram.png
 [img-soundbank]: ./img/soundbank_diagram.png
+[list_papers_md]: ./list_papers_using_desed.md
 [paper-description]: https://hal.inria.fr/hal-02160855
 [paper-eval]: https://hal.inria.fr/hal-02355573
 [paper-turpault-icassp20]: https://hal.inria.fr/hal-02467401

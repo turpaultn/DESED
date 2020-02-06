@@ -26,7 +26,7 @@ def test_download_multiprocessing(n_jobs, chunk_size, n_download):
     filenames_test = df["filename"].drop_duplicates()[:n_download]
 
     download(filenames_test, result_dir, n_jobs=n_jobs, chunk_size=chunk_size,
-             base_dir_missing_files=os.path.join("generated", "missing_files"))
+             base_dir_missing_files=os.path.join(absolute_dir_path, "generated", "missing_files"))
 
 
 def test_download_file():
