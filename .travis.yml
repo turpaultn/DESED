@@ -1,0 +1,35 @@
+os: linux
+language: python
+cache:
+    pip: true
+python:
+  - 3.6
+before_install:
+  - python --version
+install:
+  - sudo apt-get update
+  - sudo apt-get install sox
+  - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
+  - bash miniconda.sh -b -p $HOME/miniconda
+  - source "$HOME/miniconda/etc/profile.d/conda.sh"
+  - hash -r
+  - conda config --set always_yes yes --set changeps1 no
+  - conda update -q conda
+  # Useful for debugging any issues with conda
+  - conda info -a
+
+  # Replace dep1 dep2 ... with your dependencies
+  - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION
+  - conda activate test-environment
+  - pip install pip
+  - pip install sox
+  - pip install pytest pytest-cov
+  - pip install coverage codecov
+  - conda install -c conda-forge youtube-dl pysoundfile ffmpeg
+  - pip install -e .[test] # install package + test dependencies
+  - coverage run -m unittest discover
+script:
+  - pytest -s -v --color=yes --cov=src --assert=plain  # run tests and code coverage  only test : `pytest -s -v`
+after_success:
+  - codecov # submit coverage
+

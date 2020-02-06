@@ -1,0 +1,32 @@
+{
+  "Blender": {
+    "prob" : 0.1,
+    "event_max": 8,
+    "event_mean": 3,
+    "event_class": [
+      "Blender",
+      "Dishes",
+      "Speech"
+    ],
+    "event_prob": [
+      27,
+      18,
+      55
+    ]
+  },
+  "Cat": {
+    "prob" : 0.1,
+    "event_max": 9,
+    "event_mean": 4,
+    "event_class": [
+      "Cat",
+      "Dishes",
+      "Speech"
+    ],
+    "event_prob": [
+      60,
+      10,
+      30
+    ]
+  }
+}

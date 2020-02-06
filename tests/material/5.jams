@@ -1,0 +1,165 @@
+{
+  "annotations": [
+    {
+      "annotation_metadata": {
+        "curator": {
+          "name": "",
+          "email": ""
+        },
+        "annotator": {},
+        "version": "",
+        "corpus": "",
+        "annotation_tools": "",
+        "annotation_rules": "",
+        "validation": "",
+        "data_source": ""
+      },
+      "namespace": "scaper",
+      "data": [
+        {
+          "time": 0.0,
+          "duration": 10.0,
+          "value": {
+            "label": "label",
+            "source_file": "tests/material/soundbank/background/label/noise-free-sound-0055.wav",
+            "source_time": 0,
+            "event_time": 0,
+            "event_duration": 10.0,
+            "snr": 0,
+            "role": "background",
+            "pitch_shift": null,
+            "time_stretch": null
+          },
+          "confidence": 1.0
+        },
+        {
+          "time": 0.007600065651396315,
+          "duration": 1.013923,
+          "value": {
+            "label": "label",
+            "source_file": "tests/material/soundbank/foreground/label/26104_0.wav",
+            "source_time": 0.0,
+            "event_time": 0.007600065651396315,
+            "event_duration": 0.813923,
+            "snr": 7.396362733436883,
+            "role": "foreground",
+            "pitch_shift": -0.7897014259738713,
+            "time_stretch": 1.0
+          },
+          "confidence": 1.0
+        }
+      ],
+      "sandbox": {
+        "scaper": {
+          "duration": 10.0,
+          "fg_path": "tests/material/soundbank/foreground",
+          "bg_path": "tests/material/soundbank/background",
+          "fg_spec": [
+            [
+              [
+                "const",
+                "label"
+              ],
+              [
+                "const",
+                "material/soundbank/foreground/label/26104_0.wav"
+              ],
+              [
+                "const",
+                0.0
+              ],
+              [
+                "const",
+                0.007600065651396315
+              ],
+              [
+                "const",
+                0.813923
+              ],
+              [
+                "uniform",
+                6,
+                30
+              ],
+              "foreground",
+              [
+                "uniform",
+                -3.0,
+                3.0
+              ],
+              [
+                "uniform",
+                1,
+                1
+              ]
+            ]
+          ],
+          "bg_spec": [
+            [
+              [
+                "choose",
+                []
+              ],
+              [
+                "choose",
+                []
+              ],
+              [
+                "const",
+                0
+              ],
+              [
+                "const",
+                0
+              ],
+              [
+                "const",
+                10.0
+              ],
+              [
+                "const",
+                0
+              ],
+              "background",
+              null,
+              null
+            ]
+          ],
+          "fg_labels": [
+            "label",
+            "label_nOn",
+            "label_nOff",
+            "label_nOn_nOff"
+          ],
+          "bg_labels": [
+            "label"
+          ],
+          "protected_labels": [],
+          "sr": 44100,
+          "ref_db": -50,
+          "n_channels": 1,
+          "fade_in_len": 0.01,
+          "fade_out_len": 0.01,
+          "n_events": 1,
+          "polyphony_max": 0,
+          "polyphony_gini": 0.6605158622612143,
+          "allow_repeated_label": true,
+          "allow_repeated_source": true,
+          "reverb": 0.1,
+          "scaper_version": "1.0.3"
+        }
+      },
+      "time": 0,
+      "duration": 10.0
+    }
+  ],
+  "file_metadata": {
+    "title": "",
+    "artist": "",
+    "release": "",
+    "duration": 10.0,
+    "identifiers": {},
+    "jams_version": "0.3.4"
+  },
+  "sandbox": {}
+}

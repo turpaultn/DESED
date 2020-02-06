@@ -27,8 +27,8 @@ And please cite our papers in your work*
   - [References](#references)
       
 ## Requirements:
-**python >= 3.6**, scaper >= 1.0.3, dcase-util >= 0.2.5, youtube-dl >= 2019.4.30, soundfile >= 0.10.1, 
-numpy >= 1.15.4, pandas >= 0.24.0
+**python >= 3.6**, dcase-util >= 0.2.5, scaper >= 1.0.3, numpy >= 1.15.4, pandas >= 0.24.0,
+soundfile >= 0.10.1, youtube-dl >= 2019.4.30 (better with conda-forge).
 
 **To use the code, clone the repo, and launch `pip install -e .` in the `DESED/` folder.**
 
@@ -280,14 +280,17 @@ cite the DESED public evaluation set.
 
 
 ## List of papers and code using DESED
-Feel free to add your paper in the list below if you use the dataset and have a result on the public evaluation set:
+Feel free to add your paper in the file [list_papers_using_desed.md][list_papers_md] if you use the dataset and have a result on the public evaluation set:
 
+<!-- include list_papers_using_desed.md -->
 Paper                                                                       | Code
 --------------------------------------------------------------------------- | ---------------------------
 [Turpault et al.][paper-description], DCASE workshop 2019.                  | https://github.com/turpaultn/DCASE2019_task4
 [Serizel et al.][paper-eval], ICASSP 2020                                   | https://github.com/turpaultn/DESED
-[Turpault et al.][paper-turpault-icassp20], ICASSP 2020                     | https://github.com/turpaultn/walle 
+[Turpault et al.][paper-turpault-icassp20], ICASSP 2020                     | https://github.com/turpaultn/walle
+<!-- end -->
 
+*Note: to add it to README.md before doing the pull request, run `python generate_table.py`*
 
 ## Licenses
 The python code is publicly available under the MIT license, see the LICENSE file. 
@@ -332,6 +335,7 @@ In Proceedings of the 14th International Society for Music Information Retrieval
 [desed-public-eval]: https://zenodo.org/record/3588172
 [img-desed2019]: ./img/desed_block_diagram.png
 [img-soundbank]: ./img/soundbank_diagram.png
+[list_papers_md]: ./list_papers_using_desed.md
 [paper-description]: https://hal.inria.fr/hal-02160855
 [paper-eval]: https://hal.inria.fr/hal-02355573
 [paper-turpault-icassp20]: https://hal.inria.fr/hal-02467401
