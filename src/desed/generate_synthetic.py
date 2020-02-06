@@ -130,7 +130,7 @@ def add_random_background(scaper_obj):
     """
     chosen_file = choose_file(osp.join(scaper_obj.bg_path, "*"))
     file_duration = sf.info(chosen_file).duration
-    starting_source = min(random.random() * file_duration, file_duration - scaper_obj.duration)
+    starting_source = min(random.random() * file_duration, max(file_duration - scaper_obj.duration, 0))
     scaper_obj.add_background(label=('const', chosen_file.split("/")[-2]),
                               source_file=('const', chosen_file),
                               source_time=('const', starting_source))
