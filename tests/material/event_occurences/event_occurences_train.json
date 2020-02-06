@@ -6,18 +6,12 @@
     "event_class": [
       "Blender",
       "Dishes",
-      "Frying",
-      "Running_water",
-      "Speech",
-      "Vacuum_cleaner"
+      "Speech"
     ],
     "event_prob": [
       27,
-      14,
-      1,
-      2,
-      55,
-      1
+      18,
+      55
     ]
   },
   "Cat": {
@@ -25,41 +19,14 @@
     "event_max": 9,
     "event_mean": 4,
     "event_class": [
-      "Alarm_bell_ringing",
       "Cat",
       "Dishes",
-      "Dog",
-      "Running_water",
       "Speech"
     ],
     "event_prob": [
-      2,
       60,
-      2,
-      5,
-      1,
+      10,
       30
-    ]
-  },
-  "Dishes": {
-    "prob" : 0.1,
-    "event_max": 12,
-    "event_mean": 5,
-    "event_class": [
-      "Blender",
-      "Cat",
-      "Dishes",
-      "Frying",
-      "Running_water",
-      "Speech"
-    ],
-    "event_prob": [
-      2,
-      1,
-      53,
-      6,
-      2,
-      36
     ]
   }
 }

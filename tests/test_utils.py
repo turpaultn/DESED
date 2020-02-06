@@ -39,7 +39,8 @@ def test_choose_class():
                           "event_occurences", "event_occurences_train.json")
     with open(param_json) as json_file:
         params = json.load(json_file)
-    assert choose_cooccurence_class(params["Blender"]) in ["Blender", "Cat", "Dishes"], "Wrong class given"
+    label = choose_cooccurence_class(params["Blender"])
+    assert label in ["Blender", "Cat", "Dishes", "Speech"], "Wrong class given"
 
 
 def test_choose_file():
@@ -108,4 +109,4 @@ def test_high_polyphony():
 
 
 if __name__ == '__main__':
-    test_add_event()
+    test_choose_class()

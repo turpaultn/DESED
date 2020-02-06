@@ -9,7 +9,7 @@ absolute_dir_path = os.path.abspath(os.path.dirname(__file__))
 
 
 def test_modify_bg_snr():
-    jam_path = os.path.join(absolute_dir_path, "material", "post_processing", "5.jams")
+    jam_path = os.path.join(absolute_dir_path, "material", "5.jams")
     jam_obj = modify_bg_snr(15, jam_path)
     data = jam_obj["annotations"][0].data
     for cnt, obs in enumerate(data):
@@ -19,13 +19,13 @@ def test_modify_bg_snr():
 
 
 def test_generate_new_bg_snr_files():
-    in_dir = os.path.join(absolute_dir_path, "material", "post_processing")
-    out_dir = os.path.join(absolute_dir_path, "material","new_snr")
+    in_dir = os.path.join(absolute_dir_path, "material")
+    out_dir = os.path.join(absolute_dir_path, "generated", "new_snr")
     generate_new_bg_snr_files(15, in_dir, out_dir)
 
 
 def test_fg_onset():
-    jam_path = os.path.join(absolute_dir_path, "material", "post_processing", "5.jams")
+    jam_path = os.path.join(absolute_dir_path, "material", "5.jams")
     jam_obj = jams.load(jam_path)
     data = jam_obj["annotations"][0].data
     for cnt, obs in enumerate(data):
