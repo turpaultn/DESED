@@ -4,7 +4,7 @@ Mix of recorded and synthetic data. (used in DCASE 2019 task 4).
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
-*If you use this dataset, do not hesitate to update [the list](#listpapers) of papers below with your paper by doing 
+*If you use this dataset, do not hesitate to update [the list](#list-of-papers-and-code-using-desed) of papers below with your paper by doing 
 a pull request. 
 And please cite our papers in your work*
 
