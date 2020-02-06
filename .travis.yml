@@ -22,10 +22,12 @@ install:
   - conda activate test-environment
   - pip install pip
   - pip install pytest
-  - pip install codecov
+  - pip install coverage codecov
   - conda install -c conda-forge youtube-dl pysoundfile ffmpeg
   - pip install -e .[test] # install package + test dependencies
-script: pytest -s -v # run tests
+  - coverage run -m unittest discover
+script:
+  - pytest -s -v --color=yes --cov=src --assert=plain  # run tests and code coverage  only test : `pytest -s -v`
 after_success:
   - codecov # submit coverage
 
