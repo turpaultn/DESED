@@ -29,7 +29,7 @@ install:
   - coverage run -m unittest discover
   - npx embedme --verify README.md
 script:
-  - pytest -s -v --color=yes --cov=src --assert=plain  # run tests and code coverage  only test : `pytest -s -v`
+  - pytest -v --color=yes --cov=src --assert=plain  # run tests and code coverage  only test : `pytest -s -v`
 after_success:
   - codecov # submit coverage
 
