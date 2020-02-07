@@ -303,7 +303,7 @@ def post_process_df(df, length_sec, min_dur_event=0.250, min_dur_inter=0.150):
 
 
 def post_processing_annotations(folder, wavdir=None, output_folder=None, output_tsv=None, min_dur_event=0.250,
-                                min_dur_inter=0.150, background_label=False):
+                                min_dur_inter=0.150, background_label=False, rm_nOn_nOff=False):
     """ clean the .txt files of each file. It is the same processing as the real data
     - overlapping events of the same class are mixed
     - if silence < 150ms between two conscutive events of the same class, they are mixed
@@ -317,6 +317,7 @@ def post_processing_annotations(folder, wavdir=None, output_folder=None, output_
         min_dur_event: float, optional in sec, minimum duration of an event
         min_dur_inter: float, optional in sec, minimum duration between 2 events
         background_label: bool, whether to include the background label in the annotations.
+        rm_nOn_nOff: bool, whether to delete the additional _nOn _nOff at the end of labels.
 
     Returns:
         None
@@ -325,9 +326,9 @@ def post_processing_annotations(folder, wavdir=None, output_folder=None, output_
     if wavdir is None:
         wavdir = folder
     fix_count = 0
-    logger.info("Correcting annotations ... \n" 
-             "* annotations with negative duration will be removed\n" +
-             "* annotations with duration <250ms will be extended on the offset side)")
+    logger.info("Correcting annotations ... \n"
+                "* annotations with negative duration will be removed\n" +
+                "* annotations with duration <250ms will be extended on the offset side)")
 
     if output_folder is not None:
         create_folder(output_folder)
@@ -347,6 +348,8 @@ def post_processing_annotations(folder, wavdir=None, output_folder=None, output_
         logger.debug(fn)
         df, length_sec = get_data(fn, osp.join(wavdir, osp.splitext(osp.basename(fn))[0] + '.wav'),
                                   background_label=background_label)
+        if rm_nOn_nOff:
+            df["event_label"] = df["event_label"].apply(lambda x: x.replace("_nOff", "").replace("_nOn", ""))
 
         df, fc = post_process_df(df, length_sec, min_dur_event, min_dur_inter)
         fix_count += fc
