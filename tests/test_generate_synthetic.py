@@ -1,8 +1,7 @@
 import os
 import jams
 
-from desed.generate_synthetic import modify_bg_snr, generate_new_bg_snr_files, modify_fg_onset, \
-    generate_new_fg_onset_files
+from desed.generate_synthetic import modify_bg_snr, generate_new_bg_snr_files, modify_fg_onset
 
 
 absolute_dir_path = os.path.abspath(os.path.dirname(__file__))

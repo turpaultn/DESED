@@ -36,9 +36,11 @@ def test_download_file():
 
 
 def test_download_file_fail():
-    error = ['Y4U2-ZMKWgD0_380.000_390.000.wav', '\x1b[0;31mERROR:\x1b[0m This video is unavailable.\nSorry about that.']
+    errors = ['\x1b[0;31mERROR:\x1b[0m This video is unavailable.\nSorry about that.',
+              "ERROR: This video is unavailable.\nSorry about that."]
     fname = "Y4U2-ZMKWgD0_380.000_390.000.wav"
     res = download_file(result_dir, fname)
     print(res)
-    assert res == error, "Download did not fail with the right exception"
+    assert res[0] == fname
+    assert res[1] in errors , "Download did not fail with the right exception"
 

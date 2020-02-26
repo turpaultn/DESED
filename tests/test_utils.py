@@ -1,9 +1,4 @@
 # -*- coding: utf-8 -*-
-#########################################################################
-# Initial software
-# Copyright Nicolas Turpault, Romain Serizel, Justin Salamon, Ankit Parag Shah, 2019, v1.0
-# This software is distributed under the terms of the License MIT
-#########################################################################
 import os.path as osp
 import pandas as pd
 import shutil
@@ -11,7 +6,7 @@ import glob
 import os
 import json
 import scaper
-from desed.utils import post_processing_annotations, rm_high_polyphony, create_folder, pprint, choose_cooccurence_class,\
+from desed.utils import post_processing_txt_annotations, rm_high_polyphony, create_folder, pprint, choose_cooccurence_class,\
     choose_file, add_event
 import pytest
 
@@ -69,7 +64,7 @@ def test_postprocessing():
     checked_folder = osp.join(absolute_dir_path, "generated", "post_processing")
     out_tsv = osp.join(absolute_dir_path, "generated", "post.tsv")
 
-    post_processing_annotations(folder, output_folder=checked_folder,
+    post_processing_txt_annotations(folder, output_folder=checked_folder,
                                 output_tsv=out_tsv)
     df = pd.read_csv(out_tsv, sep="\t")
     print(df.to_dict())
@@ -90,7 +85,7 @@ def test_postprocessing():
                                 )
     check = (df.round(3).sort_values("onset").reset_index(drop=True) == valid_df.sort_values("onset").reset_index(drop=True))
 
-    assert check.all(axis=None), "Problem with post_processing_annotations"
+    assert check.all(axis=None), "Problem with post_processing_txt_annotations"
 
 
 def test_high_polyphony():
