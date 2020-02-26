@@ -1,7 +1,10 @@
+# -*- coding: utf-8 -*-
 import functools
 import glob
+import inspect
 import os
 import shutil
+import warnings
 from contextlib import closing
 from multiprocessing import Pool
 
@@ -35,7 +38,7 @@ def download_file(result_dir, filename):
     list : list, Empty list if the file is downloaded, otherwise contains the filename and the error associated
 
     """
-    LOG = create_logger(__name__, "Desed_real.log")
+    logger = create_logger(__name__ + "/" + inspect.currentframe().f_code.co_name)
     tmp_filename = ""
     query_id = filename[1:12]
     segment_start = filename[13:-4].split('_')[0]
@@ -98,8 +101,8 @@ def download_file(result_dir, filename):
     except IndexError as e:
         if os.path.exists(tmp_filename):
             os.remove(tmp_filename)
-        LOG.info(filename)
-        LOG.info(str(e))
+        logger.info(filename)
+        logger.info(str(e))
         return [filename, "Index Error"]
 
 
@@ -160,6 +163,8 @@ def download(filenames, result_dir, n_jobs=1, chunk_size=10, base_dir_missing_fi
             missing_files.to_csv(os.path.join(base_dir_missing_files,
                                               "missing_files_" + result_dir.split('/')[-1] + ".tsv"),
                                  index=False, sep="\t")
+            warnings.warn(f"There are missing files at {base_dir_missing_files}, \n"
+                          f"see info on https://github.com/turpaultn/desed#11-download on how to get them")
 
     except KeyboardInterrupt:
         if p is not None:

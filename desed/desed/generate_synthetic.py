@@ -1,6 +1,8 @@
+# -*- coding: utf-8 -*-
 import glob
 import os
 from os import path as osp
+import inspect
 
 import random
 import jams
@@ -10,7 +12,7 @@ import soundfile as sf
 import scaper
 from scaper import generate_from_jams
 
-from .utils import add_event, choose_cooccurence_class, create_folder, get_df_from_jams, post_process_df, choose_file
+from .utils import add_event, choose_cooccurence_class, create_folder, get_labels_from_jams, _post_process_labels_file, choose_file
 from .Logger import create_logger
 
 
@@ -33,17 +35,18 @@ def modify_bg_snr(new_snr, jam_file):
     return jam_obj
 
 
-def generate_new_bg_snr_files(new_snr, in_dir, out_dir):
+def generate_new_bg_snr_files(new_snr, in_dir, out_dir, **kwargs):
     """ Generate the new JAMS and audio files with a different background SNR
     Args:
         new_snr: float, Sound to noise ratio (SNR) of the background from the reference
         in_dir: str, folder containing JAMS file with background SNR to be changed
         out_dir: str, folder where to save the new audio and JAMS
+        kwargs: dict, scaper.generate_from_jams params
 
     Returns:
 
     """
-    logger = create_logger(__name__, "Desed.log")
+    logger = create_logger(__name__ + "/" + inspect.currentframe().f_code.co_name)
     create_folder(out_dir)
     for jam_file in sorted(glob.glob(os.path.join(in_dir, "*.jams"))):
         jams_obj = modify_bg_snr(new_snr, jam_file)
@@ -52,7 +55,7 @@ def generate_new_bg_snr_files(new_snr, in_dir, out_dir):
 
         audiofile = os.path.join(out_dir, osp.splitext(osp.basename(jam_file))[0] + ".wav")
         logger.debug(audiofile)
-        scaper.generate_from_jams(out_jams, audiofile)
+        scaper.generate_from_jams(out_jams, audiofile, **kwargs)
 
 
 def modify_fg_onset(added_value, jam_file):
@@ -79,17 +82,17 @@ def modify_fg_onset(added_value, jam_file):
     return jam_obj
 
 
-def generate_new_fg_onset_files(added_value, in_dir, out_dir):
+def generate_new_fg_onset_files(added_value, in_dir, out_dir, **kwargs):
     """ Generate the new JAMS and audio files adding a value to forground onsets
     Args:
         added_value: float, value in seconds, value to be added to previous onset
         in_dir: str, folder containing JAMS file with background SNR to be changed
         out_dir: str, folder where to save the new audio and JAMS
-
+        kwargs: dict, scaper.generate_from_jams params
     Returns:
 
     """
-    logger = create_logger(__name__, "Desed.log")
+    logger = create_logger(__name__ + "/" + inspect.currentframe().f_code.co_name)
     create_folder(out_dir)
     for jam_file in sorted(glob.glob(os.path.join(in_dir, "*.jams"))):
         jams_obj = modify_fg_onset(added_value, jam_file)
@@ -98,10 +101,10 @@ def generate_new_fg_onset_files(added_value, in_dir, out_dir):
 
         audiofile = os.path.join(out_dir, osp.splitext(osp.basename(jam_file))[0] + ".wav")
         logger.debug(audiofile)
-        scaper.generate_from_jams(out_jams, audiofile)
+        scaper.generate_from_jams(out_jams, audiofile, **kwargs)
 
 
-def initialize_scaper(duration, fg_folder, bg_folder, ref_db):
+def initialize_scaper(duration, fg_folder, bg_folder, ref_db=None):
     """ Initialize scaper object with a reference dB.
     Args:
         duration: float, in seconds, the duration of the generated audio clip.
@@ -115,7 +118,8 @@ def initialize_scaper(duration, fg_folder, bg_folder, ref_db):
     """
     sc = scaper.Scaper(duration, fg_folder, bg_folder)
     sc.protected_labels = []
-    sc.ref_db = ref_db
+    if ref_db is not None:
+        sc.ref_db = ref_db
 
     return sc
 
@@ -137,21 +141,22 @@ def add_random_background(scaper_obj):
     return scaper_obj
 
 
-def generate_single_file(class_params, class_lbl, ref_db, duration, fg_folder, bg_folder, outfolder, filename,
-                         min_events=0):
+def generate_single_file(class_params, class_lbl, duration, fg_folder, bg_folder, outfolder, filename, ref_db=None,
+                         min_events=0, reverb=0.1, **kwargs):
     """ Generate a single file, using the information of onset or offset present
     (see DESED dataset and folders in soundbank foreground)
     Args:
         class_params: dict, dict containing information about how to mix classes, and the probability of each class.
         class_lbl: str, the main foreground label of the generated file.
-        ref_db: float, the reference dB of the clip.
         duration: float, in seconds, the duration of the generated audio clip.
         fg_folder: str, path of foreground files (be careful, need subfolders, one per class or group)
         bg_folder: str, path of background files (be careful, need subfolders, one per group)
         outfolder: str, path to extract generate file
         filename: str, name of the generated file, without extension (.wav, .jams and .txt will be created)
+        ref_db: float, the reference dB of the clip.
         min_events: int, the minimum number of events to add (on top of the main event), maximum is in class_params.
-
+        reverb: float, the reverb to be applied to the foreground events
+        kwargs: arguments accepted by Scaper.generate
     Returns:
         None
     """
@@ -174,64 +179,62 @@ def generate_single_file(class_params, class_lbl, ref_db, duration, fg_folder, b
     txtfile = osp.join(outfolder, f"{filename}.txt")
 
     sc.generate(audiofile, jamsfile,
-                allow_repeated_label=True,
-                allow_repeated_source=True,
-                reverb=0.1,
-                disable_sox_warnings=True,
-                no_audio=False,
-                txt_path=txtfile)
+                reverb=reverb,
+                txt_path=txtfile,
+                **kwargs)
 
 
-def generate_files_from_jams(list_jams, outfolder, fg_path=None, bg_path=None, overwrite_jams=False):
+def generate_files_from_jams(list_jams, outfolder, overwrite_jams=False, save_isolated_events=False,
+                             isolated_events_path=None,  **kwargs):
     """ Generate audio files from jams files generated by Scaper
 
     Args:
         list_jams: list, list of jams filepath generated by Scaper.
         outfolder: str, output path to save audio files.
-        fg_path: str, optional, path of the foreground files to generate audio if different from the one used to
-            generate JAMS
-        bg_path: str, optional, path of the background files to generate audio if different from the one used to
-            generate JAMS
         overwrite_jams: bool, overwrite the input JAMS with generated ones (update fg and bg path for example)
-
+        save_isolated_events: bool, whether or not to save isolated events in a separate folder
+        isolated_events_path: str, only useful when save_isolated_events=True. Give the path to the events folders.
+            If None, a folder is created next to the audio files.
+        kwargs: dict, scaper.generate_from_jams params
     Returns: None
 
     """
-    LOG = create_logger(__name__, "Desed.log")
-    LOG.info(f"generating audio files to {outfolder}")
+    logger = create_logger(__name__ + "/" + inspect.currentframe().f_code.co_name)
+    logger.info(f"generating audio files to {outfolder}")
     create_folder(outfolder)
-    n = 0
-    for jam_file in list_jams:
-        LOG.debug(jam_file)
+    for n, jam_file in enumerate(list_jams):
+        logger.debug(jam_file)
         audiofile = osp.join(outfolder, f"{osp.splitext(osp.basename(jam_file))[0]}.wav")
         if overwrite_jams:
             jams_outfile = jam_file
         else:
             jams_outfile = None
-        generate_from_jams(jam_file, audiofile, fg_path=fg_path, bg_path=bg_path, jams_outfile=jams_outfile)
+        generate_from_jams(jam_file, audiofile, jams_outfile=jams_outfile,
+                           save_isolated_events=save_isolated_events,
+                           isolated_events_path=isolated_events_path,
+                           **kwargs)
 
-        n += 1
-        if n % 500 == 0:
-            LOG.debug(f"generating {n} / {len(list_jams)} files")
-    LOG.info("Done")
+        if n % 200 == 0:
+            logger.info(f"generating {n} / {len(list_jams)} files (updated every 200)")
+    logger.info("Done")
 
 
-def generate_multi_common(number, ref_db, duration, fg_folder, bg_folder, outfolder, min_events, max_events,
+def generate_multi_common(number, duration, fg_folder, bg_folder, outfolder, min_events, max_events, ref_db=None,
                           labels=('choose', []), source_files=('choose', []), sources_time=('const', 0),
                           events_start=('truncnorm', 5.0, 2.0, 0.0, 10.0), events_duration=('uniform', 0.25, 10.0),
                           snrs=('const', 30), pitch_shifts=('uniform', -3.0, 3.0), time_stretches=('uniform', 1, 1),
-                          txt_file=True):
+                          txt_file=True, **kwargs):
     """ Generate
 
     Args:
         number: int, number of audio clips to create.
-        ref_db: float, the dB reference of the clip
         duration: float, in seconds, the duration of the clip
         fg_folder: str, path of foreground files (be careful, need subfolders, one per class or group)
         bg_folder: str, path of background files (be careful, need subfolders, one per group)
         outfolder: str, path to extract generate file
         min_events: int, the minimum number of foreground events to add (pick at random uniformly).
         max_events: int, the maximum number of foreground events to add (pick at random uniformly).
+        ref_db: float, the dB reference of the clip
         labels: tuple or list, strategy to choose foreground events (see Scaper) or list of events.
         source_files: tuple or list, strategy to choose source files (see Scaper) or list of source files.
         sources_time: tuple or list, strategy to choose source start time (see Scaper) or list of sources start time.
@@ -241,11 +244,12 @@ def generate_multi_common(number, ref_db, duration, fg_folder, bg_folder, outfol
         pitch_shifts: tuple or list, strategy to choose pitch shift (see Scaper) or list of pitch shifts.
         time_stretches: tuple or list, strategy to choose time stretches (see Scaper) or list of time stretches.
         txt_file: bool, whether or not to save the .txt file.
+        kwargs: arguments accepted by Scaper.generate
 
     Returns:
         None
     """
-    logger = create_logger(__name__)
+    logger = create_logger(__name__ + "/" + inspect.currentframe().f_code.co_name)
     params = {
         'labels': labels,
         'source_files': source_files,
@@ -261,60 +265,65 @@ def generate_multi_common(number, ref_db, duration, fg_folder, bg_folder, outfol
         logger.debug('Generating soundscape: {:d}/{:d}'.format(n + 1, number))
         # create a scaper
         n_events = np.random.randint(min_events, max_events + 1)
-        generate_one_bg_multi_fg(ref_db=ref_db,
-                                 duration=duration,
+        generate_one_bg_multi_fg(duration=duration,
                                  fg_folder=fg_folder,
                                  bg_folder=bg_folder,
                                  out_folder=outfolder,
                                  filename=n,
                                  n_fg_events=n_events,
+                                 ref_db=ref_db,
                                  **params,
-                                 txt_file=txt_file)
+                                 txt_file=txt_file,
+                                 **kwargs)
 
 
 def generate_tsv_from_jams(list_jams, tsv_out, post_process=True, background_label=False):
     """ In scaper.generate they create a txt file for each audio file.
     Using the same idea, we create a single tsv file with all the audio files and their labels.
     Args:
-        list_jams: list, list of paths of JAMS files.
+        list_jams: list, list of paths of JAMS files. Assume WAV files have the same name as JAMS files.
         tsv_out: str, path of the tsv to be saved
         post_process: bool, post_process removes small blanks, clean the overlapping same events in the labels and
         make the smallest event 250ms long.
         background_label: bool, include the background label in the annotations.
+        # source_sep_path: str, the path to save the csv of separated source files. Assume
 
     Returns:
         None
     """
+    create_folder(osp.dirname(tsv_out))
     final_df = pd.DataFrame()
     for jam_file in list_jams:
         print(jam_file)
         fbase = osp.basename(jam_file)
-        df, length = get_df_from_jams(jam_file, background_label=background_label, return_length=True)
+        df, length = get_labels_from_jams(jam_file, background_label=background_label, return_length=True)
 
         if post_process:
-            df, _ = post_process_df(df, length)
+            df, _ = _post_process_labels_file(df, length)
 
-        df["filename"] = osp.basename(fbase)
+        df["filename"] = f"{osp.splitext(fbase)[0]}.wav"
         final_df = final_df.append(df[['filename', 'onset', 'offset', 'event_label']], ignore_index=True)
 
     final_df = final_df.sort_values(by=["filename", "onset"])
     final_df.to_csv(tsv_out, sep="\t", index=False, float_format="%.3f")
 
 
-def generate_one_bg_multi_fg(ref_db, duration, fg_folder, bg_folder, out_folder, filename, n_fg_events,
+def generate_one_bg_multi_fg(duration, fg_folder, bg_folder, out_folder, filename, n_fg_events, ref_db=None,
                              labels=('choose', []), source_files=('choose', []), sources_time=('const', 0),
                              events_start=('truncnorm', 5.0, 2.0, 0.0, 10.0), events_duration=("uniform", 0.25, 10.0),
                              snrs=("const", 30), pitch_shifts=('uniform', -3.0, 3.0),
-                             time_stretches=('uniform', 1, 1), txt_file=True):
+                             time_stretches=('uniform', 1, 1), reverb=0.1, txt_file=True,
+                             save_isolated_events=False, isolated_events_path=None,
+                             **kwargs):
     """ Generate a clip with a background file and multiple foreground files
     Args:
-        ref_db: float, the dB reference of the clip
         duration: float, in seconds, the duration of the clip
         fg_folder: str, path of foreground files (be careful, need subfolders, one per class or group)
         bg_folder: str, path of background files (be careful, need subfolders, one per group)
         out_folder: str, path to extract generate file
         filename: str, name of the generated file, without extension (.wav, .jams and .txt will be created)
         n_fg_events: int, the number of foreground events to add
+        ref_db: float, the dB reference of the clip
         labels: tuple or list, strategy to choose foreground events (see Scaper) or list of events.
         source_files: tuple or list, strategy to choose source files (see Scaper) or list of source files.
         sources_time: tuple or list, strategy to choose source start time (see Scaper) or list of sources start time.
@@ -323,8 +332,12 @@ def generate_one_bg_multi_fg(ref_db, duration, fg_folder, bg_folder, out_folder,
         snrs: tuple or list, strategy to choose foreground to background SNRs (see Scaper) or list of SNRs.
         pitch_shifts: tuple or list, strategy to choose pitch shift (see Scaper) or list of pitch shifts.
         time_stretches: tuple or list, strategy to choose time stretches (see Scaper) or list of time stretches.
+        reverb: float, the reverb to be applied to the foreground events
         txt_file: bool, whether or not to save the .txt file.
-
+        save_isolated_events: bool, whether or not to save isolated events in a separate folder
+        isolated_events_path: str, only useful when save_isolated_events=True. Give the path to the events folders.
+            If None, a folder is created next to the audio files.
+        kwargs: arguments accepted by Scaper.generate
     Returns:
         None
     """
@@ -357,9 +370,8 @@ def generate_one_bg_multi_fg(ref_db, duration, fg_folder, bg_folder, out_folder,
     else:
         txtfile = None
     sc.generate(audio_path=audiofile, jams_path=jamsfile,
-                allow_repeated_label=True,
-                allow_repeated_source=True,
-                reverb=0.1,
-                disable_sox_warnings=True,
-                no_audio=False,
-                txt_path=txtfile)
+                reverb=reverb,
+                txt_path=txtfile,
+                save_isolated_events=save_isolated_events,
+                isolated_events_path=isolated_events_path,
+                **kwargs)

@@ -15,10 +15,10 @@ setup(
     author_email="turpaultn@gmail.com",
     url="https://github.com/turpaultn/DESED",
     license='MIT',
-    package_dir={"": package_file("src")},
-    packages=find_packages(package_file("src")),
+    package_dir={"": package_file("desed")},
+    packages=find_packages(package_file("desed")),
     install_requires=[
-            "scaper >= 1.0.3",
+            "scaper >= 1.0.2",
             "numpy >= 1.15.4",
             "pandas >= 0.24.0",
             "dcase-util >= 0.2.5",
