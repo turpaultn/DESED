@@ -1,9 +1,4 @@
 # -*- coding: utf-8 -*-
-#########################################################################
-# Initial software
-# Copyright Nicolas Turpault, Romain Serizel, Justin Salamon, Ankit Parag Shah, 2019, v1.0
-# This software is distributed under the terms of the License MIT
-#########################################################################
 import logging
 import time
 import argparse
@@ -12,7 +7,7 @@ import pandas as pd
 from pprint import pformat
 
 from desed.generate_synthetic import generate_new_fg_onset_files, generate_multi_common
-from desed.utils import create_folder, rm_high_polyphony, post_processing_annotations
+from desed.utils import create_folder, rm_high_polyphony, post_processing_txt_annotations
 from desed.Logger import create_logger
 import config as cfg
 
@@ -79,7 +74,7 @@ if __name__ == '__main__':
     out_folder_500 = osp.join(out_folder, "500ms")
     create_folder(out_folder_500)
 
-    generate_multi_common(n_soundscapes, ref_db, duration, fg_folder, bg_folder, out_folder_500,
+    generate_multi_common(n_soundscapes, duration, fg_folder, bg_folder, out_folder_500, ref_db=ref_db,
                           min_events=1, max_events=1, labels=('choose', []), source_files=('choose', []),
                           sources_time=(source_time_dist, source_time),
                           events_start=(
@@ -92,7 +87,7 @@ if __name__ == '__main__':
 
     rm_high_polyphony(out_folder_500, 3)
     out_tsv = osp.join(out_tsv_folder, "500ms.tsv")
-    post_processing_annotations(out_folder_500, output_folder=out_folder_500,
+    post_processing_txt_annotations(out_folder_500, output_folder=out_folder_500,
                                 output_tsv=out_tsv)
     df = pd.read_csv(out_tsv, sep="\t")
     # Be careful, if changing the values of the added onset value,

@@ -1,9 +1,4 @@
 # -*- coding: utf-8 -*-
-#########################################################################
-# Initial software
-# Copyright Nicolas Turpault, Romain Serizel, Justin Salamon, Ankit Parag Shah, 2019, v1.0
-# This software is distributed under the terms of the License MIT
-#########################################################################
 import time
 import argparse
 import pandas as pd

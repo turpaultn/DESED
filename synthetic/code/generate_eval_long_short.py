@@ -1,16 +1,11 @@
 # -*- coding: utf-8 -*-
-#########################################################################
-# Initial software
-# Copyright Nicolas Turpault, Romain Serizel, Justin Salamon, Ankit Parag Shah, 2019, v1.0
-# This software is distributed under the terms of the License MIT
-#########################################################################
 import logging
 import time
 import argparse
 import os.path as osp
 from pprint import pformat
 
-from desed.utils import create_folder, rm_high_polyphony, post_processing_annotations
+from desed.utils import create_folder, rm_high_polyphony, post_processing_txt_annotations
 from desed.generate_synthetic import generate_new_bg_snr_files, generate_multi_common
 from desed.Logger import create_logger
 import config as cfg
@@ -74,7 +69,8 @@ if __name__ == '__main__':
 
     out_folder_ls_30 = osp.join(out_folder, "ls_30dB")
     create_folder(out_folder_ls_30)
-    generate_multi_common(n_soundscapes, ref_db, duration, fg_folder, bg_folder, out_folder_ls_30, min_events, max_events,
+    generate_multi_common(n_soundscapes, duration, fg_folder, bg_folder, out_folder_ls_30, min_events, max_events,
+                          ref_db=ref_db,
                           labels=('choose', []), source_files=('choose', []),
                           sources_time=(source_time_dist, source_time),
                           events_start=(event_time_dist, event_time_mean, event_time_std, event_time_min, event_time_max),
@@ -83,7 +79,7 @@ if __name__ == '__main__':
                           txt_file=False)
 
     rm_high_polyphony(out_folder_ls_30, 3)
-    post_processing_annotations(out_folder_ls_30, output_folder=out_folder_ls_30, output_tsv=args.outtsv,
+    post_processing_txt_annotations(out_folder_ls_30, output_folder=out_folder_ls_30, output_tsv=args.outtsv,
                                 background_label=True)
 
     # We create the same dataset with different background SNR

@@ -1,9 +1,4 @@
 # -*- coding: utf-8 -*-
-#########################################################################
-# Initial software
-# Copyright Nicolas Turpault, Romain Serizel, Justin Salamon, Ankit Parag Shah, 2019, v1.0
-# This software is distributed under the terms of the License MIT
-#########################################################################
 import logging
 import time
 import argparse
@@ -12,14 +7,14 @@ from pprint import pformat
 
 import generate_training
 from desed.generate_synthetic import generate_new_bg_snr_files
-from desed.utils import create_folder, rm_high_polyphony, post_processing_annotations
+from desed.utils import create_folder, rm_high_polyphony, post_processing_txt_annotations
 from desed.Logger import create_logger
 
 import config as cfg
 
 
 if __name__ == '__main__':
-    LOG = create_logger(__name__, "Desed.log", terminal_level=logging.INFO)
+    LOG = create_logger(__name__, terminal_level=logging.INFO)
     LOG.info(__file__)
     t = time.time()
     parser = argparse.ArgumentParser()
@@ -63,7 +58,7 @@ if __name__ == '__main__':
                                      out_folder=out_folder_30)
 
     rm_high_polyphony(out_folder_30, 3)
-    post_processing_annotations(out_folder_30, output_folder=out_folder_30, output_tsv=args.outtsv)
+    post_processing_txt_annotations(out_folder_30, output_folder=out_folder_30, output_tsv=args.outtsv)
 
     # We create the same dataset with different background SNR
     # Be careful, 6 means the background SNR is 6,

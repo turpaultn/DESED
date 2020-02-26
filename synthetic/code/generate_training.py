@@ -1,9 +1,4 @@
 # -*- coding: utf-8 -*-
-#########################################################################
-# Initial software
-# Copyright Nicolas Turpault, Romain Serizel, Justin Salamon, Ankit Parag Shah, 2019, v1.0
-# This software is distributed under the terms of the License MIT
-#########################################################################
 import time
 import argparse
 import os.path as osp
@@ -12,7 +7,7 @@ from pprint import pformat
 import logging
 
 from desed.generate_synthetic import generate_single_file
-from desed.utils import create_folder, rm_high_polyphony, post_processing_annotations
+from desed.utils import create_folder, rm_high_polyphony, post_processing_txt_annotations
 from desed.Logger import create_logger
 import config as cfg
 
@@ -28,12 +23,12 @@ def generate_files(param_file, number, ref_db, duration, fg_folder, bg_folder, o
         for i in range(int(number * class_params['prob'])):
             generate_single_file(class_params=class_params,
                                  class_lbl=class_lbl,
-                                 ref_db=ref_db,
                                  duration=duration,
                                  fg_folder=fg_folder,
                                  bg_folder=bg_folder,
                                  outfolder=out_folder,
                                  filename=n,
+                                 ref_db=ref_db,
                                  min_events=min_events)
 
             n += 1
@@ -76,5 +71,5 @@ if __name__ == "__main__":
                    out_folder=outfolder)
 
     rm_high_polyphony(outfolder, 3)
-    post_processing_annotations(outfolder, output_folder=outfolder, output_tsv=out_tsv)
+    post_processing_txt_annotations(outfolder, output_folder=outfolder, output_tsv=out_tsv)
     LOG.info(f"time of the program: {time.time() - t}")

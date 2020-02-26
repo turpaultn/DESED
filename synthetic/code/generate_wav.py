@@ -1,9 +1,4 @@
 # -*- coding: utf-8 -*-
-#########################################################################
-# Initial software
-# Copyright Nicolas Turpault, Romain Serizel, Justin Salamon, Ankit Parag Shah, 2019, v1.0
-# This software is distributed under the terms of the License MIT
-#########################################################################
 import time
 import argparse
 import os
@@ -17,7 +12,7 @@ from desed.Logger import create_logger
 
 
 if __name__ == '__main__':
-    LOG = create_logger("DESED", "Desed.log", terminal_level=logging.INFO, file_level=logging.INFO)
+    LOG = create_logger("DESED", terminal_level=logging.INFO)
     LOG.info(__file__)
     t = time.time()
     parser = argparse.ArgumentParser()
