@@ -1,32 +1,36 @@
 {
   "Blender": {
-    "prob" : 0.1,
-    "event_max": 8,
-    "event_mean": 3,
-    "event_class": [
-      "Blender",
-      "Dishes",
-      "Speech"
-    ],
-    "event_prob": [
-      27,
-      18,
-      55
-    ]
+    "prob": 0.1,
+    "co-occurences": {
+      "max_nb_events": 8,
+      "mean_nb_events": 3,
+      "classes": [
+        "Blender",
+        "Dishes",
+        "Speech"
+      ],
+      "probas": [
+        0.27,
+        0.18,
+        0.55
+      ]
+    }
   },
   "Cat": {
-    "prob" : 0.1,
-    "event_max": 9,
-    "event_mean": 4,
-    "event_class": [
-      "Cat",
-      "Dishes",
-      "Speech"
-    ],
-    "event_prob": [
-      60,
-      10,
-      30
-    ]
+    "prob": 0.1,
+    "co-occurences": {
+      "max_nb_events": 9,
+      "mean_nb_events": 4,
+      "classes": [
+        "Cat",
+        "Dishes",
+        "Speech"
+      ],
+      "probas": [
+        0.6,
+        0.1,
+        0.3
+      ]
+    }
   }
 }

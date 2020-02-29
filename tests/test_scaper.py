@@ -17,7 +17,7 @@ def test_short_background_only():
                       ("const",os.path.join(background_fd, "label", "noise-free-sound-0055.wav")),
                       ("const", 0))
     fname = "test_bg"
-    fpath = os.path.join(absolute_dir_path, "generated", fname)
+    fpath = os.path.join(absolute_dir_path, "generated", "short_bg_scaper", fname)
     create_folder(os.path.dirname(fpath))
     sc.generate(f"{fpath}.wav", f"{fpath}.jams")
 
@@ -34,7 +34,7 @@ def test_short_background_fg_events():
                       ("const", os.path.join(background_fd, "label", "noise-free-sound-0055.wav")),
                       ("const", 0))
     fname = "test_bg_fg"
-    fpath = os.path.join(absolute_dir_path, "generated", fname)
+    fpath = os.path.join(absolute_dir_path, "generated", "short_bg_scaper", fname)
     sc.add_event(("const", "label"),
                  ("const", os.path.join(foreground_fd, "label", "26104_0.wav")),
                  ("const", 0), ("const", 5), ("const", 5), ("const", 6), ("const", 0), ("const", 1))

@@ -8,7 +8,7 @@ from pprint import pformat
 import logging
 
 from desed.generate_synthetic import generate_files_from_jams, generate_tsv_from_jams
-from desed.Logger import create_logger
+from desed.logger import create_logger
 
 
 if __name__ == '__main__':
@@ -16,7 +16,7 @@ if __name__ == '__main__':
     LOG.info(__file__)
     t = time.time()
     parser = argparse.ArgumentParser()
-    parser.add_argument('--overwrite-jams', action="store_true", default=False)
+    parser.add_argument('--save_jams', action="store_true", default=False)
     parser.add_argument('--basedir', type=str, default="..")
     args = parser.parse_args()
     pformat(vars(args))
@@ -27,13 +27,17 @@ if __name__ == '__main__':
     # ########
     train_folder = osp.join(base_folder, 'metadata', 'train', 'soundscapes', 'synthetic')
     out_train_folder = osp.join(base_folder, 'audio', 'train', 'synthetic')
+    if args.save_jams:
+        out_folder_jams_train = out_train_folder
+    else:
+        out_folder_jams_train = None
     out_train_tsv = osp.join(base_folder, 'metadata', 'train', 'soundscapes', 'synthetic.tsv')
 
     list_jams_train = glob.glob(osp.join(train_folder, "*.jams"))
     fg_path_train = osp.join(base_folder, "audio", "train", "soundbank", "foreground")
     bg_path_train = osp.join(base_folder, 'audio', "train", "soundbank", "background")
     generate_files_from_jams(list_jams_train, out_train_folder, fg_path=fg_path_train, bg_path=bg_path_train,
-                             overwrite_jams=args.overwrite_jams)
+                             out_folder_jams=out_folder_jams_train)
     generate_tsv_from_jams(list_jams_train, out_train_tsv)
 
     # ########
@@ -64,6 +68,10 @@ if __name__ == '__main__':
         out_tsv = osp.join(base_folder, "metadata", "eval", "soundscapes", bn + ".tsv")
 
         list_jams = glob.glob(osp.join(folder, "*.jams"))
+        if args.save_jams:
+            out_folder_jams_eval = out_folder
+        else:
+            out_folder_jams_eval = None
         generate_files_from_jams(list_jams, out_folder, fg_path=fg_path_eval, bg_path=bg_path_eval,
-                                 overwrite_jams=args.overwrite_jams)
+                                 out_folder_jams=out_folder_jams_eval)
         generate_tsv_from_jams(list_jams, out_tsv)

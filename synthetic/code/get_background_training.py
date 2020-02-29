@@ -13,7 +13,7 @@ import io
 from pprint import pformat
 
 from desed.utils import create_folder
-from desed.Logger import create_logger
+from desed.logger import create_logger
 
 if __name__ == '__main__':
     LOG = create_logger("DESED", "Desed.log", terminal_level=logging.INFO, file_level=logging.INFO)
