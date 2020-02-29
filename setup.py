@@ -18,7 +18,7 @@ setup(
     package_dir={"": package_file("desed")},
     packages=find_packages(package_file("desed")),
     install_requires=[
-            "scaper >= 1.0.2",
+            "scaper >= 1.3.5",
             "numpy >= 1.15.4",
             "pandas >= 0.24.0",
             "dcase-util >= 0.2.5",
