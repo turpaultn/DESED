@@ -133,7 +133,7 @@
             "label"
           ],
           "protected_labels": [],
-          "sr": 44100,
+          "sr": 16000,
           "ref_db": -12,
           "n_channels": 1,
           "fade_in_len": 0.01,
