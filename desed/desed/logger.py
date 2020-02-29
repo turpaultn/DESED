@@ -4,13 +4,12 @@ import logging.config
 
 
 def create_logger(logger_name, log_file=None, terminal_level=logging.INFO, file_level=logging.INFO):
-    """
-    Create a logger.
-    The same logger object will be active all through out the python
-    interpreter process.
-    https://docs.python.org/2/howto/logging-cookbook.html
-    Use   logger = logging.getLogger(logger_name) to obtain logging all
-    through out
+    """ Create a logger.
+    Args:
+        logger_name: str, name of the logger
+        log_file: str, path of the file to log values on
+        terminal_level: int, logging level in the terminal
+        file_level: int, logging level in the file
     """
     logging.config.dictConfig({
         'version': 1,
@@ -54,3 +53,13 @@ def create_logger(logger_name, log_file=None, terminal_level=logging.INFO, file_
     terminal_h.setFormatter(tool_formatter)
     logger.addHandler(terminal_h)
     return logger
+
+
+class DesedWarning(Warning):
+    """The root DESED warning class"""
+    pass
+
+
+class DesedError(Exception):
+    """The root DESED exception class"""
+    pass

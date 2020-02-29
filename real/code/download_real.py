@@ -3,7 +3,7 @@ from __future__ import print_function, absolute_import
 
 import os
 import pandas as pd
-from desed.Logger import create_logger
+from desed.logger import create_logger
 from desed.download_real import download
 
 
