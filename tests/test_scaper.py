@@ -24,6 +24,9 @@ def test_short_background_only():
 
     audio_g, sr_g = soundfile.read(f"{fpath}.wav")
     audio_s, sr_s = soundfile.read(os.path.join(absolute_dir_path, "material", "scaper", f"{fname}.wav"))
+    print(f"audio gen: {audio_g}")
+    print(f"audio source: {audio_s}")
+    print(f"shapes, source: {audio_s.shape}, gen: {audio_g.shape}")
     assert np.allclose(audio_g, audio_s)
 
 
@@ -44,4 +47,7 @@ def test_short_background_fg_events():
 
     audio_g, sr_g = soundfile.read(f"{fpath}.wav")
     audio_s, sr_s = soundfile.read(os.path.join(absolute_dir_path, "material", "scaper", f"{fname}.wav"))
+    print(f"audio gen: {audio_g}")
+    print(f"audio source: {audio_s}")
+    print(f"shapes, source: {audio_s.shape}, gen: {audio_g.shape}")
     assert np.allclose(audio_g, audio_s)
