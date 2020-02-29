@@ -1,159 +1,19 @@
-# -*- coding: utf-8 -*-
-#########################################################################
-# Initial software
-# Copyright Nicolas Turpault, Romain Serizel, Justin Salamon, Ankit Parag Shah, 2019, v1.0
-# This software is distributed under the terms of the License MIT
-#########################################################################
+"""Post processing of desed synthetic generation of soundscapes"""
+import glob
+import inspect
+import os
+import shutil
+from os import path as osp
+
 import jams
 import numpy as np
-import os
-import os.path as osp
-import shutil
-import glob
-
-import soundfile as sf
-import pprint
 import pandas as pd
-
-from .Logger import create_logger
-
-
-def create_folder(folder, delete_if_exists=False):
-    """ Create folder (and parent folders) if not exists.
-
-    Args:
-        folder: str, path of folder(s) to create.
-        delete_if_exists: bool, True if you want to delete the folder when exists
-
-    Returns:
-        None
-    """
-    if delete_if_exists:
-        if os.path.exists(folder):
-            shutil.rmtree(folder)
-            os.mkdir(folder)
-
-    if not os.path.exists(folder):
-        os.makedirs(folder)
+import soundfile as sf
+from desed.logger import create_logger
+from desed.utils import create_folder
 
 
-pp = pprint.PrettyPrinter()
-def pprint(x):
-    pp.pprint(x)
-
-
-def choose_cooccurence_class(class_params):
-    """ Choose another class given a dictionary of parameters (from an already specified class).
-    Args:
-        class_params: dict, need to define 'event_prob' and 'event_class' attributes.
-        They are lists, and map the probability of having each class.
-
-    Returns:
-        str, the class name.
-    """
-    tmp = 0
-    inter = []
-    for i in range(len(class_params['event_prob'])):
-        tmp += class_params['event_prob'][i]
-        inter.append(tmp)
-    ind = np.random.uniform()*100
-    return class_params['event_class'][np.argmax(np.asarray(inter) > ind)]
-
-
-def choose_file(class_path):
-    """ Choose randomly a file of a given class.
-    Args:
-        class_path: str, path of the class containing all the files of a certain class.
-
-    Returns:
-        str, path of the file.
-    """
-    source_files = sorted(glob.glob(os.path.join(class_path, "*")))
-    source_files = [f for f in source_files if os.path.isfile(f)]
-    ind = np.random.randint(0, len(source_files))
-    return source_files[ind]
-
-
-def add_event(sc, class_lbl):
-    """ add a single event to a scaper object given a class. Take into account if the event has an onset or offset
-    Args:
-        sc: scaper.Scaper, scaper object to add event in.
-        class_lbl: str, label of the event to add.
-
-    Returns:
-        sc, scaper.Scaper object with the event added.
-
-    """
-    duration = sc.duration
-    fg_folder = sc.fg_path
-
-    logger = create_logger(__name__)
-    source_time_dist = 'const'
-    source_time = 0.0
-    event_duration_min = 0.25
-
-    snr_dist = 'uniform'
-    snr_min = 6
-    snr_max = 30
-
-    pitch_dist = 'uniform'
-    pitch_min = -3.0
-    pitch_max = 3.0
-
-    time_stretch_dist = 'uniform'
-    time_stretch_min = 1
-    time_stretch_max = 1
-
-    chosen_file = choose_file(os.path.join(fg_folder, class_lbl))
-    file_duration = round(sf.info(chosen_file).duration, 6)  # round because Scaper uses sox with round 6 digits
-    if "_nOn_nOff" in class_lbl:
-        logger.debug('no onset/offset')
-        sc.add_event(label=('const', class_lbl),
-                     source_file=('const', chosen_file),
-                     source_time=('uniform', 0, np.maximum(file_duration - duration, 0)),
-                     event_time=('const', 0),
-                     event_duration=('const', duration),
-                     snr=(snr_dist, snr_min, snr_max),
-                     pitch_shift=(pitch_dist, pitch_min, pitch_max),
-                     time_stretch=(time_stretch_dist, time_stretch_min, time_stretch_max))
-    elif "_nOn" in class_lbl:
-        logger.debug('no onset')
-        source_start = np.random.uniform(0, file_duration - event_duration_min)
-        sc.add_event(label=('const', class_lbl),
-                     source_file=('const', chosen_file),
-                     source_time=('const', source_start),
-                     event_time=('const', 0),
-                     event_duration=('const', np.minimum(duration, file_duration - source_start)),
-                     snr=(snr_dist, snr_min, snr_max),
-                     pitch_shift=(pitch_dist, pitch_min, pitch_max),
-                     time_stretch=(time_stretch_dist, time_stretch_min, time_stretch_max))
-    elif "_nOff" in class_lbl:
-        logger.debug('no offset')
-        event_start = np.random.uniform(max(0, duration - file_duration), duration - event_duration_min)
-        event_length = duration - event_start
-        sc.add_event(label=('const', class_lbl),
-                     source_file=('const', chosen_file),
-                     source_time=(source_time_dist, source_time),
-                     event_time=('const', event_start),
-                     event_duration=('const', event_length),
-                     snr=(snr_dist, snr_min, snr_max),
-                     pitch_shift=(pitch_dist, pitch_min, pitch_max),
-                     time_stretch=(time_stretch_dist, time_stretch_min, time_stretch_max))
-    else:
-        event_start = np.random.uniform(0, duration - event_duration_min)
-        event_length = min(file_duration, duration - event_start)
-        sc.add_event(label=('const', class_lbl),
-                     source_file=('const', chosen_file),
-                     source_time=(source_time_dist, source_time),
-                     event_time=('const', event_start),
-                     event_duration=('const', event_length),
-                     snr=(snr_dist, snr_min, snr_max),
-                     pitch_shift=(pitch_dist, pitch_min, pitch_max),
-                     time_stretch=(time_stretch_dist, time_stretch_min, time_stretch_max))
-    return sc
-
-
-def rm_high_polyphony(folder, max_polyphony=3, save_tsv_associated=None):
+def rm_high_polyphony(folder, max_polyphony=3, save_tsv_associated=None, pattern_sources="_events"):
     """ Remove the files having a too high polyphony in the deignated folder
 
     Args:
@@ -165,7 +25,7 @@ def rm_high_polyphony(folder, max_polyphony=3, save_tsv_associated=None):
         None
 
     """
-    logger = create_logger(__name__)
+    logger = create_logger(__name__ + "/" + inspect.currentframe().f_code.co_name)
     # Select training
     i = 0
     df = pd.DataFrame(columns=['scaper', 'bg', 'fg'])
@@ -185,11 +45,14 @@ def rm_high_polyphony(folder, max_polyphony=3, save_tsv_associated=None):
     if save_tsv_associated is not None:
         df.to_csv(save_tsv_associated, sep="\t", index=False)
 
-    logger.info(f"{i} files with less than {max_polyphony} overlapping events. Deleting others...")
+    logger.warning(f"{i} files with less than {max_polyphony} overlapping events. Deleting others...")
     for fname in fnames_to_rmv:
         names = glob.glob(osp.splitext(fname)[0] + ".*")
         for file in names:
             os.remove(file)
+        dirs_sources = glob.glob(osp.splitext(fname)[0] + pattern_sources)
+        for dir_path in dirs_sources:
+            shutil.rmtree(dir_path)
 
 
 def sanity_check(df, length_sec=None):
@@ -231,20 +94,20 @@ def get_data(file, wav_file=None, background_label=False):
                                       "Information not in the txt file")
         df = pd.read_csv(file, sep='\t', names=["onset", "offset", "event_label"])
     elif ext == ".jams":
-        df = get_df_from_jams(file, background_label)
+        df = get_labels_from_jams(file, background_label)
     else:
         raise NotImplementedError("Only txt and jams generated by Scaper can be loaded with get_data")
 
     return df, length_sec
 
 
-def post_process_df(df, length_sec, min_dur_event=0.250, min_dur_inter=0.150):
+def _post_process_labels_file(df_ann, length_sec=None, min_dur_event=0.250, min_dur_inter=0.150, rm_nOn_n_Off=True):
     """ Check the annotations,
         * Merge overlapping annotations of the same class
         * Merge overlapping annotations having less than 150ms between them (or 400ms between the onsets).
         * Make minimum length of events = 250ms.
     Args:
-        df:
+        df_ann:
         length_sec:
         min_dur_event:
         min_dur_inter:
@@ -252,7 +115,10 @@ def post_process_df(df, length_sec, min_dur_event=0.250, min_dur_inter=0.150):
     Returns:
 
     """
-    logger = create_logger(__name__)
+    df = df_ann.copy()
+    if rm_nOn_n_Off:
+        df["event_label"] = df["event_label"].apply(lambda x: x.replace("_nOff", "").replace("_nOn", ""))
+    logger = create_logger(__name__ + "/" + inspect.currentframe().f_code.co_name)
     fix_count = 0
     df = sanity_check(df, length_sec)
     df = df.sort_values('onset')
@@ -302,15 +168,66 @@ def post_process_df(df, length_sec, min_dur_event=0.250, min_dur_inter=0.150):
     return df, fix_count
 
 
-def post_processing_annotations(folder, wavdir=None, output_folder=None, output_tsv=None, min_dur_event=0.250,
-                                min_dur_inter=0.150, background_label=False, rm_nOn_nOff=False):
+def post_process_df_labels(df, files_duration=None, output_tsv=None, min_dur_event=0.250,
+                           min_dur_inter=0.150, rm_nOn_nOff=False):
+    """ clean the .txt files of each file. It is the same processing as the real data
+        - overlapping events of the same class are mixed
+        - if silence < 150ms between two conscutive events of the same class, they are mixed
+        - if event < 250ms, the event lasts 250ms
+
+        Args:
+            df: pd.DataFrame, dataframe of annotations containing columns ["filename", "onset", "offset", "event_label"]
+            files_duration: pd.DataFrame or float, dataframe containing columns ["filename", "duration"]
+                indicating the lengh of a file.
+                or float being the length of all the files if all the files have the same duration.
+            output_tsv: str, optional, tsv with all the annotations concatenated
+            min_dur_event: float, optional in sec, minimum duration of an event
+            min_dur_inter: float, optional in sec, minimum duration between 2 events
+            rm_nOn_nOff: bool, whether to delete the additional _nOn _nOff at the end of labels.
+
+        Returns:
+            None
+        """
+    logger = create_logger(__name__ + "/" + inspect.currentframe().f_code.co_name)
+    fix_count = 0
+    logger.info("Correcting annotations ... \n"
+                "* annotations with negative duration will be removed\n" +
+                "* annotations with duration <250ms will be extended on the offset side)")
+
+    result_df = pd.DataFrame()
+    for fn in df.filename.unique():
+        logger.debug(fn)
+        if files_duration is not None:
+            if type(files_duration) is pd.DataFrame:
+                length_sec = files_duration[files_duration.filename == fn].duration
+            elif type(files_duration) in [float, int]:
+                length_sec = files_duration
+            else:
+                raise TypeError("files duration is pd.DataFrame or a float only")
+        else:
+            length_sec = None
+        df_ann, fc = _post_process_labels_file(df[df.filename == fn], length_sec, min_dur_event,
+                                               min_dur_inter, rm_nOn_nOff)
+        fix_count += fc
+
+        result_df = result_df.append(df_ann[['filename', 'onset', 'offset', 'event_label']], ignore_index=True)
+
+    if output_tsv:
+        result_df.to_csv(output_tsv, index=False, sep="\t", float_format="%.3f")
+
+    logger.info(f"================\nFixed {fix_count} problems\n================")
+    return result_df
+
+
+def post_process_txt_labels(txtdir, wavdir=None, output_folder=None, output_tsv=None, min_dur_event=0.250,
+                            min_dur_inter=0.150, background_label=False, rm_nOn_nOff=False):
     """ clean the .txt files of each file. It is the same processing as the real data
     - overlapping events of the same class are mixed
     - if silence < 150ms between two conscutive events of the same class, they are mixed
     - if event < 250ms, the event lasts 250ms
 
     Args:
-        folder: str, directory path where the XXX.txt files are.
+        txtdir: str, directory path where the XXX.txt files are.
         wavdir: str, directory path where the associated XXX.wav audio files are (associated with .txt files)
         output_folder: str, optional, folder in which to put the checked files
         output_tsv: str, optional, tsv with all the annotations concatenated
@@ -322,9 +239,9 @@ def post_processing_annotations(folder, wavdir=None, output_folder=None, output_
     Returns:
         None
     """
-    logger = create_logger(__name__)
+    logger = create_logger(__name__ + "/" + inspect.currentframe().f_code.co_name)
     if wavdir is None:
-        wavdir = folder
+        wavdir = txtdir
     fix_count = 0
     logger.info("Correcting annotations ... \n"
                 "* annotations with negative duration will be removed\n" +
@@ -333,25 +250,22 @@ def post_processing_annotations(folder, wavdir=None, output_folder=None, output_
     if output_folder is not None:
         create_folder(output_folder)
 
-    if output_tsv is not None:
-        df_single = pd.DataFrame()
+    df_single = pd.DataFrame()  # only useful if output_csv defined
 
     if background_label:
-        list_files = glob.glob(osp.join(folder, "*.jams"))
+        list_files = glob.glob(osp.join(txtdir, "*.jams"))
     else:
-        list_files = glob.glob(osp.join(folder, "*.txt"))
+        list_files = glob.glob(osp.join(txtdir, "*.txt"))
         if len(list_files) == 0:
-            list_files = glob.glob(osp.join(folder, '*.jams'))
+            list_files = glob.glob(osp.join(txtdir, '*.jams'))
 
     out_extension = '.txt'
     for fn in list_files:
         logger.debug(fn)
         df, length_sec = get_data(fn, osp.join(wavdir, osp.splitext(osp.basename(fn))[0] + '.wav'),
                                   background_label=background_label)
-        if rm_nOn_nOff:
-            df["event_label"] = df["event_label"].apply(lambda x: x.replace("_nOff", "").replace("_nOn", ""))
 
-        df, fc = post_process_df(df, length_sec, min_dur_event, min_dur_inter)
+        df, fc = _post_process_labels_file(df, length_sec, min_dur_event, min_dur_inter, rm_nOn_nOff)
         fix_count += fc
 
         if output_folder is not None:
@@ -365,10 +279,10 @@ def post_processing_annotations(folder, wavdir=None, output_folder=None, output_
     if output_tsv:
         df_single.to_csv(output_tsv, index=False, sep="\t", float_format="%.3f")
 
-    logger.info(f"================\nFixed {fix_count} problems\n================")
+    logger.info(f"{fix_count} problems Fixed")
 
 
-def get_df_from_jams(jam_file, background_label=False, return_length=False):
+def get_labels_from_jams(jam_file, background_label=False, return_length=False):
     tsv_data = []
     param = jams.load(jam_file)
     ann = param['annotations'][0]
@@ -382,10 +296,3 @@ def get_df_from_jams(jam_file, background_label=False, return_length=False):
         return df, ann.duration
     else:
         return df
-
-
-if __name__ == '__main__':
-    rm_high_polyphony("/Users/nturpaul/Documents/Seafile/DCASE/Desed_synthetic/eval/soundscapes_generated_ls/ls_30dB")
-    post_processing_annotations("/Users/nturpaul/Documents/Seafile/DCASE/Desed_synthetic/training/soundscapes_generated",
-                                "/Users/nturpaul/Documents/Seafile/DCASE/Desed_synthetic/training/soundscapes_generated",
-                                output_folder="/Users/nturpaul/Documents/Seafile/DCASE/Desed_synthetic/training/soundscapes_generated_fixed2")

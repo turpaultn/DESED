@@ -1,0 +1,165 @@
+{
+  "annotations": [
+    {
+      "annotation_metadata": {
+        "curator": {
+          "name": "",
+          "email": ""
+        },
+        "annotator": {},
+        "version": "",
+        "corpus": "",
+        "annotation_tools": "",
+        "annotation_rules": "",
+        "validation": "",
+        "data_source": ""
+      },
+      "namespace": "scaper",
+      "data": [
+        {
+          "time": 0.0,
+          "duration": 10.0,
+          "value": {
+            "label": "label",
+            "source_file": "/Users/nturpaul/Documents/Seafile/DCASE/Desed/tests/material/soundbank/background/label/noise-free-sound-0055.wav",
+            "source_time": 0,
+            "event_time": 0,
+            "event_duration": 10,
+            "snr": 0,
+            "role": "background",
+            "pitch_shift": null,
+            "time_stretch": null
+          },
+          "confidence": 1.0
+        },
+        {
+          "time": 5.0,
+          "duration": 0.789887,
+          "value": {
+            "label": "label",
+            "source_file": "/Users/nturpaul/Documents/Seafile/DCASE/Desed/tests/material/soundbank/foreground/label/26104_0.wav",
+            "source_time": 0,
+            "event_time": 5,
+            "event_duration": 0.789887,
+            "snr": 6,
+            "role": "foreground",
+            "pitch_shift": 0,
+            "time_stretch": 1
+          },
+          "confidence": 1.0
+        }
+      ],
+      "sandbox": {
+        "scaper": {
+          "duration": 10,
+          "original_duration": 10,
+          "fg_path": "/Users/nturpaul/Documents/Seafile/DCASE/Desed/tests/material/soundbank/foreground",
+          "bg_path": "/Users/nturpaul/Documents/Seafile/DCASE/Desed/tests/material/soundbank/background",
+          "fg_spec": [
+            [
+              [
+                "const",
+                "label"
+              ],
+              [
+                "const",
+                "/Users/nturpaul/Documents/Seafile/DCASE/Desed/tests/material/soundbank/foreground/label/26104_0.wav"
+              ],
+              [
+                "const",
+                0
+              ],
+              [
+                "const",
+                5
+              ],
+              [
+                "const",
+                5
+              ],
+              [
+                "const",
+                6
+              ],
+              "foreground",
+              [
+                "const",
+                0
+              ],
+              [
+                "const",
+                1
+              ]
+            ]
+          ],
+          "bg_spec": [
+            [
+              [
+                "const",
+                "label"
+              ],
+              [
+                "const",
+                "/Users/nturpaul/Documents/Seafile/DCASE/Desed/tests/material/soundbank/background/label/noise-free-sound-0055.wav"
+              ],
+              [
+                "const",
+                0
+              ],
+              [
+                "const",
+                0
+              ],
+              [
+                "const",
+                10
+              ],
+              [
+                "const",
+                0
+              ],
+              "background",
+              null,
+              null
+            ]
+          ],
+          "fg_labels": [
+            "label",
+            "label_nOff",
+            "label_nOn",
+            "label_nOn_nOff"
+          ],
+          "bg_labels": [
+            "label"
+          ],
+          "protected_labels": [],
+          "sr": 16000,
+          "ref_db": -12,
+          "n_channels": 1,
+          "fade_in_len": 0.01,
+          "fade_out_len": 0.01,
+          "n_events": 1,
+          "polyphony_max": 1,
+          "polyphony_gini": 0.07901165808027744,
+          "allow_repeated_label": true,
+          "allow_repeated_source": true,
+          "reverb": null,
+          "scaper_version": "1.3.5",
+          "soundscape_audio_path": "/Users/nturpaul/Documents/Seafile/DCASE/Desed/tests/generated/short_bg_scaper/test_bg_fg.wav",
+          "isolated_events_audio_path": []
+        }
+      },
+      "time": 0,
+      "duration": 10
+    }
+  ],
+  "file_metadata": {
+    "title": "",
+    "artist": "",
+    "release": "",
+    "duration": 10,
+    "identifiers": {},
+    "jams_version": "0.3.4"
+  },
+  "sandbox": {}
+}
