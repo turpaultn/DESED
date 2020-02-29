@@ -1,4 +1,5 @@
 import os
+import numpy as np
 
 import soundfile
 from desed.utils import create_folder
@@ -23,7 +24,7 @@ def test_short_background_only():
 
     audio_g, sr_g = soundfile.read(f"{fpath}.wav")
     audio_s, sr_s = soundfile.read(os.path.join(absolute_dir_path, "material", "scaper", f"{fname}.wav"))
-    assert (audio_g == audio_s).all()
+    assert np.allclose(audio_g, audio_s)
 
 
 def test_short_background_fg_events():
@@ -43,4 +44,4 @@ def test_short_background_fg_events():
 
     audio_g, sr_g = soundfile.read(f"{fpath}.wav")
     audio_s, sr_s = soundfile.read(os.path.join(absolute_dir_path, "material", "scaper", f"{fname}.wav"))
-    assert (audio_g == audio_s).all()
+    assert np.allclose(audio_g, audio_s)
