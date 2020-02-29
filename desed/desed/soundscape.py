@@ -117,7 +117,8 @@ class Soundscape(scaper.Scaper):
         """ Generate a single file, using the information of onset or offset present
         (see DESED dataset and folders in soundbank foreground)
         Args:
-            co_occur_params: dict, dict containing information about how to mix classes, and the probability of each class.
+            co_occur_params: dict, dict containing information about how to mix classes,
+                and the probability of each class.
             label: str, the main foreground label of the generated file.
             out_folder: str, path to extract generate file
             filename: str, name of the generated file, without extension (.wav, .jams and .txt will be created)
@@ -168,6 +169,11 @@ class Soundscape(scaper.Scaper):
             chosen_class = choose_cooccurence_class(co_occur_params)
             sc = self.add_fg_event_non_noff(chosen_class)
 
+        # Just in case an extension has been added
+        ext = osp.splitext(filename)[-1]
+        if ext in [".wav", ".jams", ".txt"]:
+            filename = osp.splitext(filename)[0]
+
         # generate
         audio_file = osp.join(out_folder, f"{filename}.wav")
         jams_file = osp.join(out_folder, f"{filename}.jams")
@@ -182,7 +188,6 @@ class Soundscape(scaper.Scaper):
                 warnings.warn(f"The folder {isolated_events_path} already exists, it means there could be some "
                               f"unwanted audio files from previous generated audio files in it.",
                               DesedWarning)
-
 
         sc.generate(audio_file, jams_file,
                     reverb=reverb,

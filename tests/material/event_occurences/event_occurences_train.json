@@ -1,13 +1,13 @@
 {
-  "Blender": {
-    "prob": 0.1,
+  "label": {
+    "proba": 0.1,
     "co-occurences": {
-      "max_nb_events": 8,
-      "mean_nb_events": 3,
+      "max_events": 8,
+      "mean_events": 3,
       "classes": [
-        "Blender",
-        "Dishes",
-        "Speech"
+        "label",
+        "label_nOn",
+        "label_nOff"
       ],
       "probas": [
         0.27,
@@ -16,15 +16,15 @@
       ]
     }
   },
-  "Cat": {
-    "prob": 0.1,
+  "label_nOn": {
+    "proba": 0.1,
     "co-occurences": {
-      "max_nb_events": 9,
-      "mean_nb_events": 4,
+      "max_events": 9,
+      "mean_events": 4,
       "classes": [
-        "Cat",
-        "Dishes",
-        "Speech"
+        "label_nOn",
+        "label_nOn_nOff",
+        "label_nOff"
       ],
       "probas": [
         0.6,

@@ -37,8 +37,8 @@ def test_choose_class():
                           "event_occurences", "event_occurences_train.json")
     with open(param_json) as json_file:
         params = json.load(json_file)
-    label = choose_cooccurence_class(params["Blender"]["co-occurences"])
-    assert label in ["Blender", "Cat", "Dishes", "Speech"], "Wrong class given"
+    label = choose_cooccurence_class(params["label"]["co-occurences"])
+    assert label in ["label", "label_nOn", "label_nOff", "label_nOn_nOff"], "Wrong class given"
 
 
 def test_choose_file():

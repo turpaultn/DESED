@@ -22,7 +22,7 @@ class SoundscapesGenerator:
         self.samplerate = samplerate
         self.random_state = random_state
 
-    def generate(self, number, outfolder, min_events, max_events,
+    def generate(self, number, outfolder, min_events=1, max_events=5,
                  labels=('choose', []), source_files=('choose', []), sources_time=('const', 0),
                  events_start=('truncnorm', 5.0, 2.0, 0.0, 10.0), events_duration=('uniform', 0.25, 10.0),
                  snrs=('const', 30), pitch_shifts=('uniform', -3.0, 3.0), time_stretches=('uniform', 1, 1),
