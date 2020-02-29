@@ -31,7 +31,7 @@ def test_download_multiprocessing(n_jobs, chunk_size, n_download):
 
 def test_download_file():
     fname = "Y00pbt6aJV8Y_350.000_360.000.wav"
-    res = download_file(result_dir, fname)
+    res = download_file(fname, result_dir)
     # Cannot check if download succeeds since depending country sometimes it does not work
 
 
@@ -39,7 +39,7 @@ def test_download_file_fail():
     errors = ['\x1b[0;31mERROR:\x1b[0m This video is unavailable.\nSorry about that.',
               "ERROR: This video is unavailable.\nSorry about that."]
     fname = "Y4U2-ZMKWgD0_380.000_390.000.wav"
-    res = download_file(result_dir, fname)
+    res = download_file(fname, result_dir)
     print(res)
     assert res[0] == fname
     assert res[1] in errors , "Download did not fail with the right exception"
