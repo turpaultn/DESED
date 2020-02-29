@@ -170,6 +170,8 @@ class Soundscape(scaper.Scaper):
             sc = self.add_fg_event_non_noff(chosen_class)
 
         # Just in case an extension has been added
+        if type(filename) is not str:
+            filename = str(filename)
         ext = osp.splitext(filename)[-1]
         if ext in [".wav", ".jams", ".txt"]:
             filename = osp.splitext(filename)[0]
