@@ -9,8 +9,8 @@ import jams
 import numpy as np
 import pandas as pd
 import soundfile as sf
-from desed.logger import create_logger
-from desed.utils import create_folder
+from .logger import create_logger
+from .utils import create_folder
 
 
 def rm_high_polyphony(folder, max_polyphony=3, save_tsv_associated=None, pattern_sources="_events"):
@@ -18,7 +18,7 @@ def rm_high_polyphony(folder, max_polyphony=3, save_tsv_associated=None, pattern
 
     Args:
         folder: str, path to the folder containing scaper generated sounds (JAMS files) in which to remove the files.
-        max_polyphony: int, the maximum number of sounds that can be hear at the same time (polyphony).
+        max_polyphony: int, the maximum number of sounds that can be heard at the same time (polyphony).
         save_tsv_associated: str, optional, the path to generate the tsv files of associated sounds.
 
     Returns:
@@ -33,7 +33,7 @@ def rm_high_polyphony(folder, max_polyphony=3, save_tsv_associated=None, pattern
     for jam_file in sorted(glob.glob(osp.join(folder, "*.jams"))):
         param = jams.load(jam_file)
         ann = param.annotations.search(namespace='scaper')[0]
-        if ann['sandbox']['scaper']['polyphony_max'] < max_polyphony:
+        if ann['sandbox']['scaper']['polyphony_max'] <= max_polyphony:
             fg = [osp.basename(line.value['source_file']) for line in ann.data]
             bg = osp.basename(ann.data[0].value['source_file'])
             fname = osp.basename(jam_file)

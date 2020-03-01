@@ -10,7 +10,7 @@ import jams
 import json
 
 from desed.soundscape import Soundscape
-from desed.utils import create_folder, pprint, choose_cooccurence_class,choose_file
+from desed.utils import create_folder, pprint, choose_cooccurence_class
 from desed.utils import change_snr, modify_fg_onset, modify_jams
 from desed.post_process import rm_high_polyphony, post_process_txt_labels
 
@@ -42,15 +42,18 @@ def test_choose_class():
 
 
 def test_choose_file():
+    sc = Soundscape(1, os.path.join(absolute_dir_path, "material", "soundbank", "foreground"),
+                    os.path.join(absolute_dir_path, "material", "soundbank", "background"),
+                    random_state=2020, delete_if_exists=True)
     label_pth = os.path.join(absolute_dir_path, "material", "soundbank", "background", "label")
     fpath = os.path.join(absolute_dir_path, "material", "soundbank", "background", "label", "noise-free-sound-0055.wav")
-    assert choose_file(label_pth) == fpath
+    assert sc._choose_file(label_pth) == fpath
 
 
 def test_add_event():
     fg_folder = os.path.join(absolute_dir_path, "material", "soundbank", "foreground")
     bg_folder = os.path.join(absolute_dir_path, "material", "soundbank", "background")
-    sc = Soundscape(1, fg_folder, bg_folder)
+    sc = Soundscape(1, fg_folder, bg_folder, random_state=2020, delete_if_exists=True)
     sc.add_fg_event_non_noff("label")
     sc.add_fg_event_non_noff("label_nOff")
     sc.add_fg_event_non_noff("label_nOn")
@@ -100,7 +103,7 @@ def test_high_polyphony():
     assert len(ll) == 2
 
     save_name = os.path.join(absolute_dir_path, "generated", "final.tsv")
-    rm_high_polyphony(pol_dir, 2, save_name)
+    rm_high_polyphony(pol_dir, 1, save_name)
 
     ll = glob.glob(osp.join(pol_dir, "*.jams"))
     assert len(ll) == 1, f"Problem rm_high_polyphony {len(ll)} != 1"
