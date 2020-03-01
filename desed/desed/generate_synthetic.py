@@ -14,26 +14,43 @@ from .utils import create_folder
 
 
 class SoundscapesGenerator:
-    def __init__(self, duration, fg_folder, bg_folder, ref_db=-55, samplerate=16000, random_state=None):
+    """ Helps to generate set of Soundscapes
+    Args:
+        duration: float, the duration desired of the generated soundscapes
+        fg_folder: str, path to the "foreground" folder. Contains one subfolder for each label
+        bg_folder: str, path to the "background" folder. Contains one subfolder for each label
+        ref_db: float, the dB reference of audio files (See scaper)
+        samplerate: int, the sample rate desired of the generated soundscapes (be careful of the soundscape sample rate)
+        random_state: np.random.RandomState or int, the random_state wanted to be able to reproduce the dataset
+        delete_if_exists: bool, whether to delete existing files and folders created with the same name.
+    """
+    def __init__(self, duration, fg_folder, bg_folder, ref_db=-55, samplerate=16000, random_state=None,
+                 delete_if_exists=True, logger=None):
         self.duration = duration
         self.ref_db = ref_db
         self.fg_folder = fg_folder
         self.bg_folder = bg_folder
         self.samplerate = samplerate
         self.random_state = random_state
+        self.delete_if_exists = delete_if_exists
+        self.logger = logger
+        if self.logger is None:
+            self.logger = create_logger(__name__ + "/" + inspect.currentframe().f_code.co_name)
 
-    def generate(self, number, outfolder, min_events=1, max_events=5,
+    def generate(self, number, out_folder, min_events=1, max_events=5,
                  labels=('choose', []), source_files=('choose', []), sources_time=('const', 0),
                  events_start=('truncnorm', 5.0, 2.0, 0.0, 10.0), events_duration=('uniform', 0.25, 10.0),
                  snrs=('const', 30), pitch_shifts=('uniform', -3.0, 3.0), time_stretches=('uniform', 1, 1),
-                 txt_file=True, save_isolated_events=False, **kwargs):
+                 save_isolated_events=False, txt_file=True,
+                 start_from=0, **kwargs):
         """ Generate
 
         Args:
             number: int, number of audio clips to create.
-            outfolder: str, path to extract generate file
+            out_folder: str, path to extract generate file
             min_events: int, the minimum number of foreground events to add (pick at random uniformly).
             max_events: int, the maximum number of foreground events to add (pick at random uniformly).
+
             labels: tuple or list, distribution to choose foreground events or list of events.*
             source_files: tuple or list, distribution to choose source files or list of source files.*
             sources_time: tuple or list, distribution to choose source start time or list of sources start time.*
@@ -42,14 +59,17 @@ class SoundscapesGenerator:
             snrs: tuple or list, distribution to choose foreground to background SNRs or list of SNRs.*
             pitch_shifts: tuple or list, distribution to choose pitch shift or list of pitch shifts.*
             time_stretches: tuple or list, distribution to choose time stretches or list of time stretches.*
-            txt_file: bool, whether or not to save the .txt file.
             save_isolated_events: bool, whether or not to save isolated events in a separate folder
+
+            txt_file: bool, whether or not to save the .txt file.
+            start_from: int, the number to start from if file already created.
             kwargs: arguments accepted by Scaper.generate
 
+            * tuple is in the form of a distribution accepted by scaper.
         Returns:
             None
         """
-        logger = create_logger(__name__ + "/" + inspect.currentframe().f_code.co_name)
+        create_folder(out_folder)
         params = {
             'labels': labels,
             'source_files': source_files,
@@ -61,99 +81,32 @@ class SoundscapesGenerator:
             'time_stretches': time_stretches
         }
 
-        for n in range(number):
-            logger.debug('Generating soundscape: {:d}/{:d}'.format(n + 1, number))
+        for cnt in range(number):
+            self.logger.debug('Generating soundscape: {:d}/{:d}'.format(cnt + 1, number))
             # create a scaper
             n_events = np.random.randint(min_events, max_events + 1)
-            self._generate_one_bg_multi_fg(out_folder=outfolder,
-                                           filename=n,
-                                           n_fg_events=n_events,
-                                           **params,
-                                           txt_file=txt_file,
-                                           save_isolated_events=save_isolated_events,
-                                           **kwargs)
 
-    def _generate_one_bg_multi_fg(self, out_folder, filename, n_fg_events,
-                                  labels=('choose', []),
-                                  source_files=('choose', []), sources_time=('const', 0),
-                                  events_start=('truncnorm', 5.0, 2.0, 0.0, 10.0),
-                                  events_duration=("uniform", 0.25, 10.0),
-                                  snrs=("uniform", 6, 30), pitch_shifts=('uniform', -3.0, 3.0),
-                                  time_stretches=('uniform', 1, 1), reverb=0.1,
-                                  txt_file=True,
-                                  save_isolated_events=False, isolated_events_path=None,
-                                  **kwargs):
-        """ Generate a clip with a background file and multiple foreground files.
-        Args:
-            out_folder: str, path to extract generate file
-            filename: str, name of the generated file, without extension (.wav, .jams and .txt will be created)
-            n_fg_events: int, the number of foreground events to add
-            labels: tuple or list, distribution to choose foreground events or list of events.*
-            source_files: tuple or list, distribution to choose source files or list of source files.*
-            sources_time: tuple or list, distribution to choose source start time or list of sources start time.*
-            events_start: tuple or list, distribution to choose events start time or list of events start time.*
-            events_duration: tuple or list, distribution to choose events duation or list of events duration.*
-            snrs: tuple or list, distribution to choose foreground to background SNRs or list of SNRs.*
-            pitch_shifts: tuple or list, distribution to choose pitch shift or list of pitch shifts.*
-            time_stretches: tuple or list, distribution to choose time stretches or list of time stretches.*
-            reverb: float, the reverb to be applied to the foreground events
-            txt_file: bool, whether or not to save the .txt file.
-            save_isolated_events: bool, whether or not to save isolated events in a separate folder
-            isolated_events_path: str, only useful when save_isolated_events=True. Give the path to the events folders.
-                If None, a folder is created next to the audio files.
-            kwargs: arguments accepted by Scaper.generate
+            if start_from + cnt < 10:
+                filename = "0" + str(start_from + cnt)
+            else:
+                filename = str(start_from + cnt)
 
-            * All arguments with asterix, if tuple given, see Scaper for distribution allowed.
-        Returns:
-            None
-        """
-        sc = Soundscape(self.duration, self.fg_folder, self.bg_folder, self.ref_db, self.samplerate,
-                        random_state=self.random_state)
-        sc.add_random_background()
-
-        params = {"label": labels, "source_file": source_files, "source_time": sources_time, "event_time": events_start,
-                  "event_duration": events_duration, "snr": snrs, "pitch_shift": pitch_shifts,
-                  "time_stretch": time_stretches}
-        # Make sure that if we give a list of tuple for a parameter that the length of the list
-        # is matching the number of foreground events
-        for i in range(n_fg_events):
-            event_params = {}
-            for key in params:
-                if type(params[key]) is tuple:
-                    param = params[key]
-                elif type(params[key]) is list:
-                    assert len(params[key]) == n_fg_events
-                    param = params[key][i]
-                else:
-                    raise NotImplementedError("Params of events is tuple(same for all) or "
-                                              "list (different for each event)")
-                event_params[key] = param
-
-            sc.add_event(**event_params)
-
-        # generate
-        audiofile = osp.join(out_folder, f"{filename}.wav")
-        jamsfile = osp.join(out_folder, f"{filename}.jams")
-        if txt_file:
-            # Can be useless if you want background annotation as well, see post_processing_annotations.
-            txtfile = osp.join(out_folder, f"{filename}.txt")
-        else:
-            txtfile = None
-        if save_isolated_events and isolated_events_path is None:
-            isolated_events_path = osp.join(out_folder, f"{filename}_events")
-
-        sc.generate(audio_path=audiofile, jams_path=jamsfile,
-                    reverb=reverb,
-                    txt_path=txtfile,
-                    save_isolated_events=save_isolated_events,
-                    isolated_events_path=isolated_events_path,
-                    **kwargs)
+            sc = Soundscape(self.duration, self.fg_folder, self.bg_folder, self.ref_db, self.samplerate,
+                            random_state=self.random_state, delete_if_exists=self.delete_if_exists)
+            sc.generate_one_bg_multi_fg(out_folder=out_folder,
+                                        filename=filename,
+                                        n_fg_events=n_events,
+                                        **params,
+                                        txt_file=txt_file,
+                                        save_isolated_events=save_isolated_events,
+                                        **kwargs)
+            if cnt % 200 == 0:
+                self.logger.info(f"generating {cnt} / {number} files (updated every 200)")
 
     def generate_by_label_occurence(self, label_occurences, number, out_folder, min_events=0, max_events=None,
-                                    save_isolated_events=False,
+                                    save_isolated_events=False, start_from=0,
                                     **kwargs):
-        """
-
+        """ Generate landscapes by taking into account the probabilities of labels and their co-occurence
         Args:
             label_occurences: dict, parameters of labels occurences (foreground labels)
             number: int, the number of files to generate
@@ -164,6 +117,7 @@ class SoundscapesGenerator:
             max_events: int, optional, if defined, overwrite the value in label_occurences if defined.
             save_isolated_events: bool, whether or not to save isolated events in a subfolder
                 (called <filename>_events by default)
+            start_from: int, if already created file, will start the filenames at the specified number
             kwargs: parametes accepted by Scaper().generate()
         Returns:
 
@@ -199,24 +153,30 @@ class SoundscapesGenerator:
               }
             }
         """
-        log = create_logger(__name__ + "/" + inspect.currentframe().f_code.co_name)
-        n = 0
-        for class_lbl in label_occurences.keys():
-            log.debug('Generating soundscape: {:d}/{:d}'.format(n + 1, number))
-            class_params = label_occurences[class_lbl]
-            for i in range(int(number * class_params['proba'])):
+        create_folder(out_folder)
+        cnt = 0
+        for label in label_occurences.keys():
+            self.logger.debug('Generating soundscape: {:d}/{:d}'.format(cnt + 1, number))
+            label_params = label_occurences[label]
+            for i in range(int(number * label_params['proba'])):
                 sc = Soundscape(self.duration, self.fg_folder, self.bg_folder, self.ref_db, self.samplerate,
-                                random_state=self.random_state)
-                sc.generate_co_occurence(co_occur_params=class_params["co-occurences"],
-                                         label=class_lbl,
+                                random_state=self.random_state, delete_if_exists=self.delete_if_exists)
+                if start_from + cnt < 10:
+                    filename = "0" + str(start_from + cnt)
+                else:
+                    filename = str(start_from + cnt)
+
+                sc.generate_co_occurence(co_occur_params=label_params["co-occurences"],
+                                         label=label,
                                          out_folder=out_folder,
-                                         filename=n,
+                                         filename=filename,
                                          min_events=min_events,
                                          max_events=max_events,
                                          save_isolated_events=save_isolated_events,
                                          **kwargs)
-
-                n += 1
+                if cnt % 200 == 0:
+                    self.logger.info(f"generating {cnt} / {number} files (updated every 200)")
+                cnt += 1
 
 
 def generate_tsv_from_jams(list_jams, tsv_out, post_process=True, background_label=False):

@@ -3,26 +3,21 @@ Real data. (used in DCASE task 4 2018 and 2019).
 
 Contains the metadata to download the real data.
 
-#### Requirements:
-**python >= 3.6**, 
-dcase-util >= 0.2.5, youtube-dl >= 2019.4.30, soundfile >= 0.10.1, 
-numpy >= 1.15.4, pandas >= 0.24.0
-
 ## Description
 See [DESED README][desed-readme] in previous folder.
 
 ## Download
-#### Real data (all users)
-* Download the real data
+### 1.1.1 Training and validation
+* Download the recorded soundscapes
 	* Clone this repo
 	* `pip install -e .`
-	* `cd real_data/desed_real`
-	* `python download_real_data.py`
+	* `cd real/code`
+	* `python download_real.py`
 * To reproduce the dcase2019 dataset
 	* Copy `audio/` and `metadata/` in `dcase2019/dataset/` 
 
-* Get the missing files: Send a mail with the csv files in the `missing_files` folder to 
-[nicolas](nicolas.turpault@inria.fr) (and [romain](romain.serizel@loria.fr))
+* Get the missing files: Send a mail with the csv files in the `missing_files` folder to
+[Nicolas](mailto:nicolas.turpault@inria.fr) (and [Romain](mailto:romain.serizel@loria.fr))
 
 ### After downloading architecture
 **After downloading the data (see below) you should have this tree:**

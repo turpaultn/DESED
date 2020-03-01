@@ -16,7 +16,7 @@ import config as cfg
 
 
 if __name__ == '__main__':
-    LOG = create_logger(__name__, "Desed.log", terminal_level=logging.INFO)
+    LOG = create_logger(__name__, terminal_level=logging.INFO)
     LOG.info(__file__)
     t = time.time()
     parser = argparse.ArgumentParser()

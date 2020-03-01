@@ -14,7 +14,7 @@ import config as cfg
 
 
 if __name__ == "__main__":
-    LOG = create_logger("DESED", "Desed.log", terminal_level=logging.INFO, file_level=logging.INFO)
+    LOG = create_logger("DESED", terminal_level=logging.INFO, file_level=logging.INFO)
     LOG.info(__file__)
     t = time.time()
     parser = argparse.ArgumentParser()
@@ -28,7 +28,6 @@ if __name__ == "__main__":
 
     # Output folder, in args
     out_folder = args.out_folder
-    create_folder(out_folder)
     out_tsv = args.out_tsv
 
     # Default parameters

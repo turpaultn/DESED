@@ -1,32 +1,60 @@
 # Desed_synthetic
-Synthetic data. (used in DCASE 2019 task 4).
+Synthetic data. (used in DCASE 2019/20 task 4).
 
 Recreate dcase 2019 task 4 synthetic data or create new mixtures.
 
-#### Requirements:
-**python >= 3.6**, scaper >= 1.0.3,
-numpy >= 1.15.4, pandas >= 0.24.0
+![soundbank-diagram][img-soundbank]
 
-See Desed [root README][readme-root] for description and download.
+## Download
 
-## Generating new synthetic data, (copied from the README of the repo)
-<a id="gendata"></a>
- To generate new sounds, in the same way as the Desed_synthetic dataset, you can use these files:
- * `generate_training.py`, uses `event_occurences_train.json` for co-occurrence of events.
- * `generate_eval_FBSNR.py` generates similar subsets with different foreground-background sound to noise ratio (fbsnr): 30dB, 24dB, 15dB, 0dB.
+### 1. *User who just wants to download the dcase2019 synthetic evaluation set*
+* Download `DESED_synth_eval_dcase2019.tar.gz` from **[DESED_synthetic][desed-synthetic]**.
+* `DESED_synth_eval_dcase2019.tar.gz` to extract it.
+
+### 2. *User who wants to reproduce dcase2019 dataset* (training + evaluation)
+* clone this repo
+* `pip install -e .` (if not already done)
+* `cd synthetic/`
+* `sh create_dcase2019_dataset.sh`. (Recommended to run commands line by line in case of bugs)
+* Be careful, the distortions done on Matlab are up to you to create, it will be updated later to do it in python. 
+For now, uncomment corresponding lines in `create_dcase2019_dataset.sh` to download the full eval set 
+(including the distortions like 2.1.1).
+	
+### 3. *User who wants to reproduce dcase2020 dataset*
+Available soon.
+	
+### 4. *User who wants to create new synthetic data*
+* clone this repo
+* `pip install -e .` (if not already done)
+* Download `DESED_synth_soundbank.tar.gz` from **[DESED_synthetic][desed-synthetic]**.
+* `tar -xzvf DESED_synth_soundbank.tar.gz` to extract it.
+* `cd synthetic/code`
+* `python get_background_training.py` to download SINS background files.
+* See examples of code to create files in this repo in `synthetic/code`. 
+Described in [Generating new synthetic soundscapes](#gendata) below.
+
+
+## Generating new soundscapes
+
+To generate new sounds, in the same way as the Desed_synthetic dataset, you can use these files:
+ * [generate_training.py], uses `event_occurences_train.json` for co-occurrence of events.
+ * [generate_eval_FBSNR.py] generates similar subsets with different foreground-background sound to noise ratio (fbsnr): 30dB, 24dB, 15dB, 0dB.
  Uses `event_occurences_eval.json` for occurence and co-occurrence of events.  
- * `generate_eval_var_onset.py` generates subsets with a single event per file, the difference between subsets is
+ * [generate_eval_var_onset.py] generates subsets with a single event per file, the difference between subsets is
   the onset position:
     1. Onset between 0.25s and 0.75s. 
     2. Onset between 5.25s and 5.75s. 
     3. Onset between 9.25s and 9.75s.
- * `generate_eval_long_short.py` generates subsets with a long event in the background and short events in the foreground, 
+ * [generate_eval_long_short.py] generates subsets with a long event in the background and short events in the foreground, 
  the difference beteen subsets is the FBSNR: 30dB, 15dB, 0dB. 
  * `generate_eval_distortion.py` generates distortion subsets, not yet in python, 
- see `generate_eval_distortion.m` for matlab code (will be updated later).
+ see [generate_eval_distortion.m] for matlab code (will be updated later).
+ * [generate_source_separation.py] generates soundscapes and save the isolated events to be used for source separation.
 
 When a script is generating multiple subfolder but only one csv file, it means it is the same csv for the different cases.
 Example: when modifying the FBSNR, we do not change the labels (onset, offsets). 
+
+**Note: The training soundbank can be divided in a training/validation soundbank if you want to create validation data**
 
 ## DCASE 2019
 See `create_dcase2019_dataset.sh` for download.
@@ -112,6 +140,13 @@ In Proceedings of the 18th International Society for Music Information Retrieval
  <a id="5">[6]</a> M. Mauch and S. Ewert, “The Audio Degradation Toolbox and its Application to Robustness Evaluation”. 
 In Proceedings of the 14th International Society for Music Information Retrieval Conference (ISMIR 2013), Curitiba, Brazil, 2013.
 
+[./code/generate_eval_distortions.m]: ./code/generate_eval_distortions.m
+[generate_eval_FBSNR.py]: ./code/generate_eval_FBSNR.py
+[generate_eval_long_short.py]: ./code/generate_eval_long_short.py
+[generate_training.py]: ./code/generate_training.py
+[generate_eval_var_onset.py]: ./code/generate_eval_var_onset.py
+[generate_source_separation.py]: ./code/generate_source_separation.py
+[img-soundbank]: ../img/soundbank_diagram.png
 [readme-root]: ../README.md
 
 [website-dcase]: http://dcase.community/challenge2019/task-sound-event-detection-in-domestic-environments

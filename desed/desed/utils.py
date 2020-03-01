@@ -1,14 +1,12 @@
 # -*- coding: utf-8 -*-
 import functools
 import inspect
-import warnings
 
 import jams
 import numpy as np
 import os
 import os.path as osp
 import shutil
-import glob
 
 import pprint
 
@@ -70,20 +68,6 @@ def choose_cooccurence_class(co_occur_params):
     idx_chosen_class = np.argmax(np.asarray(inter_acc_probas) > random_val)
     chosen_class = co_occur_params['classes'][idx_chosen_class]
     return chosen_class
-
-
-def choose_file(class_path):
-    """ Choose randomly a file of a given class.
-    Args:
-        class_path: str, path of the class containing all the files of a certain class.
-
-    Returns:
-        str, path of the file.
-    """
-    source_files = sorted(glob.glob(os.path.join(class_path, "*")))
-    source_files = [f for f in source_files if os.path.isfile(f)]
-    ind = np.random.randint(0, len(source_files))
-    return source_files[ind]
 
 
 def change_snr(jams_path, db_change):

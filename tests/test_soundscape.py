@@ -9,7 +9,7 @@ bg_folder = os.path.join(absolute_dir_path, "material", "soundbank", "background
 out_dir = os.path.join(absolute_dir_path, "generated", "soundscape")
 os.makedirs(out_dir, exist_ok=True)
 
-sc = Soundscape(1, fg_folder, bg_folder, random_state=2020)
+sc = Soundscape(1, fg_folder, bg_folder, random_state=2020, delete_if_exists=True)
 
 
 def test_generate_simple():
