@@ -32,7 +32,7 @@ def test_generate_tsv_from_jams():
     generate_tsv_from_jams(list_jams, generated_tsv)
     df_gen = pd.read_csv(generated_tsv, sep="\t")
     df_mat = pd.read_csv(os.path.join(absolute_dir_path, "material", "generated_from_jams.tsv"), sep="\t")
-    assert df_gen == df_mat
+    assert (df_gen == df_mat).all().all()  # all on DataFrame and then on Series
 
 
 def test_generate_files_from_jams():
