@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import logging
 import os.path as osp
 import pandas as pd
 import shutil
@@ -9,6 +10,7 @@ import os
 import jams
 import json
 
+from desed.logger import create_logger
 from desed.soundscape import Soundscape
 from desed.utils import create_folder, pprint, choose_cooccurence_class
 from desed.utils import change_snr, modify_fg_onset, modify_jams
@@ -140,6 +142,11 @@ def test_fg_onset():
             onset_gen = obs.value["event_time"]
 
     assert onset == (onset_gen - 0.2), "Wrong onset generated"
+
+
+def test_logger():
+    logger = create_logger("try", terminal_level=logging.DEBUG)
+    logger.debug("this can be useful if there is a bug")
 
 
 if __name__ == '__main__':

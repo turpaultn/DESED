@@ -3,11 +3,10 @@ import sys
 import logging.config
 
 
-def create_logger(logger_name, log_file=None, terminal_level=logging.INFO, file_level=logging.INFO):
+def create_logger(logger_name, terminal_level=logging.INFO, file_level=logging.INFO):
     """ Create a logger.
     Args:
         logger_name: str, name of the logger
-        log_file: str, path of the file to log values on
         terminal_level: int, logging level in the terminal
         file_level: int, logging level in the file
     """
@@ -40,12 +39,6 @@ def create_logger(logger_name, log_file=None, terminal_level=logging.INFO, file_
     for handler in logger_handlers:
         if handler.name == 'std_out':
             logger.removeHandler(handler)
-    if log_file is not None:
-        file_h = logging.FileHandler(log_file)
-        file_h.setLevel(file_level)
-        file_h.set_name('file_handler')
-        file_h.setFormatter(formatter)
-        logger.addHandler(file_h)
 
     terminal_h = logging.StreamHandler(sys.stdout)
     terminal_h.setLevel(res_terminal_level)
