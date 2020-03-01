@@ -12,7 +12,7 @@ import scaper
 import soundfile as sf
 
 from .logger import create_logger, DesedWarning, DesedError
-from .utils import choose_cooccurence_class
+from .utils import choose_cooccurence_class, create_folder
 
 
 class Soundscape(scaper.Scaper):
@@ -176,6 +176,7 @@ class Soundscape(scaper.Scaper):
                 }
             prob is the probability of this class (not used here)
         """
+        create_folder(out_folder)
         self.add_random_background()
 
         # add main event, non_noff stands for no onset and no offset (accept label to have _nOn or _nOff specified).
@@ -266,7 +267,7 @@ class Soundscape(scaper.Scaper):
         Returns:
             None
         """
-
+        create_folder(out_folder)
         self.add_random_background()
 
         params = {"label": labels, "source_file": source_files, "source_time": sources_time,

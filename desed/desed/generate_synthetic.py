@@ -69,6 +69,7 @@ class SoundscapesGenerator:
         Returns:
             None
         """
+        create_folder(out_folder)
         params = {
             'labels': labels,
             'source_files': source_files,
@@ -152,6 +153,7 @@ class SoundscapesGenerator:
               }
             }
         """
+        create_folder(out_folder)
         cnt = 0
         for label in label_occurences.keys():
             self.logger.debug('Generating soundscape: {:d}/{:d}'.format(cnt + 1, number))
