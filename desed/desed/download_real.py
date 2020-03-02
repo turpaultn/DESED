@@ -37,7 +37,6 @@ def download_file(filename, result_dir, platform="youtube"):
     logger = create_logger(__name__ + "/" + inspect.currentframe().f_code.co_name)
     tmp_filename = ""
 
-    print(filename)
     segment_start = filename.split('_')[-2]
     segment_end = filename.split('_')[-1]
     audio_container = AudioContainer()
@@ -148,10 +147,8 @@ def download(filenames, result_dir, n_jobs=1, chunk_size=10, base_dir_missing_fi
                 for val in tqdm(p.imap_unordered(download_file_alias, filenames, chunk_size), total=len(filenames)):
                     files_error.append(val)
 
-        print(files_error)
         # Store files which gave error
         missing_files = pd.DataFrame(files_error).dropna()
-        print(missing_files)
         if not missing_files.empty:
             base_dir_missing_files = os.path.join(base_dir_missing_files, "missing_files")
             create_folder(base_dir_missing_files)
