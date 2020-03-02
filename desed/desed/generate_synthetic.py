@@ -196,7 +196,6 @@ def generate_tsv_from_jams(list_jams, tsv_out, post_process=True, background_lab
     create_folder(osp.dirname(tsv_out))
     final_df = pd.DataFrame()
     for jam_file in list_jams:
-        print(jam_file)
         fbase = osp.basename(jam_file)
         df, length = get_labels_from_jams(jam_file, background_label=background_label, return_length=True)
 

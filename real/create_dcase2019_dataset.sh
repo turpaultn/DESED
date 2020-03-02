@@ -4,7 +4,7 @@
 CONDA_ENV=python
 
 # Create directory, and copy data in right folders to have a unique directory with dcase2019 data
-ROOTDIR=../dcase2019/dataset
+ROOTDIR=$1
 mkdir -p ${ROOTDIR}
 
 # If not already done

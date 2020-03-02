@@ -20,7 +20,9 @@ And please cite our papers in your work*
   - [Synthetic soundbank/soundscapes](#2-synthetic-soundbanksoundscapes)
     - [Download](#21-download)
     - [Generating soundscapes](#22-generating-new-synthetic-soundscapes)
-  - [DCASE19 Task 4](#dcase19-task-4)
+  - [DCASE Task 4](#dcase-task-4)
+    - [DCASE19 Task 4](#dcase19-task-4)
+    - [DCASE20 Task 4](#dcase20-task-4)
   - [List of papers/code using DESED](#list-of-papers-and-code-using-desed)
   - [FAQ](#faq)
   - [Please cite us](#please-cite-us)
@@ -52,7 +54,7 @@ Copying code from `synthetic/code/` or `real/code/` folders without changing `de
 ## Description
 There are 3 different datasets: 
 * Recorded soundscapes (a.k.a., real). 
-* Synthetic soundbank + DCASE19 task 4 soundscapes: [DESED_synthetic][desed-synthetic]
+* Synthetic soundbank + DCASE task 4 soundscapes: [DESED_synthetic][desed-synthetic]
 * Public evaluation (recorded soundscapes) (a.k.a., Youtube in DCASE19, Vimeo is not available): [DESED public eval][desed-public-eval]
 
 *All these datasets contain an "audio" folder associated with a "metadata" folder 
@@ -86,7 +88,7 @@ DESED dataset is for now composed of 10 event classes in domestic environment.
 
 * DCASE 2019
 	* It uses synthetic soundbank, recorded soundscapes, and public evaluation data (a.k.a., Youtube eval during DCASE19).
-	* If you want more information about DCASE19 dataset visit [DCASE 2019 task 4 web page][website-dcase]
+	* If you want more information about DCASE19 dataset visit [DCASE 2019 task 4 web page][website-dcase19-t4]
 	* If you only want to download DCASE19 files, go to [dcase2019 task 4](#dcase2019-task-4).
 	
 ![dcase19-diagram][img-desed2019]
@@ -119,6 +121,7 @@ See instructions in the [synthetic folder][synthetic_folder].
 
 See instructions in the [synthetic folder][synthetic_folder].
 
+##### MWE
 Minimal example of usage to generate training set on default parameters:
 ```python
 from desed import SoundscapesGenerator
@@ -146,7 +149,7 @@ post_process_txt_labels(out_folder,
 ```
 
 #### Folders structure after download
-**After downloading the data (see below) you should have this tree:**
+After downloading the data (see below) you should have this tree:
 ```
 ├── real                                   
 │   ├── audio
@@ -193,15 +196,16 @@ post_process_txt_labels(out_folder,
 ```
 
 
-## DCASE19 task 4
-### Download
+## DCASE task 4
+### DCASE19 task 4
+#### Download
 Recommended to open `synthetic/create_dcase2019_dataset.sh` and 
 `real/create_dcase2019_dataset.sh` and launch line by line in case of bugs.
 
 Otherwise launch `sh create_dcase2019_dataset.sh`.
 
-### Description of Desed for dcase2019 task 4
-[DCASE 2019 task 4 web page][website-dcase]
+#### Description of Desed for dcase2019 task 4
+[DCASE 2019 task 4 web page][website-dcase19-t4]
 
 * **Recorded soundscapes**
 	* **Training**: 1578 weakly labeled clips, 14412 unlabeled clips
@@ -247,6 +251,51 @@ dcase2019/
         ├── train
         └── validation
 ```
+
+### DCASE20 Task 4
+### DCASE19 task 4
+#### Download
+Recorded (real) soundscapes are similar 2019.
+
+Recommended to open `synthetic/create_dcase2020_dataset.sh` and 
+`real/create_dcase2019_dataset.sh` and launch line by line in case of bugs.
+
+Otherwise launch `sh create_dcase2020_dataset.sh`.
+
+#### Description of Desed for dcase2020 task 4
+
+DESED is only a subset of DCASE 2020 task 4 dataset.
+The task is dealing on sound event detection using DESED, and on source separation using a dataset provided by Google.
+See [DCASE 2020 task 4 web page][website-dcase20-t4] for more info.
+
+DESED part:
+* **Recorded soundscapes**
+	* **Training**: 1578 weakly labeled clips, 14412 unlabeled clips
+	* **Public Evaluation**: 692 Youtube files (reported as "eval youtube" in papers)
+	* **Challenge Evaluation**: Youtube and Vimeo files.
+
+* **Synthetic**
+	* **Training**: There are 2060 background files from SINS and 1009 foreground from Freesound.
+	We generated 2536 10s files with a FBSNR between 6dB to 30dB.
+	* **Evaluation**: 	There are 12 (Freesound) + 5 (Youtube) background files and 314 foreground files. 
+
+** After running the script `create_dcase2020_dataset.sh`, you should have a folder called `dataset`in that way**
+```
+dataset
+├── audio
+│   ├── train
+│   │   ├── synthetic20
+│	│   │   └── soundscapes
+│   │   ├── unlabel_in_domain
+│   │   └── weak
+│   └── validation
+└── metadata
+    ├── eval
+    ├── train
+    │   └── synthetic20
+    └── validation
+```
+
 
 ## FAQ
 * Why don't we have a single dataset repository ?
@@ -323,7 +372,7 @@ In Proceedings of the 18th International Society for Music Information Retrieval
 In Proceedings of the 14th International Society for Music Information Retrieval Conference (ISMIR 2013), Curitiba, Brazil, 2013.
 
 [audioset]: https://research.google.com/audioset/index.html
-[desed-synthetic]: https://zenodo.org/record/3588151
+[desed-synthetic]: https://zenodo.org/record/3693695
 [desed-public-eval]: https://zenodo.org/record/3588172
 [img-desed2019]: ./img/desed_block_diagram.png
 [img-soundbank]: ./img/soundbank_diagram.png
@@ -335,4 +384,5 @@ In Proceedings of the 14th International Society for Music Information Retrieval
 [scaper]: https://github.com/justinsalamon/scaper
 [synthetic_folder]: ./synthetic
 [website]: https://project.inria.fr/desed/
-[website-dcase]: http://dcase.community/challenge2019/task-sound-event-detection-in-domestic-environments
+[website-dcase19-t4]: http://dcase.community/challenge2019/task-sound-event-detection-in-domestic-environments
+[website-dcase20-t4]: http://dcase.community/challenge2020/task-sound-event-detection-and-separation-in-domestic-environments

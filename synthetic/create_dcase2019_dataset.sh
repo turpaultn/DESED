@@ -3,12 +3,14 @@
 # Change with your own environment
 CONDA_ENV=python
 # Create directory, and copy data in right folders to have a unique directory with dcase2019 data
-ROOTDIR=../dcase2019/dataset
+ROOTDIR=$(realpath ../dcase2019/dataset)
 mkdir -p ${ROOTDIR}
 
+cd ..
 echo "Download and extract soundbank"
 wget -O DESED_synth_soundbank.tar.gz https://zenodo.org/record/3571305/files/DESED_synth_soundbank.tar.gz?download=1
 tar -xzvf DESED_synth_soundbank.tar.gz
+cd synthetic
 
 cd code
 # If you did not download the synthetic training background yet

@@ -1,9 +1,10 @@
 #!/bin/bash
-DATADIR=$(realpath dcase2019/dataset)
+DATADIR=$(realpath dataset)
+
 cd real
 ./create_dcase2019_dataset.sh ${DATADIR}
 
 cd ../synthetic/
-./create_dcase2019_dataset.sh
+./create_dcase2020_dataset.sh
 
 cd ../
