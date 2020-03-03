@@ -53,7 +53,7 @@ def download_file(filename, result_dir, platform="youtube"):
     }
 
     if platform.lower() == "youtube":
-        query_id = filename[0:11]
+        query_id = filename[1:12] # Remove the Y in front of the file.
         baseurl = "https://www.youtube.com/watch?v="
     elif platform.lower() == "vimeo":
         query_id = filename.split('_')[0]
