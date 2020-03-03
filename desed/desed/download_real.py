@@ -36,9 +36,9 @@ def download_file(filename, result_dir, platform="youtube"):
     """
     logger = create_logger(__name__ + "/" + inspect.currentframe().f_code.co_name)
     tmp_filename = ""
-
-    segment_start = filename.split('_')[-2]
-    segment_end = filename.split('_')[-1]
+    fname_no_ext = os.path.splitext(filename)[0]
+    segment_start = fname_no_ext.split('_')[-2]
+    segment_end = fname_no_ext.split('_')[-1]
     audio_container = AudioContainer()
 
     # Define download parameters
@@ -93,8 +93,8 @@ def download_file(filename, result_dir, platform="youtube"):
                 os.remove(fpath)
             raise
 
-        # youtube-dl error, file often removed
-        except (ExtractorError, DownloadError) as e:
+        # youtube-dl error, file often removed, IO Error is for AudioContainer error if length of file is different.
+        except (ExtractorError, DownloadError, IOError) as e:
             if os.path.exists(tmp_filename):
                 os.remove(tmp_filename)
 
