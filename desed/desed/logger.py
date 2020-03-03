@@ -3,19 +3,17 @@ import sys
 import logging.config
 
 
-def create_logger(logger_name, terminal_level=logging.INFO, file_level=logging.INFO):
+def create_logger(logger_name, terminal_level=logging.INFO):
     """ Create a logger.
     Args:
         logger_name: str, name of the logger
         terminal_level: int, logging level in the terminal
-        file_level: int, logging level in the file
     """
     logging.config.dictConfig({
         'version': 1,
         'disable_existing_loggers': False,
     })
     logger = logging.getLogger(logger_name)
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     tool_formatter = logging.Formatter('%(levelname)s - %(name)s - %(message)s')
 
     if type(terminal_level) is str:
