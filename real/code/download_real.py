@@ -23,7 +23,7 @@ def download_from_csv(csv_path, result_dir):
 if __name__ == "__main__":
     # To be changed for your root folder if needed (if dcase2019 used)
     base_missing_files_folder = ".."
-    dataset_folder = ".."
+    dataset_folder = os.path.join("..", "..", "dataset")
 
     LOG.info("Download_data")
     LOG.info("\n\nOnce database is downloaded, do not forget to check your missing_files\n\n")
