@@ -36,7 +36,11 @@ Described in [Generating new synthetic soundscapes](#gendata) below.
 
 ## Generating new soundscapes
 
-To generate new sounds, in the same way as the Desed_synthetic dataset, you can use these files:
+Data are generated using [Scaper][scaper].
+In the following you have example of how to use it.
+For more information do not hesitate to check their [docs][scaper-doc].
+
+Examples of how to generate new sounds in the same way as the Desed_synthetic dataset:
  * [generate_training.py], uses `event_occurences_train.json` for co-occurrence of events.
  * [generate_eval_FBSNR.py] generates similar subsets with different foreground-background sound to noise ratio (fbsnr): 30dB, 24dB, 15dB, 0dB.
  Uses `event_occurences_eval.json` for occurence and co-occurrence of events.  
@@ -148,5 +152,6 @@ In Proceedings of the 14th International Society for Music Information Retrieval
 [generate_source_separation.py]: ./code/generate_source_separation.py
 [img-soundbank]: ../img/soundbank_diagram.png
 [readme-root]: ../README.md
-
+[scaper]: https://github.com/justinsalamon/scaper
+[scaper-doc]: https://scaper.readthedocs.io/en/latest/
 [website-dcase]: http://dcase.community/challenge2019/task-sound-event-detection-in-domestic-environments
