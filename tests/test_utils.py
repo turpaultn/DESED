@@ -43,6 +43,16 @@ def test_choose_class():
     assert label in ["label", "label_nOn", "label_nOff", "label_nOn_nOff"], "Wrong class given"
 
 
+def test_choose_class_random_state():
+    param_json = osp.join(absolute_dir_path, "material",
+                          "event_occurences", "event_occurences_train.json")
+    with open(param_json) as json_file:
+        params = json.load(json_file)
+    label = choose_cooccurence_class(params["label"]["co-occurences"], random_state=2)
+    label_rep = choose_cooccurence_class(params["label"]["co-occurences"], random_state=2)
+    assert label == label_rep, "Random state not working, having different values"
+
+
 def test_choose_file():
     sc = Soundscape(1, os.path.join(absolute_dir_path, "material", "soundbank", "foreground"),
                     os.path.join(absolute_dir_path, "material", "soundbank", "background"),

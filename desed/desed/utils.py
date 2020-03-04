@@ -7,8 +7,9 @@ import numpy as np
 import os
 import os.path as osp
 import shutil
-
 import pprint
+
+from scaper.util import _check_random_state
 
 from .logger import create_logger, DesedError
 
@@ -36,7 +37,7 @@ def pprint(x):
     pp.pprint(x)
 
 
-def choose_cooccurence_class(co_occur_params):
+def choose_cooccurence_class(co_occur_params, random_state=None):
     """ Choose another class given a dictionary of parameters (from an already specified class).
     Args:
         co_occur_params: dict, define the parameters of co-occurence of classes
@@ -62,8 +63,12 @@ def choose_cooccurence_class(co_occur_params):
     for i in range(len(co_occur_params['probas'])):
         accumulated_probas += co_occur_params['probas'][i]
         inter_acc_probas.append(accumulated_probas)
-    # Get a random value between 0-1
-    random_val = np.random.uniform()
+    if random_state is not None:
+        random_state = _check_random_state(random_state)
+        random_val = random_state.rand()
+    else:
+        # Get a random value between 0-1
+        random_val = np.random.uniform()
     # Get the index of the chosen class by taking the index of the first accumulated value > random_val
     idx_chosen_class = np.argmax(np.asarray(inter_acc_probas) > random_val)
     chosen_class = co_occur_params['classes'][idx_chosen_class]
