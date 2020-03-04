@@ -3,9 +3,9 @@
 from os import path as osp
 import inspect
 
-import numpy as np
 import pandas as pd
 from scaper import generate_from_jams
+from scaper.util import _check_random_state
 
 from .logger import create_logger
 from .post_process import _post_process_labels_file, get_labels_from_jams
@@ -31,8 +31,7 @@ class SoundscapesGenerator:
         self.fg_folder = fg_folder
         self.bg_folder = bg_folder
         self.samplerate = samplerate
-        self.random_state = random_state
-        np.random.seed(random_state)
+        self.random_state = _check_random_state(random_state)
         self.delete_if_exists = delete_if_exists
         self.logger = logger
         if self.logger is None:
@@ -85,7 +84,7 @@ class SoundscapesGenerator:
         for cnt in range(number):
             self.logger.debug('Generating soundscape: {:d}/{:d}'.format(cnt + 1, number))
             # create a scaper
-            n_events = np.random.randint(min_events, max_events + 1)
+            n_events = self.random_state.randint(min_events, max_events + 1)
 
             if start_from + cnt < 10:
                 filename = "0" + str(start_from + cnt)
