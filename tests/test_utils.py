@@ -148,6 +148,24 @@ def test_logger():
     logger = create_logger("try", terminal_level=logging.DEBUG)
     logger.debug("this can be useful if there is a bug")
 
+    logger = create_logger("try", terminal_level="DEBUG")
+    logger.debug("this can be useful if there is a bug")
+
+    logger = create_logger("try", terminal_level="info")
+    logger.info("common info")
+
+    logger = create_logger("try", terminal_level="warning")
+    logger.warning("Careful, something the user cannot do about, otherwise use warnings")
+
+    logger = create_logger("try", terminal_level="error")
+    logger.error("This is an error, but do not stop the program")
+
+    logger = create_logger("try", terminal_level="CRITICAL")
+    logger.critical("this is critical, it is added to the bug given")
+
+    logger = create_logger("try", terminal_level="No idea")
+    logger.debug("Nothing")
+
 
 if __name__ == '__main__':
     test_choose_class()
