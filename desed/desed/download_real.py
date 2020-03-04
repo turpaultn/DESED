@@ -155,8 +155,9 @@ def download(filenames, result_dir, n_jobs=1, chunk_size=10, base_dir_missing_fi
 
             # Save missing_files to be able to ask them
             missing_files.columns = ["filename", "error"]
+            set_name = os.path.basename(result_dir)
             missing_files.to_csv(os.path.join(base_dir_missing_files,
-                                              "missing_files_" + result_dir.split('/')[-1] + ".tsv"),
+                                              "missing_files_" + set_name + ".tsv"),
                                  index=False, sep="\t")
             warnings.warn(f"There are missing files at {base_dir_missing_files}, \n"
                           f"see info on https://github.com/turpaultn/desed#11-download on how to get them",
