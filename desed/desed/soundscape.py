@@ -193,7 +193,7 @@ class Soundscape(scaper.Scaper):
                 raise DesedError("max_events has to be specified")
 
         # add random number of foreground events
-        n_events = np.random.randint(min_events, max_events)
+        n_events = self.random_state.randint(min_events, max_events)
         for _ in range(n_events):
             chosen_class = choose_cooccurence_class(co_occur_params)
             self.add_fg_event_non_noff(chosen_class)
