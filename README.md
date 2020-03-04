@@ -253,7 +253,6 @@ dcase2019/
 ```
 
 ### DCASE20 Task 4
-### DCASE19 task 4
 #### Download
 Recorded (real) soundscapes are similar 2019.
 
@@ -276,7 +275,7 @@ DESED part:
 
 * **Synthetic**
 	* **Training**: There are 2060 background files from SINS and 1009 foreground from Freesound.
-	We generated 2536 10s files with a FBSNR between 6dB to 30dB.
+	We generated 2595 10s files with a FBSNR between 6dB to 30dB.
 	* **Evaluation**: 	There are 12 (Freesound) + 5 (Youtube) background files and 314 foreground files. 
 
 ** After running the script `create_dcase2020_dataset.sh`, you should have a folder called `dataset`in that way**
