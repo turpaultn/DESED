@@ -32,6 +32,7 @@ class SoundscapesGenerator:
         self.bg_folder = bg_folder
         self.samplerate = samplerate
         self.random_state = random_state
+        np.random.seed(random_state)
         self.delete_if_exists = delete_if_exists
         self.logger = logger
         if self.logger is None:
