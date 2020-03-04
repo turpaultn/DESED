@@ -1,8 +1,8 @@
 """Sounscape is a subclass of scaper.Scaper to fulfill our specific needs and default values"""
 import glob
 import inspect
+import numpy as np
 import os
-import random
 import shutil
 import warnings
 from os import path as osp
@@ -46,7 +46,7 @@ class Soundscape(scaper.Scaper):
         """
         chosen_file = self._choose_file(osp.join(self.bg_path, label))
         file_duration = sf.info(chosen_file).duration
-        starting_source = min(random.random() * file_duration, max(file_duration - self.duration, 0))
+        starting_source = min(self.random_state.rand() * file_duration, max(file_duration - self.duration, 0))
         self.add_background(label=('const', chosen_file.split("/")[-2]),
                             source_file=('const', chosen_file),
                             source_time=('const', starting_source))

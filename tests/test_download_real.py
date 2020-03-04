@@ -1,4 +1,6 @@
 import os
+import shutil
+
 import pandas as pd
 import pytest
 
@@ -10,7 +12,7 @@ result_dir = os.path.join(absolute_dir_path, "generated", "audio", "validation")
 
 @pytest.fixture()
 def rm_folder():
-    os.removedirs(os.path.join(absolute_dir_path, "generated"))
+    shutil.rmtree(os.path.join(absolute_dir_path, "generated"))
 
 
 # Problem with this test, if I exchange the single process and multiprocessing, it does not work
@@ -19,7 +21,7 @@ def rm_folder():
     (3, 3, 12),
     (1, 3, 15),
 ])
-def test_download_multiprocessing(n_jobs, chunk_size, n_download):
+def test_download_multiprocessing(n_jobs, chunk_size, n_download, rm_folder):
     test = os.path.join(absolute_dir_path, "material", "validation.tsv")
     df = pd.read_csv(test, header=0, sep='\t')
 
@@ -43,4 +45,3 @@ def test_download_file_fail():
     print(res)
     assert res[0] == fname
     # assert res[1] in errors , "Download did not fail with the right exception"
-

@@ -32,11 +32,6 @@ def create_logger(logger_name, terminal_level=logging.INFO):
     else:
         res_terminal_level = terminal_level
     logger.setLevel(res_terminal_level)
-    # Remove the stdout handler
-    logger_handlers = logger.handlers[:]
-    for handler in logger_handlers:
-        if handler.name == 'std_out':
-            logger.removeHandler(handler)
 
     terminal_h = logging.StreamHandler(sys.stdout)
     terminal_h.setLevel(res_terminal_level)
