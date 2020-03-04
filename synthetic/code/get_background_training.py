@@ -16,7 +16,7 @@ from desed.utils import create_folder
 from desed.logger import create_logger
 
 if __name__ == '__main__':
-    LOG = create_logger("DESED", terminal_level=logging.INFO, file_level=logging.INFO)
+    LOG = create_logger("DESED", terminal_level=logging.INFO)
     t = time.time()
     parser = argparse.ArgumentParser()
     parser.add_argument('--basedir', type=str, default="..",
