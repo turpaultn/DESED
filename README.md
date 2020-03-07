@@ -309,7 +309,8 @@ We do not have the problem for evaluation data because we try to overcome the pr
 
 * I have a problem downloading the recorded soundscapes. How do I do ?
 If you're in a country with youtube restrictions, you can try to use a VPN and the --proxy option from youtube-dl.
-You can also try to upgrade youtube-dl since it is regularly updated. Finally, if you succeeded to download most of the files, you can send the missing files as stated before in this page.
+You can also try to upgrade youtube-dl since it is regularly updated. 
+Finally, if you succeeded to download most of the files, you can send the missing files as stated in the `real/README.md.
 
 * How do I evaluate and compare my system with other methods using this dataset ?
 
