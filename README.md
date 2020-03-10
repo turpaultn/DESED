@@ -373,7 +373,7 @@ In Proceedings of the 18th International Society for Music Information Retrieval
 In Proceedings of the 14th International Society for Music Information Retrieval Conference (ISMIR 2013), Curitiba, Brazil, 2013.
 
 [audioset]: https://research.google.com/audioset/index.html
-[desed-synthetic]: https://zenodo.org/record/3693695
+[desed-synthetic]: https://zenodo.org/record/3702397
 [desed-public-eval]: https://zenodo.org/record/3588172
 [fuss_zenodo]: https://zenodo.org/record/3694384/
 [img-desed2019]: ./img/desed_block_diagram.png
