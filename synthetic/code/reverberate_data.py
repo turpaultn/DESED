@@ -15,10 +15,16 @@ from desed.utils import create_folder
 
 import config as cfg
 
-absolute_dir_path = os.path.abspath(os.path.dirname(__file__))
+
+absolute_dir_path = osp.abspath(osp.dirname(__file__))
 relative_path_ss_repo = osp.join(absolute_dir_path, "..", "..")
 base_dir_repo = osp.abspath(relative_path_ss_repo)
-sys.path.append(osp.join(base_dir_repo, "sound-separation", "datasets", "fuss"))
+fuss_dir_data = osp.join(base_dir_repo, "sound-separation", "datasets", "fuss")
+sys.path.append(fuss_dir_data)
+if not osp.exists(fuss_dir_data):
+    print("\n FUSS repo need to be cloned to make this work !! At the root of the repo, launch: \n"
+          "`git clone https://github.com/google-research/sound-separation.git` \n\n")
+
 
 from reverberate_and_mix import reverberate_and_mix, make_rir_dict_from_folder, make_mix_info_subsources, \
     read_mix_info, write_item_dict, write_mix_info
