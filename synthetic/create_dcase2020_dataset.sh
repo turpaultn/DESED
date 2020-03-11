@@ -1,5 +1,8 @@
 #!/bin/bash
 
+echo "#################\n # Please launch this file from 'synthetic' folder \n #################
+
+
 # Change with your own environment
 CONDA_ENV=python
 # Will put dcase2020 dataset in this folder

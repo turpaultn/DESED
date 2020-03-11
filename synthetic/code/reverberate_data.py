@@ -13,7 +13,7 @@ from desed.logger import create_logger
 from desed.post_process import post_process_txt_labels
 from desed.utils import create_folder
 
-import config_data as cfg
+import config as cfg
 
 absolute_dir_path = os.path.abspath(os.path.dirname(__file__))
 relative_path_ss_repo = osp.join(absolute_dir_path, "..", "..")
@@ -86,7 +86,7 @@ if __name__ == '__main__':
     # Parameters
     subset = "soundscapes"  # need to be the same in generate_synth_dcase20.py (last folder before sounds)
     nproc = args.nproc
-    sample_rate = cfg.sample_rate
+    sample_rate = cfg.samplerate
     clip_duration = cfg.clip_duration
 
     rir_folder = args.rir_folder
