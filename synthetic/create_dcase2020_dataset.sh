@@ -23,7 +23,7 @@ tar -xzf DESED_synth_soundbank.tar.gz
 rm DESED_synth_soundbank.tar.gz
 echo "Done"
 
-cd cd ${SYNTHETIC_DIR}/code
+cd ${SYNTHETIC_DIR}/code
 # If you did not download the synthetic training background yet
 echo "Download SINS background... (to add TUT, add the option --TUT)"
 ${CONDA_ENV} get_background_training.py --basedir=${SYNTHETIC_DIR}
