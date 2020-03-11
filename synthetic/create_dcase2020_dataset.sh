@@ -9,7 +9,7 @@ ROOT_DIR=$(realpath ..)
 # Will put dcase2020 dataset in this folder
 DATASET_DIR=${ROOT_DIR}/dataset
 # The path to synthetic where the python files are
-SYNTHETIC_DIR=$(pwd -P)
+SYNTHETIC_DIR=${ROOT_DIR}/dataset
 
 # For reverberation computation
 NPROC=8 # Be careful, if you do not use the same number of processors, you won't reproduce the baseline data.
