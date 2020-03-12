@@ -275,7 +275,8 @@ DESED part:
 
 * **Synthetic**
 	* **Training**: There are 2060 background files from SINS and 1009 foreground from Freesound.
-	We generated 2595 10s files with a FBSNR between 6dB to 30dB.
+	We generated 2595 10s files with a FBSNR between 6dB to 30dB. Files are reverberated using 
+	room impulse responses (RIR) from [FUSS][fuss_zenodo] dataset.
 	* **Evaluation**: 	There are 12 (Freesound) + 5 (Youtube) background files and 314 foreground files. 
 
 ** After running the script `create_dcase2020_dataset.sh`, you should have a folder called `dataset`in that way**
@@ -372,8 +373,9 @@ In Proceedings of the 18th International Society for Music Information Retrieval
 In Proceedings of the 14th International Society for Music Information Retrieval Conference (ISMIR 2013), Curitiba, Brazil, 2013.
 
 [audioset]: https://research.google.com/audioset/index.html
-[desed-synthetic]: https://zenodo.org/record/3693695
+[desed-synthetic]: https://zenodo.org/record/3702397
 [desed-public-eval]: https://zenodo.org/record/3588172
+[fuss_zenodo]: https://zenodo.org/record/3694384/
 [img-desed2019]: ./img/desed_block_diagram.png
 [img-soundbank]: ./img/soundbank_diagram.png
 [list_papers_md]: ./list_papers_using_desed.md

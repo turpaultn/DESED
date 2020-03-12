@@ -21,8 +21,13 @@ For now, uncomment corresponding lines in `create_dcase2019_dataset.sh` to downl
 (including the distortions like 2.1.1).
 	
 ### 3. *User who wants to reproduce dcase2020 dataset*
-Available soon.
-	
+* clone this repo
+* `pip install -e .` (if not already done)
+* `cd synthetic/`
+* `sh create_dcase2020_dataset.sh`. (Recommended to run commands line by line in case of bugs)
+
+*Note: it also download and apply the RIRs from [fuss dataset][fuss_zenodo]*
+
 ### 4. *User who wants to create new synthetic data*
 * clone this repo
 * `pip install -e .` (if not already done)
@@ -60,55 +65,9 @@ Example: when modifying the FBSNR, we do not change the labels (onset, offsets).
 
 **Note: The training soundbank can be divided in a training/validation soundbank if you want to create validation data**
 
-## DCASE 2019
-See `create_dcase2019_dataset.sh` for download.
-
-##### Description of Desed for dcase2019 task 4
-[DCASE 2019 task 4 web page][website-dcase]
-
-
-* **Training**: There are 2060 background files from SINS and 1009 foreground from Freesound.
-We generated 2045 10s files with a FBSNR between 6dB to 30dB.
-* **Evaluation**: 	There are 12 (Freesound) + 5 (Youtube) background files and 314 foreground files. 
-Generating different subsets to test robustness against some parameters.
-
-	Taking a background sound and multiple foreground sounds and associating them in different conditions:
-	* Varying the foreground-background signal to noise ratio (FBSNR).
-	* Varying the onsets: Generating foreground sounds only at the beginning, middle or end of the 10 seconds.
-	* Using long 'foreground' event classes as background, and short events as foreground. 
-	* Degrading the final 10s mixtures.
-
-
-** After running the script `create_dcase2019_dataset.sh`, you should have a folder called `dcase2019`in that way**
-```
-└── dcase2019
-    ├── dataset
-    │   ├── audio
-    │   │   ├── eval
-    │   │   │   ├── 500ms
-    │   │   │   ├── 5500ms
-    │   │   │   ├── 9500ms
-    │   │   │   ├── distorted_clipping
-    │   │   │   ├── distorted_drc
-    │   │   │   ├── distorted_highpass_filter
-    │   │   │   ├── distorted_lowpass_filter
-    │   │   │   ├── distorted_smartphone_playback
-    │   │   │   ├── distorted_smartphone_recording
-    │   │   │   ├── fbsnr_0dB
-    │   │   │   ├── fbsnr_15dB
-    │   │   │   ├── fbsnr_24dB
-    │   │   │   ├── fbsnr_30dB
-    │   │   │   ├── ls_0dB
-    │   │   │   ├── ls_15dB
-    │   │   │   └── ls_30dB
-    │   │   ├── train
-    │   │   │   └── synthetic
-    │   │   └── validation
-    │   └── metadata
-    │       ├── eval
-    │       └── train
-    └── desed_synthetic
-```
+## DCASE
+- 2019: see `create_dcase2019_dataset.sh` for download.
+- 2020: see `create_dcase2020_dataset.sh` for download.
 
 
 ## Licenses
@@ -144,6 +103,13 @@ In Proceedings of the 18th International Society for Music Information Retrieval
  <a id="5">[6]</a> M. Mauch and S. Ewert, “The Audio Degradation Toolbox and its Application to Robustness Evaluation”. 
 In Proceedings of the 14th International Society for Music Information Retrieval Conference (ISMIR 2013), Curitiba, Brazil, 2013.
 
+
+[fuss_zenodo]: https://zenodo.org/record/3694384/
+[scaper]: https://github.com/justinsalamon/scaper
+[scaper-doc]: https://scaper.readthedocs.io/en/latest/
+[website-dcase]: http://dcase.community/challenge2019/task-sound-event-detection-in-domestic-environments
+
+
 [./code/generate_eval_distortions.m]: ./code/generate_eval_distortions.m
 [generate_eval_FBSNR.py]: ./code/generate_eval_FBSNR.py
 [generate_eval_long_short.py]: ./code/generate_eval_long_short.py
@@ -152,6 +118,3 @@ In Proceedings of the 14th International Society for Music Information Retrieval
 [generate_source_separation.py]: ./code/generate_source_separation.py
 [img-soundbank]: ../img/soundbank_diagram.png
 [readme-root]: ../README.md
-[scaper]: https://github.com/justinsalamon/scaper
-[scaper-doc]: https://scaper.readthedocs.io/en/latest/
-[website-dcase]: http://dcase.community/challenge2019/task-sound-event-detection-in-domestic-environments
