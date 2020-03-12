@@ -69,8 +69,8 @@ if __name__ == '__main__':
     parser.add_argument('-i', '--input_folder', help="the input folder containing a subfolder called 'soundscapes'"
                                                   "conatining the data to reverberate",
                         type=str, default=None, required=True)
-    parser.add_argument('-o', '--reverb_out_folder', help="the output folder in which to save the reverberated generated"
-                                                         "examples",
+    parser.add_argument('-o', '--reverb_out_folder', help="the output folder in which to save the reverberated "
+                                                          "generated examples",
                         type=str, default=None)
     parser.add_argument('--reverb_out_tsv', help="output metadata file, if not defined the folder will be taken "
                                                  "from --reverb_out_folder and audio replaced to metadata in the path",
@@ -168,7 +168,8 @@ if __name__ == '__main__':
                                   check_length=True, fix_length=True, check_mix=True, fix_mix=True,
                                   sample_rate=sample_rate, duration=clip_duration)
 
-    post_process_txt_labels(reverb_folder,
-                            output_folder=reverb_folder,
+    rev_subset_folder = osp.join(reverb_folder, subset)
+    post_process_txt_labels(rev_subset_folder,
+                            output_folder=rev_subset_folder,
                             output_tsv=out_tsv, rm_nOn_nOff=True)
     print(time.time() - t)
