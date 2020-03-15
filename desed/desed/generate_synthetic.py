@@ -105,6 +105,7 @@ class SoundscapesGenerator:
 
     def generate_by_label_occurence(self, label_occurences, number, out_folder, min_events=0, max_events=None,
                                     save_isolated_events=False, start_from=0,
+                                    snr=('uniform', 6, 30), pitch_shift=None, time_stretch=None,
                                     **kwargs):
         """ Generate landscapes by taking into account the probabilities of labels and their co-occurence
         Args:
@@ -118,6 +119,9 @@ class SoundscapesGenerator:
             save_isolated_events: bool, whether or not to save isolated events in a subfolder
                 (called <filename>_events by default)
             start_from: int, if already created file, will start the filenames at the specified number
+            snr: tuple, tuple accepted by Scaper().add_event()
+            pitch_shift: tuple, tuple accepted by Scaper().add_event()
+            time_stretch: tuple, tuple accepted by Scaper().add_event()
             kwargs: parametes accepted by Scaper().generate()
         Returns:
 
@@ -173,6 +177,9 @@ class SoundscapesGenerator:
                                          min_events=min_events,
                                          max_events=max_events,
                                          save_isolated_events=save_isolated_events,
+                                         snr=snr,
+                                         pitch_shift=pitch_shift,
+                                         time_stretch=time_stretch,
                                          **kwargs)
                 if cnt % 200 == 0:
                     self.logger.info(f"generating {cnt} / {number} files (updated every 200)")

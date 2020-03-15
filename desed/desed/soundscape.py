@@ -141,7 +141,9 @@ class Soundscape(scaper.Scaper):
                 raise NotImplementedError("Can only remove files or folders")
     
     def generate_co_occurence(self, co_occur_params, label, out_folder, filename, min_events=0, max_events=None,
-                              reverb=None, save_isolated_events=False, **kwargs):
+                              reverb=None, save_isolated_events=False,
+                              snr=('uniform', 6, 30), pitch_shift=None, time_stretch=None,
+                              **kwargs):
         """ Generate a single file, using the information of onset or offset present
         (see DESED dataset and folders in soundbank foreground)
         Args:
@@ -157,7 +159,10 @@ class Soundscape(scaper.Scaper):
             reverb: float, the reverb to be applied to the foreground events
             save_isolated_events: bool, whether or not to save isolated events in a subfolder
                 (called <filename>_events by default)
-            kwargs: arguments accepted by Scaper.generate
+            snr: tuple, tuple accepted by Scaper().add_event()
+            pitch_shift: tuple, tuple accepted by Scaper().add_event()
+            time_stretch: tuple, tuple accepted by Scaper().add_event()
+            kwargs: arguments accepted by Scaper.generate or
         Returns:
             None
 
