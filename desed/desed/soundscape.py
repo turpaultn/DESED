@@ -185,7 +185,7 @@ class Soundscape(scaper.Scaper):
         self.add_random_background()
 
         # add main event, non_noff stands for no onset and no offset (accept label to have _nOn or _nOff specified).
-        self.add_fg_event_non_noff(label)
+        self.add_fg_event_non_noff(label, snr=snr, pitch_shift=pitch_shift, time_stretch=time_stretch)
 
         if max_events is None:
             max_events = co_occur_params.get("max_events")
@@ -201,7 +201,7 @@ class Soundscape(scaper.Scaper):
         n_events = self.random_state.randint(min_events, max_events)
         for _ in range(n_events):
             chosen_class = choose_cooccurence_class(co_occur_params, random_state=self.random_state)
-            self.add_fg_event_non_noff(chosen_class)
+            self.add_fg_event_non_noff(chosen_class, snr=snr, pitch_shift=pitch_shift, time_stretch=time_stretch)
 
         # Just in case an extension has been added
         ext = osp.splitext(filename)[-1]
