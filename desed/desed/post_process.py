@@ -20,7 +20,8 @@ def rm_high_polyphony(folder, max_polyphony=3, save_tsv_associated=None, pattern
         folder: str, path to the folder containing scaper generated sounds (JAMS files) in which to remove the files.
         max_polyphony: int, the maximum number of sounds that can be heard at the same time (polyphony).
         save_tsv_associated: str, optional, the path to generate the tsv files of associated sounds.
-
+        pattern_sources: str, optional, the pattern that is added to the source to get isolated events
+            (to be able to delete them if needed)
     Returns:
         None
 

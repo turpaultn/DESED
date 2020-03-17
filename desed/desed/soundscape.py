@@ -7,7 +7,6 @@ import shutil
 import warnings
 from os import path as osp
 
-import numpy as np
 import scaper
 import soundfile as sf
 

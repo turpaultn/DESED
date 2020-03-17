@@ -7,12 +7,12 @@ import zipfile
 
 import pandas as pd
 import requests
-from desed.logger import create_logger
-from desed.utils import create_folder
+from .logger import create_logger
+from .utils import create_folder
 
 
 def get_background_training(basedir, sins=True, tut=False, keep_sins=False):
-    LOG = create_logger("DESED", terminal_level=logging.INFO)
+    logger = create_logger("DESED", terminal_level=logging.INFO)
     zip_file_url_meta = "https://zenodo.org/record/1247102/files/DCASE2018-task5-dev.meta.zip?download=1"
     destination_folder = os.path.join(basedir, "audio", "train", "soundbank")
 
@@ -29,7 +29,7 @@ def get_background_training(basedir, sins=True, tut=False, keep_sins=False):
         df = df[df[1] == "other"]
 
         for i in range(1, 24):
-            LOG.info(f"downloading zip {i} / 23 ...")
+            logger.info(f"downloading zip {i} / 23 ...")
             # Download the first zip, and keep only other
             zip_file_url = f"https://zenodo.org/record/1247102/files/DCASE2018-task5-dev.audio.{i}.zip?download=1"
             r = requests.get(zip_file_url)
@@ -53,9 +53,10 @@ def get_background_training(basedir, sins=True, tut=False, keep_sins=False):
 
     if tut:
         for i in range(1, 10):
-            LOG.info(f"downloading zip {i} / 10 ...")
+            logger.info(f"downloading zip {i} / 10 ...")
             # Download the first zip, and keep only other
-            zip_file_url = f"https://zenodo.org/record/400515/files/TUT-acoustic-scenes-2017-development.audio.{i}.zip?download=1"
+            zip_file_url = f"https://zenodo.org/record/400515/files/" \
+                f"TUT-acoustic-scenes-2017-development.audio.{i}.zip?download=1"
             r = requests.get(zip_file_url)
             z = zipfile.ZipFile(io.BytesIO(r.content))
             z.extractall(destination_folder)

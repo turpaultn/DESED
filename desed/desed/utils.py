@@ -62,19 +62,20 @@ def choose_cooccurence_class(co_occur_params, random_state=None):
     """ Choose another class given a dictionary of parameters (from an already specified class).
     Args:
         co_occur_params: dict, define the parameters of co-occurence of classes
-        Example of co_occur_params dictionnary::
-            {
-              "max_events": 13,
-              "classes": [
-                "Alarm_bell_ringing",
-                "Dog",
-              ],
-              "probas": [
-                70,
-                30
-              ]
-            }
-        classes and probas maps each others
+            Example of co_occur_params dictionnary::
+                {
+                  "max_events": 13,
+                  "classes": [
+                    "Alarm_bell_ringing",
+                    "Dog",
+                  ],
+                  "probas": [
+                    70,
+                    30
+                  ]
+                }
+            classes and probas maps each others
+        random_state: int, or RandomS0tate object
     Returns:
         str, the class name.
     """
