@@ -102,7 +102,7 @@ if __name__ == '__main__':
     if reverb_folder is None:
         reverb_folder = input_folder + "_reverb"
     if args.reverb_out_tsv is None:
-        out_tsv = reverb_folder.replace("audio", "metadata") + ".tsv"
+        out_tsv = osp.join(reverb_folder.replace("audio", "metadata"), subset + ".tsv")
     else:
         out_tsv = args.reverb_out_tsv
 
