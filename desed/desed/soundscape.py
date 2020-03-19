@@ -139,7 +139,7 @@ class Soundscape(scaper.Scaper):
             else:
                 raise NotImplementedError("Can only remove files or folders")
     
-    def generate_co_occurence(self, co_occur_params, label, out_folder, filename, min_events=0, max_events=None,
+    def generate_co_occurence(self, co_occur_params, label, out_folder, filename, min_events=1, max_events=None,
                               reverb=None, save_isolated_events=False,
                               snr=('uniform', 6, 30), pitch_shift=None, time_stretch=None,
                               **kwargs):
@@ -151,10 +151,11 @@ class Soundscape(scaper.Scaper):
             label: str, the main foreground label of the generated file.
             out_folder: str, path to extract generate file
             filename: str, name of the generated file, without extension (.wav, .jams and .txt will be created)
-            min_events: int, optional, the minimum number of events per files (default=0)
+            min_events: int, optional, the minimum number of events per files (default=1, >= 1)
                 (Be careful, if max_events in label_occurences params is less than this it will raise an error)
-                If defined in the label_occurences dict, this parameter overwrites it.
-            max_events: int, optional, if defined, overwrite the value in label_occurences if defined.
+                If defined in the label_occurences dict, this parameter corresponds to the number of cooccurences.
+            max_events: int, optional, if defined, overwrite the value in label_occurences if defined
+                (in label_occurences this parameter corresponds to the number of cooccurences).
             reverb: float, the reverb to be applied to the foreground events
             save_isolated_events: bool, whether or not to save isolated events in a subfolder
                 (called <filename>_events by default)
@@ -190,11 +191,15 @@ class Soundscape(scaper.Scaper):
             max_events = co_occur_params.get("max_events")
             if max_events is None:
                 raise DesedError("max_events has to be specified")
+        else:
+            max_events = max_events - 1
 
         if min_events is None:
             min_events = co_occur_params.get("min_events")
             if min_events is None:
                 raise DesedError("min_events has to be specified in generate co occurence or in params")
+        else:
+            min_events = min_events - 1
 
         # add random number of foreground events
         if min_events == max_events:
