@@ -161,7 +161,7 @@ class SoundscapesGenerator:
         for label in label_occurences.keys():
             self.logger.debug('Generating soundscape: {:d}/{:d}'.format(cnt + 1, number))
             label_params = label_occurences[label]
-            for i in range(int(number * label_params['proba'])):
+            for i in range(round(number * label_params['proba'])):
                 sc = Soundscape(self.duration, self.fg_folder, self.bg_folder, self.ref_db, self.samplerate,
                                 random_state=self.random_state, delete_if_exists=self.delete_if_exists)
                 if start_from + cnt < 10:
@@ -183,6 +183,9 @@ class SoundscapesGenerator:
                 if cnt % 200 == 0:
                     self.logger.info(f"generating {cnt} / {number} files (updated every 200)")
                 cnt += 1
+        if cnt != number:
+            self.logger.warn(f"The number of generated examples {cnt} is different from the number asked {number}"
+                             f"because of probabilities of events.")
 
 
 def generate_tsv_from_jams(list_jams, tsv_out, post_process=True, background_label=False):
