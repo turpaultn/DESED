@@ -5,12 +5,11 @@ import inspect
 
 import pandas as pd
 from scaper import generate_from_jams
-from scaper.util import _check_random_state
 
 from .logger import create_logger
 from .post_process import _post_process_labels_file, get_labels_from_jams
 from .soundscape import Soundscape
-from .utils import create_folder
+from .utils import create_folder, _check_random_state
 
 
 class SoundscapesGenerator:
@@ -105,6 +104,7 @@ class SoundscapesGenerator:
 
     def generate_by_label_occurence(self, label_occurences, number, out_folder, min_events=0, max_events=None,
                                     save_isolated_events=False, start_from=0,
+                                    snr=('uniform', 6, 30), pitch_shift=None, time_stretch=None,
                                     **kwargs):
         """ Generate landscapes by taking into account the probabilities of labels and their co-occurence
         Args:
@@ -118,6 +118,9 @@ class SoundscapesGenerator:
             save_isolated_events: bool, whether or not to save isolated events in a subfolder
                 (called <filename>_events by default)
             start_from: int, if already created file, will start the filenames at the specified number
+            snr: tuple, tuple accepted by Scaper().add_event()
+            pitch_shift: tuple, tuple accepted by Scaper().add_event()
+            time_stretch: tuple, tuple accepted by Scaper().add_event()
             kwargs: parametes accepted by Scaper().generate()
         Returns:
 
@@ -158,7 +161,7 @@ class SoundscapesGenerator:
         for label in label_occurences.keys():
             self.logger.debug('Generating soundscape: {:d}/{:d}'.format(cnt + 1, number))
             label_params = label_occurences[label]
-            for i in range(int(number * label_params['proba'])):
+            for i in range(round(number * label_params['proba'])):
                 sc = Soundscape(self.duration, self.fg_folder, self.bg_folder, self.ref_db, self.samplerate,
                                 random_state=self.random_state, delete_if_exists=self.delete_if_exists)
                 if start_from + cnt < 10:
@@ -173,10 +176,16 @@ class SoundscapesGenerator:
                                          min_events=min_events,
                                          max_events=max_events,
                                          save_isolated_events=save_isolated_events,
+                                         snr=snr,
+                                         pitch_shift=pitch_shift,
+                                         time_stretch=time_stretch,
                                          **kwargs)
                 if cnt % 200 == 0:
                     self.logger.info(f"generating {cnt} / {number} files (updated every 200)")
                 cnt += 1
+        if cnt != number:
+            self.logger.warn(f"The number of generated examples {cnt} is different from the number asked {number}"
+                             f"because of probabilities of events.")
 
 
 def generate_tsv_from_jams(list_jams, tsv_out, post_process=True, background_label=False):
@@ -220,8 +229,6 @@ def generate_files_from_jams(list_jams, out_folder, out_folder_jams=None,
         out_folder_jams: str, path to write the jams (could be modified by fg_path and bg_path for example),
             if None, jams not saved
         save_isolated_events: bool, whether or not to save isolated events in a separate folder
-        isolated_events_path: str, only useful when save_isolated_events=True. Give the path to the events folders.
-            If None, a folder is created next to the audio files.
         overwrite_exist_audio: bool, whether to regenerate existing audio files or not
         kwargs: dict, scaper.generate_from_jams params (fg_path, bg_path, ...)
     Returns: None

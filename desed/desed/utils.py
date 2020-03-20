@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import functools
 import inspect
+import numbers
 
 import jams
 import numpy as np
@@ -9,9 +10,29 @@ import os.path as osp
 import shutil
 import pprint
 
-from scaper.util import _check_random_state
-
 from .logger import create_logger, DesedError
+
+
+def _check_random_state(seed):
+    """Turn seed into a np.random.RandomState instance
+
+    Parameters
+    ----------
+    seed : None | int | instance of RandomState
+        If seed is None, return the RandomState singleton used by np.random.
+        If seed is an int, return a new RandomState instance seeded with seed.
+        If seed is already a RandomState instance, return it.
+        Otherwise raise ValueError.
+    """
+    if seed is None or seed is np.random:
+        return np.random.mtrand._rand
+    elif isinstance(seed, (numbers.Integral, np.integer, int)):
+        return np.random.RandomState(seed)
+    elif isinstance(seed, np.random.RandomState):
+        return seed
+    else:
+        raise ValueError('%r cannot be used to seed a numpy.random.RandomState'
+                         ' instance' % seed)
 
 
 def create_folder(folder, exist_ok=True, delete_if_exists=False):
@@ -41,19 +62,20 @@ def choose_cooccurence_class(co_occur_params, random_state=None):
     """ Choose another class given a dictionary of parameters (from an already specified class).
     Args:
         co_occur_params: dict, define the parameters of co-occurence of classes
-        Example of co_occur_params dictionnary::
-            {
-              "max_events": 13,
-              "classes": [
-                "Alarm_bell_ringing",
-                "Dog",
-              ],
-              "probas": [
-                70,
-                30
-              ]
-            }
-        classes and probas maps each others
+            Example of co_occur_params dictionnary::
+                {
+                  "max_events": 13,
+                  "classes": [
+                    "Alarm_bell_ringing",
+                    "Dog",
+                  ],
+                  "probas": [
+                    70,
+                    30
+                  ]
+                }
+            classes and probas maps each others
+        random_state: int, or RandomS0tate object
     Returns:
         str, the class name.
     """

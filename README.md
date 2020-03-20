@@ -27,6 +27,10 @@ And please cite our papers in your work*
   - [FAQ](#faq)
   - [Please cite us](#please-cite-us)
   - [References](#references)
+
+## Updates
+- 18th March 2020, update DESED_synth_dcase20_train_jams.tar of DESED_synth. They use pitch shifting, while the others 
+didn't. These are the final JAMS used for dcase2020 baseline. Also commenting reverb since not used for the baseline.
       
 ## Requirements:
 **python >= 3.6**, dcase-util >= 0.2.5, scaper >= 1.3.5, numpy >= 1.15.4, pandas >= 0.24.0,
@@ -275,7 +279,7 @@ DESED part:
 
 * **Synthetic**
 	* **Training**: There are 2060 background files from SINS and 1009 foreground from Freesound.
-	We generated 2595 10s files with a FBSNR between 6dB to 30dB. Files are reverberated using 
+	We generated 2584 10s files with a FBSNR between 6dB to 30dB. Files are reverberated using 
 	room impulse responses (RIR) from [FUSS][fuss_zenodo] dataset.
 	* **Evaluation**: 	There are 12 (Freesound) + 5 (Youtube) background files and 314 foreground files. 
 
