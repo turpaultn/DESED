@@ -9,7 +9,7 @@ def package_file(fname):
 
 setup(
     name='desed',
-    version='1.1.4',
+    version='1.1.7',
     description="DESED dataset utils",
     author="Nicolas Turpault, Romain Serizel, Ankit Shah, Justin Salamon",
     author_email="turpaultn@gmail.com",
@@ -18,11 +18,14 @@ setup(
     package_dir={"": package_file("desed")},
     packages=find_packages(package_file("desed")),
     install_requires=[
-            "scaper >= 1.3.5",
-            "numpy >= 1.15.4",
-            "pandas >= 0.24.0",
-            "dcase-util >= 0.2.5",
-            "youtube-dl >= 2019.4.30",
-            "soundfile >= 0.10.1",
-            "jams >= 0.3.4"]
+        "scaper >= 1.3.5",
+        "numpy >= 1.15.4",
+        "pandas >= 0.24.0",
+        "dcase-util >= 0.2.5",
+        "youtube-dl >= 2019.4.30",
+        "soundfile >= 0.10.1",
+        "jams >= 0.3.4",
+        "tqdm >= 4.29.1",
+        "requests >= 2.21.0"
+    ]
 )

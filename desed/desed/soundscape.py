@@ -7,7 +7,6 @@ import shutil
 import warnings
 from os import path as osp
 
-import numpy as np
 import scaper
 import soundfile as sf
 
@@ -140,8 +139,10 @@ class Soundscape(scaper.Scaper):
             else:
                 raise NotImplementedError("Can only remove files or folders")
     
-    def generate_co_occurence(self, co_occur_params, label, out_folder, filename, min_events=0, max_events=None,
-                              reverb=None, save_isolated_events=False, **kwargs):
+    def generate_co_occurence(self, co_occur_params, label, out_folder, filename, min_events=1, max_events=None,
+                              reverb=None, save_isolated_events=False,
+                              snr=('uniform', 6, 30), pitch_shift=None, time_stretch=None,
+                              **kwargs):
         """ Generate a single file, using the information of onset or offset present
         (see DESED dataset and folders in soundbank foreground)
         Args:
@@ -150,14 +151,18 @@ class Soundscape(scaper.Scaper):
             label: str, the main foreground label of the generated file.
             out_folder: str, path to extract generate file
             filename: str, name of the generated file, without extension (.wav, .jams and .txt will be created)
-            min_events: int, optional, the minimum number of events per files (default=0)
+            min_events: int, optional, the minimum number of events per files (default=1, >= 1)
                 (Be careful, if max_events in label_occurences params is less than this it will raise an error)
-                If defined in the label_occurences dict, this parameter overwrites it.
-            max_events: int, optional, if defined, overwrite the value in label_occurences if defined.
+                If defined in the label_occurences dict, this parameter corresponds to the number of cooccurences.
+            max_events: int, optional, if defined, overwrite the value in label_occurences if defined
+                (in label_occurences this parameter corresponds to the number of cooccurences).
             reverb: float, the reverb to be applied to the foreground events
             save_isolated_events: bool, whether or not to save isolated events in a subfolder
                 (called <filename>_events by default)
-            kwargs: arguments accepted by Scaper.generate
+            snr: tuple, tuple accepted by Scaper().add_event()
+            pitch_shift: tuple, tuple accepted by Scaper().add_event()
+            time_stretch: tuple, tuple accepted by Scaper().add_event()
+            kwargs: arguments accepted by Scaper.generate or
         Returns:
             None
 
@@ -180,23 +185,30 @@ class Soundscape(scaper.Scaper):
         self.add_random_background()
 
         # add main event, non_noff stands for no onset and no offset (accept label to have _nOn or _nOff specified).
-        self.add_fg_event_non_noff(label)
+        self.add_fg_event_non_noff(label, snr=snr, pitch_shift=pitch_shift, time_stretch=time_stretch)
 
         if max_events is None:
             max_events = co_occur_params.get("max_events")
             if max_events is None:
                 raise DesedError("max_events has to be specified")
+        else:
+            max_events = max_events - 1
 
         if min_events is None:
             min_events = co_occur_params.get("min_events")
             if min_events is None:
-                raise DesedError("max_events has to be specified")
+                raise DesedError("min_events has to be specified in generate co occurence or in params")
+        else:
+            min_events = min_events - 1
 
         # add random number of foreground events
-        n_events = self.random_state.randint(min_events, max_events)
+        if min_events == max_events:
+            n_events = min_events
+        else:
+            n_events = self.random_state.randint(min_events, max_events)
         for _ in range(n_events):
-            chosen_class = choose_cooccurence_class(co_occur_params)
-            self.add_fg_event_non_noff(chosen_class)
+            chosen_class = choose_cooccurence_class(co_occur_params, random_state=self.random_state)
+            self.add_fg_event_non_noff(chosen_class, snr=snr, pitch_shift=pitch_shift, time_stretch=time_stretch)
 
         # Just in case an extension has been added
         ext = osp.splitext(filename)[-1]

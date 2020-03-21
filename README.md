@@ -27,6 +27,10 @@ And please cite our papers in your work*
   - [FAQ](#faq)
   - [Please cite us](#please-cite-us)
   - [References](#references)
+
+## Updates
+- 18th March 2020, update DESED_synth_dcase20_train_jams.tar of DESED_synth. They use pitch shifting, while the others 
+didn't. These are the final JAMS used for dcase2020 baseline. Also commenting reverb since not used for the baseline.
       
 ## Requirements:
 **python >= 3.6**, dcase-util >= 0.2.5, scaper >= 1.3.5, numpy >= 1.15.4, pandas >= 0.24.0,
@@ -253,7 +257,6 @@ dcase2019/
 ```
 
 ### DCASE20 Task 4
-### DCASE19 task 4
 #### Download
 Recorded (real) soundscapes are similar 2019.
 
@@ -276,7 +279,8 @@ DESED part:
 
 * **Synthetic**
 	* **Training**: There are 2060 background files from SINS and 1009 foreground from Freesound.
-	We generated 2536 10s files with a FBSNR between 6dB to 30dB.
+	We generated 2584 10s files with a FBSNR between 6dB to 30dB. Files are reverberated using 
+	room impulse responses (RIR) from [FUSS][fuss_zenodo] dataset.
 	* **Evaluation**: 	There are 12 (Freesound) + 5 (Youtube) background files and 314 foreground files. 
 
 ** After running the script `create_dcase2020_dataset.sh`, you should have a folder called `dataset`in that way**
@@ -311,7 +315,8 @@ We do not have the problem for evaluation data because we try to overcome the pr
 * I have a problem downloading the recorded soundscapes. How do I do ?
 
 If you're in a country with youtube restrictions, you can try to use a VPN and the --proxy option from youtube-dl.
-You can also try to upgrade youtube-dl since it is regularly updated. Finally, if you succeeded to download most of the files, you can send the missing files as stated before in this page.
+You can also try to upgrade youtube-dl since it is regularly updated. 
+Finally, if you succeeded to download most of the files, you can send the missing files as stated in the `real/README.md.
 
 * How do I evaluate and compare my system with other methods using this dataset ?
 
@@ -373,8 +378,9 @@ In Proceedings of the 18th International Society for Music Information Retrieval
 In Proceedings of the 14th International Society for Music Information Retrieval Conference (ISMIR 2013), Curitiba, Brazil, 2013.
 
 [audioset]: https://research.google.com/audioset/index.html
-[desed-synthetic]: https://zenodo.org/record/3693695
+[desed-synthetic]: https://zenodo.org/record/3702397
 [desed-public-eval]: https://zenodo.org/record/3588172
+[fuss_zenodo]: https://zenodo.org/record/3694384/
 [img-desed2019]: ./img/desed_block_diagram.png
 [img-soundbank]: ./img/soundbank_diagram.png
 [list_papers_md]: ./list_papers_using_desed.md

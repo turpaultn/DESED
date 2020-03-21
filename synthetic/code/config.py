@@ -12,3 +12,5 @@ meta_path_train = osp.join(meta_path, 'train')
 ref_db = -55
 samplerate = 16000
 random_seed = 2020
+
+clip_duration = 10

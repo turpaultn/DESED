@@ -12,8 +12,7 @@ import pandas as pd
 import youtube_dl
 from dcase_util.containers import AudioContainer
 from tqdm import tqdm
-from youtube_dl import DownloadError
-from youtube_dl.utils import ExtractorError
+from youtube_dl.utils import ExtractorError, DownloadError
 
 from .logger import create_logger, DesedWarning
 from .utils import create_folder
@@ -53,7 +52,7 @@ def download_file(filename, result_dir, platform="youtube"):
     }
 
     if platform.lower() == "youtube":
-        query_id = filename[1:12] # Remove the Y in front of the file.
+        query_id = filename[1:12]  # Remove the Y in front of the file.
         baseurl = "https://www.youtube.com/watch?v="
     elif platform.lower() == "vimeo":
         query_id = filename.split('_')[0]
@@ -83,7 +82,7 @@ def download_file(filename, result_dir, platform="youtube"):
             audio_container.detect_file_format()
             audio_container.save(filename=os.path.join(result_dir, filename))
 
-            #Remove temporary file
+            # Remove temporary file
             os.remove(tmp_filename)
             return []
 

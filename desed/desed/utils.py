@@ -1,16 +1,38 @@
 # -*- coding: utf-8 -*-
 import functools
 import inspect
+import numbers
 
 import jams
 import numpy as np
 import os
 import os.path as osp
 import shutil
-
 import pprint
 
 from .logger import create_logger, DesedError
+
+
+def _check_random_state(seed):
+    """Turn seed into a np.random.RandomState instance
+
+    Parameters
+    ----------
+    seed : None | int | instance of RandomState
+        If seed is None, return the RandomState singleton used by np.random.
+        If seed is an int, return a new RandomState instance seeded with seed.
+        If seed is already a RandomState instance, return it.
+        Otherwise raise ValueError.
+    """
+    if seed is None or seed is np.random:
+        return np.random.mtrand._rand
+    elif isinstance(seed, (numbers.Integral, np.integer, int)):
+        return np.random.RandomState(seed)
+    elif isinstance(seed, np.random.RandomState):
+        return seed
+    else:
+        raise ValueError('%r cannot be used to seed a numpy.random.RandomState'
+                         ' instance' % seed)
 
 
 def create_folder(folder, exist_ok=True, delete_if_exists=False):
@@ -36,23 +58,24 @@ def pprint(x):
     pp.pprint(x)
 
 
-def choose_cooccurence_class(co_occur_params):
+def choose_cooccurence_class(co_occur_params, random_state=None):
     """ Choose another class given a dictionary of parameters (from an already specified class).
     Args:
         co_occur_params: dict, define the parameters of co-occurence of classes
-        Example of co_occur_params dictionnary::
-            {
-              "max_events": 13,
-              "classes": [
-                "Alarm_bell_ringing",
-                "Dog",
-              ],
-              "probas": [
-                70,
-                30
-              ]
-            }
-        classes and probas maps each others
+            Example of co_occur_params dictionnary::
+                {
+                  "max_events": 13,
+                  "classes": [
+                    "Alarm_bell_ringing",
+                    "Dog",
+                  ],
+                  "probas": [
+                    70,
+                    30
+                  ]
+                }
+            classes and probas maps each others
+        random_state: int, or RandomS0tate object
     Returns:
         str, the class name.
     """
@@ -62,8 +85,12 @@ def choose_cooccurence_class(co_occur_params):
     for i in range(len(co_occur_params['probas'])):
         accumulated_probas += co_occur_params['probas'][i]
         inter_acc_probas.append(accumulated_probas)
-    # Get a random value between 0-1
-    random_val = np.random.uniform()
+    if random_state is not None:
+        random_state = _check_random_state(random_state)
+        random_val = random_state.rand()
+    else:
+        # Get a random value between 0-1
+        random_val = np.random.uniform()
     # Get the index of the chosen class by taking the index of the first accumulated value > random_val
     idx_chosen_class = np.argmax(np.asarray(inter_acc_probas) > random_val)
     chosen_class = co_occur_params['classes'][idx_chosen_class]
