@@ -309,6 +309,7 @@ Because of licenses issues. (Example of SINS in the training soundbank)
 We do not have the problem for evaluation data because we try to overcome the problem after running into this issue.
 
 * I have a problem downloading the recorded soundscapes. How do I do ?
+
 If you're in a country with youtube restrictions, you can try to use a VPN and the --proxy option from youtube-dl.
 You can also try to upgrade youtube-dl since it is regularly updated. Finally, if you succeeded to download most of the files, you can send the missing files as stated before in this page.
 
