@@ -9,7 +9,7 @@ a pull request.
 And please cite our papers in your work*
 
 **Table of contents**
-
+  - [Updates](#updates)
   - [Requirements](#requirements)
   - [Links](#links)
   - [Description](#description)

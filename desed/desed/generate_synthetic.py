@@ -184,7 +184,7 @@ class SoundscapesGenerator:
                     self.logger.info(f"generating {cnt} / {number} files (updated every 200)")
                 cnt += 1
         if cnt != number:
-            self.logger.warn(f"The number of generated examples {cnt} is different from the number asked {number}"
+            self.logger.warn(f"The number of generated examples ({cnt}) is different from the number asked ({number}) "
                              f"because of probabilities of events.")
 
 
