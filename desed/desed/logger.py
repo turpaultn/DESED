@@ -33,11 +33,13 @@ def create_logger(logger_name, terminal_level=logging.INFO):
         res_terminal_level = terminal_level
     logger.setLevel(res_terminal_level)
 
-    terminal_h = logging.StreamHandler(sys.stdout)
-    terminal_h.setLevel(res_terminal_level)
-    terminal_h.set_name('stdout')
-    terminal_h.setFormatter(tool_formatter)
-    logger.addHandler(terminal_h)
+    # To avoid duplicates handlers (should have only one)
+    if not len(logger.handlers[:]):
+        terminal_h = logging.StreamHandler(sys.stdout)
+        terminal_h.setLevel(res_terminal_level)
+        terminal_h.set_name('stdout')
+        terminal_h.setFormatter(tool_formatter)
+        logger.addHandler(terminal_h)
     return logger
 
 
