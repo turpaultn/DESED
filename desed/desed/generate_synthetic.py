@@ -202,6 +202,8 @@ def generate_tsv_from_jams(list_jams, tsv_out, post_process=True, background_lab
     Returns:
         None
     """
+    if len(list_jams) == 0:
+        raise IndexError("Cannot generate a tsv file, the list of jams given is empty")
     create_folder(osp.dirname(tsv_out))
     final_df = pd.DataFrame()
     for jam_file in list_jams:

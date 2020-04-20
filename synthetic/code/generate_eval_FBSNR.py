@@ -8,7 +8,7 @@ import argparse
 import os.path as osp
 from pprint import pformat
 
-from desed.generate_synthetic import SoundscapesGenerator
+from desed.generate_synthetic import SoundscapesGenerator, generate_files_from_jams
 from desed.logger import create_logger
 from desed.post_process import rm_high_polyphony, post_process_txt_labels
 from desed.utils import create_folder, modify_jams, change_snr
@@ -70,15 +70,18 @@ if __name__ == '__main__':
     jams_to_modify = glob.glob(osp.join(out_folder_30, "*.jams"))
     # Put FBSNR to [0;24] range so reducing of 6 compared to [6;30]
     minus_6_snr = functools.partial(change_snr, db_change=-6)
-    modify_jams(jams_to_modify, minus_6_snr, out_folder_24)
+    new_jams24 = modify_jams(jams_to_modify, minus_6_snr, out_folder_24)
+    generate_files_from_jams(new_jams24, out_folder_24, out_folder_24)
 
     # Same for 15
     out_folder_15 = osp.join(out_folder, "15dB")
     create_folder(out_folder_15)
     minus_15_snr = functools.partial(change_snr, db_change=-15)
-    modify_jams(jams_to_modify, minus_15_snr, out_folder_15)
+    new_jams15 = modify_jams(jams_to_modify, minus_15_snr, out_folder_15)
+    generate_files_from_jams(new_jams15, out_folder_15, out_folder_15)
 
     out_folder_0 = osp.join(out_folder, "0dB")
     create_folder(out_folder_0)
     minus_30_snr = functools.partial(change_snr, db_change=-30)
-    modify_jams(jams_to_modify, minus_30_snr, out_folder_0)
+    new_jams0 = modify_jams(jams_to_modify, minus_30_snr, out_folder_0)
+    generate_files_from_jams(new_jams0, out_folder_0, out_folder_0)
