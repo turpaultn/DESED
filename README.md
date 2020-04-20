@@ -33,7 +33,7 @@ And please cite our papers in your work*
 didn't. These are the final JAMS used for dcase2020 baseline. Also commenting reverb since not used for the baseline.
       
 ## Requirements:
-**python >= 3.6**, dcase-util >= 0.2.5, scaper >= 1.3.5, numpy >= 1.15.4, pandas >= 0.24.0,
+**python >= 3.6**, dcase-util >= 0.2.11, scaper >= 1.3.5, numpy >= 1.15.4, pandas >= 0.24.0,
 soundfile >= 0.10.1, youtube-dl >= 2019.4.30 (better with conda-forge).
 
 ## Installation
