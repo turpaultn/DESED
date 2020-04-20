@@ -75,7 +75,7 @@ def download_file(filename, result_dir, platform="youtube"):
 
             tmp_filename = TMP_FOLDER + query_id + "." + best_audio_format["ext"]
             audio_container.load(filename=tmp_filename, fs=44100, res_type='kaiser_best',
-                                 start=float(segment_start), stop=float(segment_end))
+                                 start=float(segment_start), stop=float(segment_end), auto_trimming=True)
 
             # Save segmented audio
             audio_container.filename = filename
