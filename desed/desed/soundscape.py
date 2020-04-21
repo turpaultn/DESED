@@ -142,6 +142,7 @@ class Soundscape(scaper.Scaper):
     def generate_co_occurence(self, co_occur_params, label, out_folder, filename, min_events=1, max_events=None,
                               reverb=None, save_isolated_events=False,
                               snr=('uniform', 6, 30), pitch_shift=None, time_stretch=None,
+                              background_label="*",
                               **kwargs):
         """ Generate a single file, using the information of onset or offset present
         (see DESED dataset and folders in soundbank foreground)
@@ -162,6 +163,8 @@ class Soundscape(scaper.Scaper):
             snr: tuple, tuple accepted by Scaper().add_event()
             pitch_shift: tuple, tuple accepted by Scaper().add_event()
             time_stretch: tuple, tuple accepted by Scaper().add_event()
+            background_label: str, if "*" choose in all available files. If a name is given it has to match the name
+                of a folder in 'background'.
             kwargs: arguments accepted by Scaper.generate or
         Returns:
             None
@@ -182,7 +185,7 @@ class Soundscape(scaper.Scaper):
             prob is the probability of this class (not used here)
         """
         create_folder(out_folder)
-        self.add_random_background()
+        self.add_random_background(background_label)
 
         # add main event, non_noff stands for no onset and no offset (accept label to have _nOn or _nOff specified).
         self.add_fg_event_non_noff(label, snr=snr, pitch_shift=pitch_shift, time_stretch=time_stretch)
@@ -254,6 +257,7 @@ class Soundscape(scaper.Scaper):
                                  time_stretches=('uniform', 1, 1), reverb=0.1,
                                  txt_file=True,
                                  save_isolated_events=False, isolated_events_path=None,
+                                 background_label="*",
                                  **kwargs):
         """ Generate a clip with a background file and multiple foreground files.
         Args:
@@ -273,6 +277,8 @@ class Soundscape(scaper.Scaper):
             save_isolated_events: bool, whether or not to save isolated events in a separate folder
             isolated_events_path: str, only useful when save_isolated_events=True. Give the path to the events folders.
                 If None, a folder is created next to the audio files.
+            background_label: str, if "*" choose in all available files. If a name is given it has to match the name
+                of a folder in 'background'.
             kwargs: arguments accepted by Scaper.generate
 
             * All arguments with asterix, if tuple given, see Scaper for distribution allowed.
@@ -280,7 +286,7 @@ class Soundscape(scaper.Scaper):
             None
         """
         create_folder(out_folder)
-        self.add_random_background()
+        self.add_random_background(background_label)
 
         params = {"label": labels, "source_file": source_files, "source_time": sources_time,
                   "event_time": events_start,

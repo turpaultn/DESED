@@ -40,8 +40,8 @@ class SoundscapesGenerator:
                  labels=('choose', []), source_files=('choose', []), sources_time=('const', 0),
                  events_start=('truncnorm', 5.0, 2.0, 0.0, 10.0), events_duration=('uniform', 0.25, 10.0),
                  snrs=('const', 30), pitch_shifts=('uniform', -3.0, 3.0), time_stretches=('uniform', 1, 1),
-                 save_isolated_events=False, txt_file=True,
-                 start_from=0, **kwargs):
+                 save_isolated_events=False, background_label="*",
+                 txt_file=True, start_from=0, **kwargs):
         """ Generate
 
         Args:
@@ -59,6 +59,8 @@ class SoundscapesGenerator:
             pitch_shifts: tuple or list, distribution to choose pitch shift or list of pitch shifts.*
             time_stretches: tuple or list, distribution to choose time stretches or list of time stretches.*
             save_isolated_events: bool, whether or not to save isolated events in a separate folder
+            background_label: str, if "*" choose in all available files. If a name is given it has to match the name
+                of a folder in 'background'.
 
             txt_file: bool, whether or not to save the .txt file.
             start_from: int, the number to start from if file already created.
@@ -98,6 +100,7 @@ class SoundscapesGenerator:
                                         **params,
                                         txt_file=txt_file,
                                         save_isolated_events=save_isolated_events,
+                                        background_label=background_label,
                                         **kwargs)
             if cnt % 200 == 0:
                 self.logger.info(f"generating {cnt} / {number} files (updated every 200)")
@@ -105,6 +108,7 @@ class SoundscapesGenerator:
     def generate_by_label_occurence(self, label_occurences, number, out_folder, min_events=0, max_events=None,
                                     save_isolated_events=False, start_from=0,
                                     snr=('uniform', 6, 30), pitch_shift=None, time_stretch=None,
+                                    background_label="*",
                                     **kwargs):
         """ Generate landscapes by taking into account the probabilities of labels and their co-occurence
         Args:
@@ -121,6 +125,8 @@ class SoundscapesGenerator:
             snr: tuple, tuple accepted by Scaper().add_event()
             pitch_shift: tuple, tuple accepted by Scaper().add_event()
             time_stretch: tuple, tuple accepted by Scaper().add_event()
+            background_label: str, if "*" choose in all available files. If a name is given it has to match the name
+                of a folder in 'background'.
             kwargs: parametes accepted by Scaper().generate()
         Returns:
 
@@ -179,6 +185,7 @@ class SoundscapesGenerator:
                                          snr=snr,
                                          pitch_shift=pitch_shift,
                                          time_stretch=time_stretch,
+                                         background_label=background_label,
                                          **kwargs)
                 if cnt % 200 == 0:
                     self.logger.info(f"generating {cnt} / {number} files (updated every 200)")
