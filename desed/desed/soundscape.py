@@ -38,12 +38,22 @@ class Soundscape(scaper.Scaper):
             self.sr = samplerate
         self.delete_if_exists = delete_if_exists
 
-    def add_random_background(self, label="*"):
-        """ Add random background to a scaper object
+    def add_random_background(self, label=None):
+        """ Add a random background to a scaper object
         Args:
-            label: str, possible labels are names the subfolders of self.bg_path.
+            label: str or list, possible labels are names the subfolders of self.bg_path. None can use them all.
         """
-        chosen_file = self._choose_file(osp.join(self.bg_path, label))
+        # If str or None, keep it like this
+        if label is not None:
+            if isinstance(label, list):
+                bg_label = self.random_state.choice(label)
+            elif isinstance(label, str):
+                bg_label = label
+            else:
+                raise NotImplementedError("Background label can only be a list of available labels or a string")
+        else:
+            bg_label = "*"
+        chosen_file = self._choose_file(osp.join(self.bg_path, bg_label))
         file_duration = sf.info(chosen_file).duration
         starting_source = min(self.random_state.rand() * file_duration, max(file_duration - self.duration, 0))
         self.add_background(label=('const', chosen_file.split("/")[-2]),
@@ -65,16 +75,21 @@ class Soundscape(scaper.Scaper):
 
         """
         logger = create_logger(__name__ + "/" + inspect.currentframe().f_code.co_name)
-        source_time_dist = 'const'
-        source_time = 0.0
 
         chosen_file = self._choose_file(os.path.join(self.fg_path, label))
         file_duration = round(sf.info(chosen_file).duration, 6)  # round because Scaper uses sox with round 6 digits
         if "_nOn_nOff" in label:
+            # If no onset and offset, the file should be bigger than the duration of the file
             logger.debug('no onset/offset')
+            if file_duration - self.duration <=0:
+                warnings.warn("Event without onset and offset added not for the full time of the audio soundscape")
+                source_start = 0
+            else:
+                source_start = self.random_state.uniform(0, np.maximum(file_duration - self.duration, 0))
+
             self.add_event(label=('const', label),
                            source_file=('const', chosen_file),
-                           source_time=('uniform', 0, np.maximum(file_duration - self.duration, 0)),
+                           source_time=('const', source_start),
                            event_time=('const', 0),
                            event_duration=('const', self.duration),
                            snr=snr,
@@ -82,7 +97,10 @@ class Soundscape(scaper.Scaper):
                            time_stretch=time_stretch)
         elif "_nOn" in label:
             logger.debug('no onset')
-            source_start = self.random_state.uniform(0, file_duration - event_duration_min)
+            if file_duration - event_duration_min <= 0:
+                source_start = 0
+            else:
+                source_start = self.random_state.uniform(0, file_duration - event_duration_min)
             self.add_event(label=('const', label),
                            source_file=('const', chosen_file),
                            source_time=('const', source_start),
@@ -98,18 +116,44 @@ class Soundscape(scaper.Scaper):
             event_length = self.duration - event_start
             self.add_event(label=('const', label),
                            source_file=('const', chosen_file),
-                           source_time=(source_time_dist, source_time),
+                           source_time=('const', 0),
                            event_time=('const', event_start),
                            event_duration=('const', event_length),
                            snr=snr,
                            pitch_shift=pitch_shift,
                            time_stretch=time_stretch)
         else:
-            event_start = self.random_state.uniform(0, self.duration - event_duration_min)
-            event_length = min(file_duration, self.duration - event_start)
+            logger.debug("onset offset")
+            if file_duration > self.duration:
+                if file_duration // self.duration > 2:
+                    choice = np.random.choice(["onset", "middle", "offset"], p=[0.375, 0.25, 0.375])
+                else:
+                    choice = np.random.choice(["onset", "offset"])
+                logger.debug(f"choice: {choice}")
+                if choice == "onset":
+                    event_start = self.random_state.uniform(0, self.duration - event_duration_min)
+                    length_possible = self.duration - event_start
+                    event_length = file_duration if file_duration < length_possible else length_possible
+                    source_start = 0
+                elif choice == "offset":
+                    event_start = 0
+                    event_length = self.random_state.uniform(0, self.duration - event_duration_min)
+                    source_start = file_duration - event_length
+                else:
+                    source_start = self.random_state.uniform(self.duration, file_duration - self.duration)
+                    event_start = 0
+                    event_length = self.duration
+            else:
+                event_start = self.random_state.uniform(0, self.duration - event_duration_min)
+                source_start = 0
+                length_possible = self.duration - event_start
+                event_length = file_duration if file_duration < length_possible else length_possible
+            logger.debug(f"event_start: {event_start}, length: {event_length}, source_start: {source_start}, "
+                         f"file_duration: {file_duration}")
+
             self.add_event(label=('const', label),
                            source_file=('const', chosen_file),
-                           source_time=(source_time_dist, source_time),
+                           source_time=("const", source_start),
                            event_time=('const', event_start),
                            event_duration=('const', event_length),
                            snr=snr,
@@ -142,7 +186,7 @@ class Soundscape(scaper.Scaper):
     def generate_co_occurence(self, co_occur_params, label, out_folder, filename, min_events=1, max_events=None,
                               reverb=None, save_isolated_events=False,
                               snr=('uniform', 6, 30), pitch_shift=None, time_stretch=None,
-                              background_label="*",
+                              bg_labels=None,
                               **kwargs):
         """ Generate a single file, using the information of onset or offset present
         (see DESED dataset and folders in soundbank foreground)
@@ -163,9 +207,9 @@ class Soundscape(scaper.Scaper):
             snr: tuple, tuple accepted by Scaper().add_event()
             pitch_shift: tuple, tuple accepted by Scaper().add_event()
             time_stretch: tuple, tuple accepted by Scaper().add_event()
-            background_label: str, if "*" choose in all available files. If a name is given it has to match the name
-                of a folder in 'background'.
-            kwargs: arguments accepted by Scaper.generate or
+            bg_labels: list or str, if None choose in all available files.
+                If a name or list is given it has to match the name of a folder in 'background'. example: "sins"
+            kwargs: arguments accepted by Scaper.generate
         Returns:
             None
 
@@ -185,7 +229,7 @@ class Soundscape(scaper.Scaper):
             prob is the probability of this class (not used here)
         """
         create_folder(out_folder)
-        self.add_random_background(background_label)
+        self.add_random_background(bg_labels)
 
         # add main event, non_noff stands for no onset and no offset (accept label to have _nOn or _nOff specified).
         self.add_fg_event_non_noff(label, snr=snr, pitch_shift=pitch_shift, time_stretch=time_stretch)
@@ -248,6 +292,78 @@ class Soundscape(scaper.Scaper):
                       isolated_events_path=isolated_events_path,
                       **kwargs)
 
+    def generate_from_non_noff(self, label, list_labels, out_folder, filename, n_events,
+                               reverb=None, save_isolated_events=False,
+                               snr=('uniform', 6, 30), pitch_shift=None, time_stretch=None,
+                               bg_labels=None,
+                               **kwargs):
+        """ Generate a single file, using the information of onset or offset present
+        (see DESED dataset and folders in soundbank foreground)
+        Args:
+            label: str, the main foreground label of the generated file.
+            list_labels: list, the list of available labels
+            out_folder: str, path to extract generate file
+            filename: str, name of the generated file, without extension (.wav, .jams and .txt will be created)
+            n_events: int, the of events in the soundscape
+            reverb: float, the reverb to be applied to the foreground events
+            save_isolated_events: bool, whether or not to save isolated events in a subfolder
+                (called <filename>_events by default)
+            snr: tuple, tuple accepted by Scaper().add_event()
+            pitch_shift: tuple, tuple accepted by Scaper().add_event()
+            time_stretch: tuple, tuple accepted by Scaper().add_event()
+            bg_labels: list, if None choose in all available files. If a name is given it has to match the name
+                of a folder in 'background'. example: ["sins"]
+            kwargs: arguments accepted by Scaper.generate
+        Returns:
+            None
+
+        """
+        create_folder(out_folder)
+        self.add_random_background(bg_labels)
+
+        if n_events > 0:
+            # add main event, non_noff stands for no onset and no offset (accept label to have _nOn or _nOff specified).
+            self.add_fg_event_non_noff(label, snr=snr, pitch_shift=pitch_shift, time_stretch=time_stretch)
+
+            for _ in range(n_events - 1):
+                chosen_class = self.random_state.choice(list_labels)
+                self.add_fg_event_non_noff(chosen_class, snr=snr, pitch_shift=pitch_shift, time_stretch=time_stretch)
+
+        # Just in case an extension has been added
+        ext = osp.splitext(filename)[-1]
+        if ext in [".wav", ".jams", ".txt"]:
+            filename = osp.splitext(filename)[0]
+
+        # generate
+        audio_file = osp.join(out_folder, f"{filename}.wav")
+        jams_file = osp.join(out_folder, f"{filename}.jams")
+        txt_file = osp.join(out_folder, f"{filename}.txt")
+
+        if self.delete_if_exists:
+            self._remove(audio_file)
+            self._remove(jams_file)
+            self._remove(txt_file)
+
+        # To get isolated events in a subfolder
+        isolated_events_path = kwargs.get("isolated_events_path")
+        if save_isolated_events:
+            if isolated_events_path is None:
+                isolated_events_path = osp.join(out_folder, f"{filename}_events")
+            if self.delete_if_exists:
+                self._remove(isolated_events_path)
+            else:
+                if osp.exists(isolated_events_path):
+                    warnings.warn(f"The folder {isolated_events_path} already exists, it means there could be some "
+                                  f"unwanted audio files from previous generated audio files in it.",
+                                  DesedWarning)
+
+        self.generate(audio_file, jams_file,
+                      reverb=reverb,
+                      txt_path=txt_file,
+                      save_isolated_events=save_isolated_events,
+                      isolated_events_path=isolated_events_path,
+                      **kwargs)
+
     def generate_one_bg_multi_fg(self, out_folder, filename, n_fg_events,
                                  labels=('choose', []),
                                  source_files=('choose', []), sources_time=('const', 0),
@@ -257,7 +373,7 @@ class Soundscape(scaper.Scaper):
                                  time_stretches=('uniform', 1, 1), reverb=0.1,
                                  txt_file=True,
                                  save_isolated_events=False, isolated_events_path=None,
-                                 background_label="*",
+                                 bg_labels=None,
                                  **kwargs):
         """ Generate a clip with a background file and multiple foreground files.
         Args:
@@ -277,8 +393,8 @@ class Soundscape(scaper.Scaper):
             save_isolated_events: bool, whether or not to save isolated events in a separate folder
             isolated_events_path: str, only useful when save_isolated_events=True. Give the path to the events folders.
                 If None, a folder is created next to the audio files.
-            background_label: str, if "*" choose in all available files. If a name is given it has to match the name
-                of a folder in 'background'.
+            bg_labels: list, if None choose in all available files. If a name is given it has to match the name
+                of a folder in 'background'. example: ["sins"]
             kwargs: arguments accepted by Scaper.generate
 
             * All arguments with asterix, if tuple given, see Scaper for distribution allowed.
@@ -286,7 +402,7 @@ class Soundscape(scaper.Scaper):
             None
         """
         create_folder(out_folder)
-        self.add_random_background(background_label)
+        self.add_random_background(bg_labels)
 
         params = {"label": labels, "source_file": source_files, "source_time": sources_time,
                   "event_time": events_start,
@@ -297,11 +413,14 @@ class Soundscape(scaper.Scaper):
         for i in range(n_fg_events):
             event_params = {}
             for key in params:
-                if type(params[key]) is tuple:
+                if params[key] is None or isinstance(params[key], tuple):
                     param = params[key]
                 elif type(params[key]) is list:
                     assert len(params[key]) == n_fg_events
-                    param = params[key][i]
+                    if not isinstance(params[key][i], tuple):
+                        param = ("const", params[key][i])
+                    else:
+                        param = params[key][i]
                 else:
                     raise NotImplementedError("Params of events is tuple(same for all) or "
                                               "list (different for each event)")

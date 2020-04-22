@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """class and functions to generate synthetic data using loops"""
+import os
 from os import path as osp
 import inspect
 
@@ -39,8 +40,8 @@ class SoundscapesGenerator:
     def generate(self, number, out_folder, min_events=1, max_events=5,
                  labels=('choose', []), source_files=('choose', []), sources_time=('const', 0),
                  events_start=('truncnorm', 5.0, 2.0, 0.0, 10.0), events_duration=('uniform', 0.25, 10.0),
-                 snrs=('const', 30), pitch_shifts=('uniform', -3.0, 3.0), time_stretches=('uniform', 1, 1),
-                 save_isolated_events=False, background_label="*",
+                 snrs=('const', 30), pitch_shifts=('uniform', -3.0, 3.0), time_stretches=None,
+                 save_isolated_events=False, bg_labels=None,
                  txt_file=True, start_from=0, **kwargs):
         """ Generate
 
@@ -59,8 +60,8 @@ class SoundscapesGenerator:
             pitch_shifts: tuple or list, distribution to choose pitch shift or list of pitch shifts.*
             time_stretches: tuple or list, distribution to choose time stretches or list of time stretches.*
             save_isolated_events: bool, whether or not to save isolated events in a separate folder
-            background_label: str, if "*" choose in all available files. If a name is given it has to match the name
-                of a folder in 'background'.
+            bg_labels: list, if None choose in all available files. If a name is given it has to match the name
+                of a folder in 'background'. example: ["sins"]
 
             txt_file: bool, whether or not to save the .txt file.
             start_from: int, the number to start from if file already created.
@@ -100,15 +101,71 @@ class SoundscapesGenerator:
                                         **params,
                                         txt_file=txt_file,
                                         save_isolated_events=save_isolated_events,
-                                        background_label=background_label,
+                                        bg_labels=bg_labels,
                                         **kwargs)
             if cnt % 200 == 0:
                 self.logger.info(f"generating {cnt} / {number} files (updated every 200)")
 
+    def generate_balance(self, number, out_folder, min_events, max_events, list_labels=None,
+                         save_isolated_events=False, start_from=0,
+                         snr=('uniform', 6, 30), pitch_shift=None, time_stretch=None,
+                         bg_labels=None,
+                         **kwargs):
+        """ Generate landscapes by taking into account the probabilities of labels and their co-occurence
+        Args:
+
+            number: int, the number of files to generate
+            out_folder: str, the path of the folder where to save the generated files
+            min_events: int, the minimum number of events per files
+            max_events: int, the maximum number of labels per file
+            list_labels: list of available labels (in foreground)
+            save_isolated_events: bool, whether or not to save isolated events in a subfolder
+                (called <filename>_events by default)
+            start_from: int, if already created file, will start the filenames at the specified number
+            snr: tuple, tuple accepted by Scaper().add_event()
+            pitch_shift: tuple, tuple accepted by Scaper().add_event()
+            time_stretch: tuple, tuple accepted by Scaper().add_event()
+            bg_labels: list, if None choose in all available files. If a name is given it has to match the name
+                of a folder in 'background'. example: ["sins"]
+            kwargs: parametes accepted by Scaper().generate()
+        """
+        create_folder(out_folder)
+        cnt = 0
+        if list_labels is None:
+            list_labels = os.listdir(self.fg_folder)
+        for label in list_labels:
+            self.logger.debug('Generating soundscape: {:d}/{:d}'.format(cnt + 1, number))
+            number_per_class = round(number // len(list_labels))
+            for i in range(number_per_class):
+                sc = Soundscape(self.duration, self.fg_folder, self.bg_folder, self.ref_db, self.samplerate,
+                                random_state=self.random_state, delete_if_exists=self.delete_if_exists)
+                if start_from + cnt < 10:
+                    filename = "0" + str(start_from + cnt)
+                else:
+                    filename = str(start_from + cnt)
+                n_events = self.random_state.randint(min_events, max_events)
+                sc.generate_from_non_noff(label=label,
+                                          list_labels=list_labels,
+                                          out_folder=out_folder,
+                                          filename=filename,
+                                          n_events=n_events,
+                                          save_isolated_events=save_isolated_events,
+                                          snr=snr,
+                                          pitch_shift=pitch_shift,
+                                          time_stretch=time_stretch,
+                                          bg_labels=bg_labels,
+                                          **kwargs)
+                if cnt % 200 == 0:
+                    self.logger.info(f"generating {cnt} / {number} files (updated every 200)")
+                cnt += 1
+        if cnt != number:
+            self.logger.warn(f"The number of generated examples ({cnt}) is different from the number asked ({number}) "
+                             f"because of probabilities of events.")
+
     def generate_by_label_occurence(self, label_occurences, number, out_folder, min_events=0, max_events=None,
                                     save_isolated_events=False, start_from=0,
                                     snr=('uniform', 6, 30), pitch_shift=None, time_stretch=None,
-                                    background_label="*",
+                                    bg_labels=None,
                                     **kwargs):
         """ Generate landscapes by taking into account the probabilities of labels and their co-occurence
         Args:
@@ -125,8 +182,8 @@ class SoundscapesGenerator:
             snr: tuple, tuple accepted by Scaper().add_event()
             pitch_shift: tuple, tuple accepted by Scaper().add_event()
             time_stretch: tuple, tuple accepted by Scaper().add_event()
-            background_label: str, if "*" choose in all available files. If a name is given it has to match the name
-                of a folder in 'background'.
+            bg_labels: list, if None choose in all available files. If a name is given it has to match the name
+                of a folder in 'background'. example: ["sins"]
             kwargs: parametes accepted by Scaper().generate()
         Returns:
 
@@ -185,7 +242,7 @@ class SoundscapesGenerator:
                                          snr=snr,
                                          pitch_shift=pitch_shift,
                                          time_stretch=time_stretch,
-                                         background_label=background_label,
+                                         bg_labels=bg_labels,
                                          **kwargs)
                 if cnt % 200 == 0:
                     self.logger.info(f"generating {cnt} / {number} files (updated every 200)")
