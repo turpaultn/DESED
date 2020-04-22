@@ -7,7 +7,6 @@ from pprint import pformat
 import logging
 
 from desed.generate_synthetic import SoundscapesGenerator
-from desed.utils import create_folder
 from desed.post_process import rm_high_polyphony, post_process_txt_labels
 from desed.logger import create_logger
 import config as cfg
