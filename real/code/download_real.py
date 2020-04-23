@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import print_function, absolute_import
 
+import argparse
 import os
+from pprint import pformat
+
 import pandas as pd
 from desed.logger import create_logger
 from desed.download_real import download
@@ -21,9 +24,14 @@ def download_from_csv(csv_path, result_dir):
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-d', '--dataset_folder', type=str, default="..")
+    parser.add_argument('-m', '--missing_files_folder', type=str, default="..")
+    args = parser.parse_args()
+    pformat(vars(args))
     # To be changed for your root folder if needed (if dcase2019 used)
     base_missing_files_folder = ".."
-    dataset_folder = os.path.join("..", "..", "dataset")
+    dataset_folder = args.dataset_folder
 
     LOG.info("Download_data")
     LOG.info("\n\nOnce database is downloaded, do not forget to check your missing_files\n\n")

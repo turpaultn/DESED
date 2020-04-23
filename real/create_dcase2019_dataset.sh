@@ -9,9 +9,7 @@ mkdir -p ${ROOTDIR}
 
 # If not already done
 echo "download real data audio files ... ~23GB"
-cd code
-${CONDA_ENV} download_real.py
-cd ..
+${CONDA_ENV} code/download_real.py --dataset_folder="." -m "."
 
 # Copy or move data
 cp -r metadata ${ROOTDIR}/
