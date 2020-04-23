@@ -135,7 +135,11 @@ class SoundscapesGenerator:
             list_labels = []
             for pth in os.listdir(self.fg_folder):
                 if osp.isdir(osp.join(self.fg_folder, pth)):
+                    if "non" in pth.lower() or "noff" in pth.lower():
+                        for pattern in ["_nOn", "nOff", "_non", "_noff"]:
+                            pth = pth.replace(pattern, "")
                     list_labels.append(pth)
+            list_labels = list(set(list_labels))
             self.logger.debug(f"list of labels: {list_labels}")
         for label in list_labels:
             self.logger.debug('Generating soundscape: {:d}/{:d}'.format(cnt + 1, number))
