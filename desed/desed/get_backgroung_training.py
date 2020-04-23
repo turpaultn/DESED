@@ -29,7 +29,7 @@ def get_background_training(basedir, sins=True, tut=False, keep_sins=False):
         df = df[df[1] == "other"]
 
         for i in range(1, 24):
-            logger.info(f"downloading zip {i} / 23 ...")
+            logger.info(f"SINS downloading zip {i} / 23 ...")
             # Download the first zip, and keep only other
             zip_file_url = f"https://zenodo.org/record/1247102/files/DCASE2018-task5-dev.audio.{i}.zip?download=1"
             r = requests.get(zip_file_url)
@@ -53,7 +53,7 @@ def get_background_training(basedir, sins=True, tut=False, keep_sins=False):
 
     if tut:
         for i in range(1, 10):
-            logger.info(f"downloading zip {i} / 10 ...")
+            logger.info(f"TUT (scenes-2017-dev) downloading zip {i} / 10 ...")
             # Download the first zip, and keep only other
             zip_file_url = f"https://zenodo.org/record/400515/files/" \
                 f"TUT-acoustic-scenes-2017-development.audio.{i}.zip?download=1"
