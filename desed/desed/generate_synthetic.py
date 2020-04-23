@@ -133,9 +133,10 @@ class SoundscapesGenerator:
         cnt = 0
         if list_labels is None:
             list_labels = os.listdir(self.fg_folder)
+        print(list_labels)
         for label in list_labels:
             self.logger.debug('Generating soundscape: {:d}/{:d}'.format(cnt + 1, number))
-            number_per_class = round(number // len(list_labels))
+            number_per_class = max(1, round(number // len(list_labels)))
             for i in range(number_per_class):
                 sc = Soundscape(self.duration, self.fg_folder, self.bg_folder, self.ref_db, self.samplerate,
                                 random_state=self.random_state, delete_if_exists=self.delete_if_exists)
@@ -143,7 +144,10 @@ class SoundscapesGenerator:
                     filename = "0" + str(start_from + cnt)
                 else:
                     filename = str(start_from + cnt)
-                n_events = self.random_state.randint(min_events, max_events)
+                if min_events == max_events:
+                    n_events = min_events
+                else:
+                    n_events = self.random_state.randint(min_events, max_events)
                 sc.generate_from_non_noff(label=label,
                                           list_labels=list_labels,
                                           out_folder=out_folder,

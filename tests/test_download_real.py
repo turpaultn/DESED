@@ -18,10 +18,10 @@ def rm_folder():
 # Problem with this test, if I exchange the single process and multiprocessing, it does not work
 # It gives: "Fatal Python error: Aborted"
 @pytest.mark.parametrize("n_jobs,chunk_size,n_download", [
-    (3, 3, 12),
-    (1, 3, 15),
+    (3, 3, 10),
+    (1, 3, 6),
 ])
-def test_download_multiprocessing(n_jobs, chunk_size, n_download, rm_folder):
+def test_download_multiprocessing(n_jobs, chunk_size, n_download):
     test = os.path.join(absolute_dir_path, "material", "validation.tsv")
     df = pd.read_csv(test, header=0, sep='\t')
 
@@ -32,8 +32,8 @@ def test_download_multiprocessing(n_jobs, chunk_size, n_download, rm_folder):
 
 
 def test_download_file():
-    fname = "Y00pbt6aJV8Y_350.000_360.000.wav"
-    res = download_file(fname, result_dir)
+    fname = "173180999_0_10.wav"
+    res = download_file(fname, result_dir, platform="vimeo")
     # Cannot check if download succeeds since depending country sometimes it does not work
 
 

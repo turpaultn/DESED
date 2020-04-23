@@ -31,4 +31,4 @@ def test_logger_critical():
 
 
 def test_logger_not_set():
-    logger = create_logger(__name__ + "/" + inspect.currentframe().f_code.co_name, "")
+    logger = create_logger(__name__ + "/" + inspect.currentframe().f_code.co_name, "Nothing")
