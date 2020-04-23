@@ -62,65 +62,6 @@ def test_choose_file():
     assert sc._choose_file(label_pth) == fpath
 
 
-def test_add_event():
-    fg_folder = os.path.join(absolute_dir_path, "material", "soundbank", "foreground")
-    bg_folder = os.path.join(absolute_dir_path, "material", "soundbank", "background")
-    sc = Soundscape(1, fg_folder, bg_folder, random_state=2020, delete_if_exists=True)
-    sc.add_fg_event_non_noff("label")
-    sc.add_fg_event_non_noff("label_nOff")
-    sc.add_fg_event_non_noff("label_nOn")
-    sc.add_fg_event_non_noff("label_nOn_nOff")
-    # Todo, check it generates well with the good labels and files
-
-
-def test_postprocessing():
-    """ Test the preprocessing method
-    Returns:
-    Should output Fixed 3 problems
-    """
-    folder = osp.join(absolute_dir_path, "material", "post_processing")
-    checked_folder = osp.join(absolute_dir_path, "generated", "post_processing")
-    out_tsv = osp.join(absolute_dir_path, "generated", "post.tsv")
-
-    post_process_txt_labels(folder, output_folder=checked_folder,
-                            output_tsv=out_tsv)
-    df = pd.read_csv(out_tsv, sep="\t")
-    print(df.to_dict())
-    valid_df = pd.DataFrame({'filename': {0: '5.wav',
-                                          1: '5.wav',
-                                          2: '7.wav',
-                                          3: '7.wav',
-                                          4: '7.wav',
-                                          5: '7.wav',
-                                          6: '7.wav',
-                                          7: '7.wav'},
-                             'onset': {0: 0.008, 1: 4.969, 2: 2.183, 3: 2.406,
-                                       4: 3.099, 5: 3.406, 6: 3.684, 7: 6.406},
-                             'offset': {0: 5.546, 1: 9.609, 2: 2.488, 3: 5.2,
-                                        4: 3.36, 5: 6.2, 6: 5.624, 7: 10.0},
-                             'event_label': {0: 'Cat', 1: 'Speech', 2: 'Dishes', 3: 'Speech',
-                                             4: 'Dishes', 5: 'Cat', 6: 'Dishes', 7: 'Frying'}}
-                            )
-    check = (df.round(3).sort_values("onset").reset_index(drop=True) == valid_df.sort_values("onset").reset_index(drop=True))
-
-    assert check.all(axis=None), "Problem with post_processing_txt_annotations"
-
-
-def test_high_polyphony():
-    pol_dir = osp.join(absolute_dir_path, "generated", "polyphony")
-    if osp.exists(pol_dir):
-        shutil.rmtree(pol_dir)
-    shutil.copytree(osp.join(absolute_dir_path, "material", "post_processing"), pol_dir)
-    ll = glob.glob(osp.join(pol_dir, "*.jams"))
-    assert len(ll) == 2
-
-    save_name = os.path.join(absolute_dir_path, "generated", "final.tsv")
-    rm_high_polyphony(pol_dir, 1, save_name)
-
-    ll = glob.glob(osp.join(pol_dir, "*.jams"))
-    assert len(ll) == 1, f"Problem rm_high_polyphony {len(ll)} != 1"
-
-
 def test_modify_bg_snr():
     jam_path = os.path.join(absolute_dir_path, "material", "5.jams")
     jam_obj = change_snr(jam_path, -15)
@@ -152,29 +93,6 @@ def test_fg_onset():
             onset_gen = obs.value["event_time"]
 
     assert onset == (onset_gen - 0.2), "Wrong onset generated"
-
-
-def test_logger():
-    logger = create_logger("try", terminal_level=logging.DEBUG)
-    logger.debug("this can be useful if there is a bug")
-
-    logger = create_logger("try", terminal_level="DEBUG")
-    logger.debug("this can be useful if there is a bug")
-
-    logger = create_logger("try", terminal_level="info")
-    logger.info("common info")
-
-    logger = create_logger("try", terminal_level="warning")
-    logger.warning("Careful, something the user cannot do about, otherwise use warnings")
-
-    logger = create_logger("try", terminal_level="error")
-    logger.error("This is an error, but do not stop the program")
-
-    logger = create_logger("try", terminal_level="CRITICAL")
-    logger.critical("this is critical, it is added to the bug given")
-
-    logger = create_logger("try", terminal_level="No idea")
-    logger.debug("Nothing")
 
 
 if __name__ == '__main__':
