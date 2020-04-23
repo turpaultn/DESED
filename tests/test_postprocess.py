@@ -61,12 +61,16 @@ def test_high_polyphony():
 
 def test_get_data():
     txt_file = osp.join(absolute_dir_path, "material", "post_processing", "5.txt")
-    df, length_sec = get_data(osp.join(absolute_dir_path, "material", "post_processing", "5.jams"))
+    df, length_sec = get_data(osp.join(absolute_dir_path, "material", "post_processing", "7.jams"))
     assert length_sec is None
-    assert df == pd.read_csv(txt_file, sep="\t", names=["onset", "offset", "event_label"])
-    df, length_sec = get_data(osp.join(absolute_dir_path, "material", "post_processing", "5.txt"))
+    assert (df.round(3) == pd.DataFrame.from_dict({0: [2.183, 2.488, "Dishes"],
+                                                   1: [3.099, 3.360, "Dishes"],
+                                                   2: [3.684, 5.624, "Dishes"],
+                                                   3: [6.406, 10.000,  "Frying"]},
+                                                  orient="index", columns=["onset", "offset", "event_label"])).all().all()
+    df, length_sec = get_data(txt_file)
     assert length_sec is None
-    assert df == pd.read_csv(txt_file, sep="\t", names=["onset", "offset", "event_label"])
+    assert (df.round(3) == pd.read_csv(txt_file, sep="\t", names=["onset", "offset", "event_label"]).round(3)).all().all()
     with pytest.raises(NotImplementedError) as e:
         get_data(osp.join(absolute_dir_path, "material", "post_processing", "5.txt"),
-                          background_label="label")
+                 background_label="label")
