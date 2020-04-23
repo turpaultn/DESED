@@ -29,6 +29,8 @@ And please cite our papers in your work*
   - [References](#references)
 
 ## Updates
+- 23th April 2020, update the generation procedure (`add_fg_event_non_noff`) to use all parts of files longer than 
+the duration of the soundscapes created + Add possibility to use only background from certain labels (i.e: sins or tut).
 - 18th March 2020, update DESED_synth_dcase20_train_jams.tar of DESED_synth. They use pitch shifting, while the others 
 didn't. These are the final JAMS used for dcase2020 baseline. Also commenting reverb since not used for the baseline.
       
