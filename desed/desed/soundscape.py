@@ -75,7 +75,6 @@ class Soundscape(scaper.Scaper):
 
         """
         logger = create_logger(__name__ + "/" + inspect.currentframe().f_code.co_name)
-
         chosen_file = self._choose_file(os.path.join(self.fg_path, label))
         file_duration = round(sf.info(chosen_file).duration, 6)  # round because Scaper uses sox with round 6 digits
         if "_nOn_nOff" in label:
@@ -169,6 +168,8 @@ class Soundscape(scaper.Scaper):
         Returns:
             str, path of the file.
         """
+        assert osp.exists(class_path), \
+            f"The class path given: {class_path} \n does not point to a valid folder (bg_path or fg_path + label)"
         event_files = sorted(glob.glob(os.path.join(class_path, "*")))
         event_files = [f for f in event_files if os.path.isfile(f)]
         ind = self.random_state.randint(0, len(event_files))
@@ -214,7 +215,7 @@ class Soundscape(scaper.Scaper):
             None
 
         Examples:
-            Example of co_occur_params dictionnary::
+            Example of co_occur_params dictionary::
                 {
                   "max_events": 13,
                   "classes": [
