@@ -62,17 +62,6 @@ def test_choose_file():
     assert sc._choose_file(label_pth) == fpath
 
 
-def test_add_event():
-    fg_folder = os.path.join(absolute_dir_path, "material", "soundbank", "foreground")
-    bg_folder = os.path.join(absolute_dir_path, "material", "soundbank", "background")
-    sc = Soundscape(1, fg_folder, bg_folder, random_state=2020, delete_if_exists=True)
-    sc.add_fg_event_non_noff("label")
-    sc.add_fg_event_non_noff("label_nOff")
-    sc.add_fg_event_non_noff("label_nOn")
-    sc.add_fg_event_non_noff("label_nOn_nOff")
-    # Todo, check it generates well with the good labels and files
-
-
 def test_postprocessing():
     """ Test the preprocessing method
     Returns:
