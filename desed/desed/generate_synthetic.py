@@ -156,17 +156,17 @@ class SoundscapesGenerator:
                     n_events = min_events
                 else:
                     n_events = self.random_state.randint(min_events, max_events)
-                sc.generate_from_non_noff(label=label,
-                                          list_labels=list_labels,
-                                          out_folder=out_folder,
-                                          filename=filename,
-                                          n_events=n_events,
-                                          save_isolated_events=save_isolated_events,
-                                          snr=snr,
-                                          pitch_shift=pitch_shift,
-                                          time_stretch=time_stretch,
-                                          bg_labels=bg_labels,
-                                          **kwargs)
+                sc.generate_using_non_noff(label=label,
+                                           list_labels=list_labels,
+                                           out_folder=out_folder,
+                                           filename=filename,
+                                           n_events=n_events,
+                                           save_isolated_events=save_isolated_events,
+                                           snr=snr,
+                                           pitch_shift=pitch_shift,
+                                           time_stretch=time_stretch,
+                                           bg_labels=bg_labels,
+                                           **kwargs)
                 if cnt % 200 == 0:
                     self.logger.info(f"generating {cnt} / {number} files (updated every 200)")
                 cnt += 1
