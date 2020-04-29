@@ -13,6 +13,11 @@ from .logger import create_logger
 from .utils import create_folder
 
 
+def save_tsv(df, filepath):
+    df = df.sort_values("filename")
+    df.to_csv(filepath, index=False, sep="\t", float_format="%.3f")
+
+
 def rm_high_polyphony(folder, max_polyphony=3, save_tsv_associated=None, pattern_sources="_events"):
     """ Remove the files having a too high polyphony in the deignated folder
 
@@ -214,7 +219,7 @@ def post_process_df_labels(df, files_duration=None, output_tsv=None, min_dur_eve
         result_df = result_df.append(df_ann[['filename', 'onset', 'offset', 'event_label']], ignore_index=True)
 
     if output_tsv:
-        result_df.to_csv(output_tsv, index=False, sep="\t", float_format="%.3f")
+        save_tsv(result_df, output_tsv)
 
     logger.info(f"================\nFixed {fix_count} problems\n================")
     return result_df
@@ -278,7 +283,7 @@ def post_process_txt_labels(txtdir, wavdir=None, output_folder=None, output_tsv=
             df_single = df_single.append(df[['filename', 'onset', 'offset', 'event_label']], ignore_index=True)
 
     if output_tsv:
-        df_single.to_csv(output_tsv, index=False, sep="\t", float_format="%.3f")
+        save_tsv(df_single, output_tsv)
 
     logger.info(f"{fix_count} problems Fixed")
 
