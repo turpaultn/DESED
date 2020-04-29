@@ -107,22 +107,24 @@ def get_data(file, wav_file=None, background_label=False):
     return df, length_sec
 
 
-def _post_process_labels_file(df_ann, length_sec=None, min_dur_event=0.250, min_dur_inter=0.150, rm_nOn_n_Off=True):
+def _post_process_labels_file(df_ann, length_sec=None, min_dur_event=0.250, min_dur_inter=0.150, rm_non_noff=True):
     """ Check the annotations,
         * Merge overlapping annotations of the same class
         * Merge overlapping annotations having less than 150ms between them (or 400ms between the onsets).
         * Make minimum length of events = 250ms.
     Args:
-        df_ann:
-        length_sec:
-        min_dur_event:
-        min_dur_inter:
+        df_ann: pd.DataFrame object, containing the annotations to post_process
+        length_sec: float, duration of the file to post_process
+        min_dur_event: float, optional in sec, minimum duration of an event
+        min_dur_inter: float, optional in sec, minimum duration between 2 events
+        rm_non_noff: bool, whether to delete the additional _nOn _nOff at the end of labels.
 
     Returns:
 
     """
+
     df = df_ann.copy()
-    if rm_nOn_n_Off:
+    if rm_non_noff:
         df["event_label"] = df["event_label"].apply(lambda x: x.replace("_nOff", "").replace("_nOn", ""))
     logger = create_logger(__name__ + "/" + inspect.currentframe().f_code.co_name)
     fix_count = 0
@@ -175,7 +177,7 @@ def _post_process_labels_file(df_ann, length_sec=None, min_dur_event=0.250, min_
 
 
 def post_process_df_labels(df, files_duration=None, output_tsv=None, min_dur_event=0.250,
-                           min_dur_inter=0.150, rm_nOn_nOff=False):
+                           min_dur_inter=0.150, rm_nOn_nOff=True):
     """ clean the .txt files of each file. It is the same processing as the real data
         - overlapping events of the same class are mixed
         - if silence < 150ms between two conscutive events of the same class, they are mixed
@@ -226,7 +228,7 @@ def post_process_df_labels(df, files_duration=None, output_tsv=None, min_dur_eve
 
 
 def post_process_txt_labels(txtdir, wavdir=None, output_folder=None, output_tsv=None, min_dur_event=0.250,
-                            min_dur_inter=0.150, background_label=False, rm_nOn_nOff=False):
+                            min_dur_inter=0.150, background_label=False, rm_nOn_nOff=True):
     """ clean the .txt files of each file. It is the same processing as the real data
     - overlapping events of the same class are mixed
     - if silence < 150ms between two conscutive events of the same class, they are mixed
