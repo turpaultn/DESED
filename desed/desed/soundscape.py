@@ -75,17 +75,18 @@ class Soundscape(scaper.Scaper):
 
         """
         logger = create_logger(__name__ + "/" + inspect.currentframe().f_code.co_name)
-
+        label_path = os.path.join(self.fg_path, label)
+        assert osp.exists(label_path), f"The label provided ({label}) does not point to a valid folder: {label_path}"
         chosen_file = self._choose_file(os.path.join(self.fg_path, label))
-        file_duration = round(sf.info(chosen_file).duration, 6)  # round because Scaper uses sox with round 6 digits
+        file_duration = round(sf.info(chosen_file).duration, 6)  # because Scaper uses sox with truncate 6 digits
         if "_nOn_nOff" in label:
             # If no onset and offset, the file should be bigger than the duration of the file
             logger.debug('no onset/offset')
-            if file_duration - self.duration <=0:
+            if file_duration - self.duration <= 0:
                 warnings.warn("Event without onset and offset added not for the full time of the audio soundscape")
                 source_start = 0
             else:
-                source_start = self.random_state.uniform(0, np.maximum(file_duration - self.duration, 0))
+                source_start = self.random_state.uniform(0, file_duration - self.duration)
 
             self.add_event(label=('const', label),
                            source_file=('const', chosen_file),
@@ -161,7 +162,7 @@ class Soundscape(scaper.Scaper):
                            time_stretch=time_stretch)
         return self
 
-    def _choose_file(self, class_path):
+    def _choose_file(self, class_path, non_noff=False):
         """ Choose randomly a file of a given class.
         Args:
             class_path: str, path of the class containing all the files of a certain class.
@@ -170,7 +171,15 @@ class Soundscape(scaper.Scaper):
             str, path of the file.
         """
         event_files = sorted(glob.glob(os.path.join(class_path, "*")))
+        if non_noff:
+            event_files.append(glob.glob(os.path.join(class_path + "_nOn", "*")))
+            event_files.append(glob.glob(os.path.join(class_path + "_nOff", "*")))
+            event_files.append(glob.glob(os.path.join(class_path + "_nOn_nOff", "*")))
+            event_files = sorted(event_files)
+
         event_files = [f for f in event_files if os.path.isfile(f)]
+        assert len(event_files) > 0, f"no event files to be chosen in this path: {os.path.join(class_path, '*')}" \
+            f" (pattern used by glob)"
         ind = self.random_state.randint(0, len(event_files))
         return event_files[ind]
 
@@ -214,7 +223,7 @@ class Soundscape(scaper.Scaper):
             None
 
         Examples:
-            Example of co_occur_params dictionnary::
+            Example of co_occur_params dictionary::
                 {
                   "max_events": 13,
                   "classes": [
@@ -292,11 +301,11 @@ class Soundscape(scaper.Scaper):
                       isolated_events_path=isolated_events_path,
                       **kwargs)
 
-    def generate_from_non_noff(self, label, list_labels, out_folder, filename, n_events,
-                               reverb=None, save_isolated_events=False,
-                               snr=('uniform', 6, 30), pitch_shift=None, time_stretch=None,
-                               bg_labels=None,
-                               **kwargs):
+    def generate_using_non_noff(self, label, list_labels, out_folder, filename, n_events,
+                                reverb=None, save_isolated_events=False,
+                                snr=('uniform', 6, 30), pitch_shift=None, time_stretch=None,
+                                bg_labels=None,
+                                **kwargs):
         """ Generate a single file, using the information of onset or offset present
         (see DESED dataset and folders in soundbank foreground)
         Args:

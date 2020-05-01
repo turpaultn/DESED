@@ -13,6 +13,11 @@ from .logger import create_logger
 from .utils import create_folder
 
 
+def save_tsv(df, filepath):
+    df = df.sort_values("filename")
+    df.to_csv(filepath, index=False, sep="\t", float_format="%.3f")
+
+
 def rm_high_polyphony(folder, max_polyphony=3, save_tsv_associated=None, pattern_sources="_events"):
     """ Remove the files having a too high polyphony in the deignated folder
 
@@ -102,22 +107,24 @@ def get_data(file, wav_file=None, background_label=False):
     return df, length_sec
 
 
-def _post_process_labels_file(df_ann, length_sec=None, min_dur_event=0.250, min_dur_inter=0.150, rm_nOn_n_Off=True):
+def _post_process_labels_file(df_ann, length_sec=None, min_dur_event=0.250, min_dur_inter=0.150, rm_non_noff=True):
     """ Check the annotations,
         * Merge overlapping annotations of the same class
         * Merge overlapping annotations having less than 150ms between them (or 400ms between the onsets).
         * Make minimum length of events = 250ms.
     Args:
-        df_ann:
-        length_sec:
-        min_dur_event:
-        min_dur_inter:
+        df_ann: pd.DataFrame object, containing the annotations to post_process
+        length_sec: float, duration of the file to post_process
+        min_dur_event: float, optional in sec, minimum duration of an event
+        min_dur_inter: float, optional in sec, minimum duration between 2 events
+        rm_non_noff: bool, whether to delete the additional _nOn _nOff at the end of labels.
 
     Returns:
 
     """
+
     df = df_ann.copy()
-    if rm_nOn_n_Off:
+    if rm_non_noff:
         df["event_label"] = df["event_label"].apply(lambda x: x.replace("_nOff", "").replace("_nOn", ""))
     logger = create_logger(__name__ + "/" + inspect.currentframe().f_code.co_name)
     fix_count = 0
@@ -170,7 +177,7 @@ def _post_process_labels_file(df_ann, length_sec=None, min_dur_event=0.250, min_
 
 
 def post_process_df_labels(df, files_duration=None, output_tsv=None, min_dur_event=0.250,
-                           min_dur_inter=0.150, rm_nOn_nOff=False):
+                           min_dur_inter=0.150, rm_nOn_nOff=True):
     """ clean the .txt files of each file. It is the same processing as the real data
         - overlapping events of the same class are mixed
         - if silence < 150ms between two conscutive events of the same class, they are mixed
@@ -214,14 +221,14 @@ def post_process_df_labels(df, files_duration=None, output_tsv=None, min_dur_eve
         result_df = result_df.append(df_ann[['filename', 'onset', 'offset', 'event_label']], ignore_index=True)
 
     if output_tsv:
-        result_df.to_csv(output_tsv, index=False, sep="\t", float_format="%.3f")
+        save_tsv(result_df, output_tsv)
 
     logger.info(f"================\nFixed {fix_count} problems\n================")
     return result_df
 
 
 def post_process_txt_labels(txtdir, wavdir=None, output_folder=None, output_tsv=None, min_dur_event=0.250,
-                            min_dur_inter=0.150, background_label=False, rm_nOn_nOff=False):
+                            min_dur_inter=0.150, background_label=False, rm_nOn_nOff=True):
     """ clean the .txt files of each file. It is the same processing as the real data
     - overlapping events of the same class are mixed
     - if silence < 150ms between two conscutive events of the same class, they are mixed
@@ -278,7 +285,7 @@ def post_process_txt_labels(txtdir, wavdir=None, output_folder=None, output_tsv=
             df_single = df_single.append(df[['filename', 'onset', 'offset', 'event_label']], ignore_index=True)
 
     if output_tsv:
-        df_single.to_csv(output_tsv, index=False, sep="\t", float_format="%.3f")
+        save_tsv(df_single, output_tsv)
 
     logger.info(f"{fix_count} problems Fixed")
 

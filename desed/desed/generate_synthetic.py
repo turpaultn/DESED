@@ -135,8 +135,13 @@ class SoundscapesGenerator:
             list_labels = []
             for pth in os.listdir(self.fg_folder):
                 if osp.isdir(osp.join(self.fg_folder, pth)):
+                    if "non" in pth.lower() or "noff" in pth.lower():
+                        for pattern in ["_nOn", "_nOff", "_non", "_noff"]:
+                            pth = pth.replace(pattern, "")
                     list_labels.append(pth)
+            list_labels = sorted(set(list_labels))
             self.logger.debug(f"list of labels: {list_labels}")
+
         for label in list_labels:
             self.logger.debug('Generating soundscape: {:d}/{:d}'.format(cnt + 1, number))
             number_per_class = max(1, round(number // len(list_labels)))
@@ -151,17 +156,17 @@ class SoundscapesGenerator:
                     n_events = min_events
                 else:
                     n_events = self.random_state.randint(min_events, max_events)
-                sc.generate_from_non_noff(label=label,
-                                          list_labels=list_labels,
-                                          out_folder=out_folder,
-                                          filename=filename,
-                                          n_events=n_events,
-                                          save_isolated_events=save_isolated_events,
-                                          snr=snr,
-                                          pitch_shift=pitch_shift,
-                                          time_stretch=time_stretch,
-                                          bg_labels=bg_labels,
-                                          **kwargs)
+                sc.generate_using_non_noff(label=label,
+                                           list_labels=list_labels,
+                                           out_folder=out_folder,
+                                           filename=filename,
+                                           n_events=n_events,
+                                           save_isolated_events=save_isolated_events,
+                                           snr=snr,
+                                           pitch_shift=pitch_shift,
+                                           time_stretch=time_stretch,
+                                           bg_labels=bg_labels,
+                                           **kwargs)
                 if cnt % 200 == 0:
                     self.logger.info(f"generating {cnt} / {number} files (updated every 200)")
                 cnt += 1
