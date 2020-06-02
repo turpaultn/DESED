@@ -85,7 +85,7 @@ if __name__ == '__main__':
                 time_stretches=(time_stretch_dist, time_stretch_min, time_stretch_max),
                 txt_file=True)
 
-    rm_high_polyphony(out_folder_500, 3)
+    rm_high_polyphony(out_folder_500, 2)
     out_tsv = osp.join(out_tsv_folder, "500ms.tsv")
     post_process_txt_labels(out_folder_500, output_folder=out_folder_500,
                             output_tsv=out_tsv)
