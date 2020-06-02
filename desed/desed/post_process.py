@@ -14,6 +14,7 @@ from .utils import create_folder
 
 
 def save_tsv(df, filepath):
+    create_folder(osp.dirname(filepath))
     df = df.sort_values("filename")
     df.to_csv(filepath, index=False, sep="\t", float_format="%.3f")
 
@@ -70,6 +71,8 @@ def sanity_check(df, length_sec=None):
     Returns:
         pandas.DataFrame, the updated dataframe.
     """
+    if not df['onset'].dtype == np.float and df['offset'].dtype == np.float:
+        df[['onset', 'offset']] = df[['onset', 'offset']].astype(float)
     if length_sec is not None:
         df['offset'].clip(upper=length_sec, inplace=True)
     df['onset'].clip(lower=0, inplace=True)
@@ -125,7 +128,7 @@ def _post_process_labels_file(df_ann, length_sec=None, min_dur_event=0.250, min_
 
     df = df_ann.copy()
     if rm_non_noff:
-        df["event_label"] = df["event_label"].apply(lambda x: x.replace("_nOff", "").replace("_nOn", ""))
+        df["event_label"] = df["event_label"].apply(lambda x: str(x).replace("_nOff", "").replace("_nOn", ""))
     logger = create_logger(__name__ + "/" + inspect.currentframe().f_code.co_name)
     fix_count = 0
     df = sanity_check(df, length_sec)
