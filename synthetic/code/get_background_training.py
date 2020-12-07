@@ -5,7 +5,7 @@ import logging
 
 from pprint import pformat
 
-from desed.get_backgroung_training import get_background_training
+from desed.download_soundbank import get_backgrounds_train
 from desed.logger import create_logger
 
 if __name__ == '__main__':
@@ -23,6 +23,6 @@ if __name__ == '__main__':
     args = parser.parse_args()
     pformat(vars(args))
 
-    get_background_training(args.basedir, not args.no_SINS, args.TUT, args.keep_sins)
+    get_backgrounds_train(args.basedir, not args.no_SINS, args.TUT, args.keep_sins)
 
     LOG.info(f"time of the program: {time.time() - t}")

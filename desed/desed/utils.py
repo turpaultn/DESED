@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import functools
+import glob
 import inspect
 import numbers
 
@@ -9,6 +10,8 @@ import os
 import os.path as osp
 import shutil
 import pprint
+
+import requests
 
 from .logger import create_logger, DesedError
 
@@ -187,3 +190,35 @@ def modify_jams(list_jams, modify_function, out_dir=None, **kwargs):
 
     return new_list_jams
 
+
+def move_files(list_fnames_to_move, input_folder, output_folder):
+    """ Move validation files to have a split train/valid
+    Args:
+        list_fnames_to_move: str, list of filenames to move
+        input_folder: str, path to the input folder containing the training files to split
+        output_folder: str, path to the output validation folder
+
+    Returns:
+            list of output paths (files moved from the input folder)
+    """
+    fnames_input = glob.glob(input_folder)
+
+    # Take only the basename of the input, so be careful if there are some filenames duplicate
+    fnames_input_base = [os.path.basename(f) for f in fnames_input]
+    output_files = []
+    for fname_to_move in list_fnames_to_move:
+        if fname_to_move in fnames_input_base:
+            input_file = os.path.join(input_folder, fname_to_move)
+            destination_file = os.path.join(output_folder, fname_to_move)
+            shutil.move(input_file, destination_file)
+            output_files.append(destination_file)
+    print(f"{len(output_files)} files moved")
+    return output_files
+
+
+def download_file(url, target_destination):
+    response = requests.get(url, stream=True)
+    handle = open(target_destination, "wb")
+    for chunk in response.iter_content(chunk_size=512):
+        if chunk:  # filter out keep-alive new chunks
+            handle.write(chunk)
