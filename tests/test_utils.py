@@ -1,20 +1,18 @@
 # -*- coding: utf-8 -*-
-import logging
 import os.path as osp
-import pandas as pd
-import shutil
+
 import pytest
 import functools
 import glob
 import os
 import jams
 import json
+import pandas as pd
 
-from desed.logger import create_logger
 from desed.soundscape import Soundscape
 from desed.utils import create_folder, pprint, choose_cooccurence_class
 from desed.utils import change_snr, modify_fg_onset, modify_jams
-from desed.post_process import rm_high_polyphony, post_process_txt_labels
+from desed.utils import download_file
 
 absolute_dir_path = os.path.abspath(os.path.dirname(__file__))
 
@@ -95,5 +93,12 @@ def test_fg_onset():
     assert onset == (onset_gen - 0.2), "Wrong onset generated"
 
 
-if __name__ == '__main__':
-    test_choose_class()
+def test_download_file():
+    fname_valid = "https://zenodo.org/record/4307908/files/soundbank_validation.tsv?download=1"
+    fpath = os.path.join(absolute_dir_path, "generated", "utils", "soundbank_validation.tsv")
+    create_folder(osp.dirname(fpath))
+    download_file(fname_valid, fpath)
+    material = os.path.join(absolute_dir_path, "material", "utils", "soundbank_validation.tsv")
+    df_download = pd.read_csv(fpath)
+    df_material = pd.read_csv(material)
+    assert df_download.equals(df_material), "Wrong file downloaded, not matching: soundbank_validation.tsv"
