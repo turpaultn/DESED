@@ -1,8 +1,10 @@
+<div align="center">
+	<a href="https://project.inria.fr/desed/" rel="desed website"><img src=""./img/Desed.png"" alt="desed-logo" /></a>
+</div>
+
 # Desed dataset
 Domestic environment sound event detection (DESED). 
-Mix of recorded and synthetic data. (used in DCASE 2019 task 4).
-
-[![desed-logo]][website]
+Mix of recorded and synthetic data. (used in DCASE 2019 task 4)
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
