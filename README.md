@@ -1,6 +1,6 @@
-<div align="center">
-	<a href="https://project.inria.fr/desed/" rel="desed website"><img src=""./img/Desed.png"" alt="desed-logo" /></a>
-</div>
+<p align="center">
+	<a href="https://project.inria.fr/desed/" rel="desed website"><img src="./img/Desed.png" alt="desed-logo" /></a>
+</p>
 
 # Desed dataset
 Domestic environment sound event detection (DESED). 
