@@ -45,6 +45,35 @@ Data are generated using [Scaper][scaper].
 In the following you have example of how to use it.
 For more information do not hesitate to check their [docs][scaper-doc].
 
+### MWE
+Minimal example of usage to generate training set on default parameters:
+```python
+from desed import SoundscapesGenerator
+from desed.post_process import rm_high_polyphony, post_process_txt_labels
+import json
+
+sg = SoundscapesGenerator(duration=10.0,
+                          fg_folder="synthetic/audio/train/soundbank/foreground",
+                          bg_folder="synthetic/audio/train/soundbank/foreground",
+                          ref_db=-55,
+                          samplerate=16000)
+
+with open("synthetic/code/event_occurences/event_occurences_train.json") as json_file:
+    co_occur_dict = json.load(json_file)
+out_folder = "dataset/audio/train/generated_soundscapes"
+
+sg.generate_by_label_occurence(label_occurences=co_occur_dict,
+                               number=200,
+                               out_folder=out_folder)
+
+rm_high_polyphony(out_folder, 3)
+post_process_txt_labels(out_folder, 
+			output_folder=out_folder, 
+			output_tsv="dataset/metadata/train/generated_soundscapes.tsv")
+```
+
+### Scripts to generate soundscapes
+
 Examples of how to generate new sounds in the same way as the Desed_synthetic dataset:
  * [generate_training.py], uses `event_occurences_train.json` for co-occurrence of events.
  * [generate_eval_FBSNR.py] generates similar subsets with different foreground-background sound to noise ratio (fbsnr): 30dB, 24dB, 15dB, 0dB.
@@ -65,7 +94,7 @@ Example: when modifying the FBSNR, we do not change the labels (onset, offsets).
 
 **Note: The training soundbank can be divided in a training/validation soundbank if you want to create validation data**
 
-## DCASE
+## DCASE task 4 baseline synthetic soundscapes
 - 2019: see `create_dcase2019_dataset.sh` for download.
 - 2020: see `create_dcase2020_dataset.sh` for download.
 

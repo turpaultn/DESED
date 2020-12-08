@@ -2,7 +2,10 @@
 Domestic environment sound event detection (DESED). 
 Mix of recorded and synthetic data. (used in DCASE 2019 task 4).
 
+[![desed-logo]][website]
+
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+
 
 *If you use this dataset, do not hesitate to update [the list](#list-of-papers-and-code-using-desed) of papers below with your paper by doing 
 a pull request. 
@@ -119,40 +122,19 @@ It corresponds to "youtube" subset in the [desed eval paper][paper-description].
 ## 2. Synthetic soundbank/soundscapes
 ![soundbank-diagram][img-soundbank]
 
-### 2.1 Download
+### 2.1 Download soundbank
+See in [./desed/desed/download_soundbank.py] for more options
+```python
+import desed
+desed.download_soundbank("./")
+```
+
 See instructions in the [synthetic folder][synthetic_folder].
 
 <a id="gendata"></a>
-### 2.2 Generating new synthetic soundscapes
+### 2.2 Soundscapes (existing set or generate new)
 
 See instructions in the [synthetic folder][synthetic_folder].
-
-##### MWE
-Minimal example of usage to generate training set on default parameters:
-```python
-from desed import SoundscapesGenerator
-from desed.post_process import rm_high_polyphony, post_process_txt_labels
-import json
-
-sg = SoundscapesGenerator(duration=10.0,
-                          fg_folder="synthetic/audio/train/soundbank/foreground",
-                          bg_folder="synthetic/audio/train/soundbank/foreground",
-                          ref_db=-55,
-                          samplerate=16000)
-
-with open("synthetic/code/event_occurences/event_occurences_train.json") as json_file:
-    co_occur_dict = json.load(json_file)
-out_folder = "dataset/audio/train/generated_soundscapes"
-
-sg.generate_by_label_occurence(label_occurences=co_occur_dict,
-                               number=200,
-                               out_folder=out_folder)
-
-rm_high_polyphony(out_folder, 3)
-post_process_txt_labels(out_folder, 
-			output_folder=out_folder, 
-			output_tsv="dataset/metadata/train/generated_soundscapes.tsv")
-```
 
 #### Folders structure after download
 After downloading the data (see below) you should have this tree:
@@ -182,7 +164,7 @@ After downloading the data (see below) you should have this tree:
     │       │   ├── background
     │       │   │   └── sins                    (Has to be downloaded by: get_background_training.py)
     │       │   └── foreground                  (14 subfolders)
-    │       └── synthetic
+    │       └── synthetic                       (Generated soundscapes)
     ├── metadata
     │   ├── eval
     │   │   └── soundscapes                     (metadata to reproduce the wav files used in dcase2019)
@@ -380,6 +362,7 @@ In Proceedings of the 18th International Society for Music Information Retrieval
 In Proceedings of the 14th International Society for Music Information Retrieval Conference (ISMIR 2013), Curitiba, Brazil, 2013.
 
 [audioset]: https://research.google.com/audioset/index.html
+[desed-logo]: ./img/Desed.png
 [desed-synthetic]: https://zenodo.org/record/3702397
 [desed-public-eval]: https://zenodo.org/record/3588172
 [fuss_zenodo]: https://zenodo.org/record/3694384/
