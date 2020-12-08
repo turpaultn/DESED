@@ -9,7 +9,7 @@ def package_file(fname):
 
 setup(
     name='desed',
-    version='1.2.0',
+    version='1.2.2',
     description="DESED dataset utils",
     author="Nicolas Turpault, Romain Serizel, Ankit Shah, Justin Salamon",
     author_email="turpaultn@gmail.com",

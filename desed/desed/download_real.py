@@ -21,7 +21,7 @@ from .utils import create_folder
 TMP_FOLDER = "tmp/"
 
 
-def download_file(filename, result_dir, platform="youtube"):
+def download_unique_file(filename, result_dir, platform="youtube"):
     """ download a file from youtube given an audioSet filename. (It takes only a part of the file thanks to
     information provided in the filename)
     Args:
@@ -100,7 +100,7 @@ def download_file(filename, result_dir, platform="youtube"):
             return [filename, str(e)]
 
         # multiprocessing can give this error
-        except IndexError as e:
+        except (IndexError, ValueError) as e:
             if os.path.exists(tmp_filename):
                 os.remove(tmp_filename)
             logger.info(filename)
@@ -112,6 +112,11 @@ def download_file(filename, result_dir, platform="youtube"):
 
 
 def download(filenames, result_dir, n_jobs=1, chunk_size=10, base_dir_missing_files="..", platform="youtube"):
+    warnings.warn("Depreciated, use 'download_real' instead")
+    return download_real(filenames, result_dir, n_jobs, chunk_size, base_dir_missing_files, platform)
+
+
+def download_real(filenames, result_dir, n_jobs=1, chunk_size=10, base_dir_missing_files="..", platform="youtube"):
     """ download files in parallel from youtube given a tsv file listing files to download.
     It also stores not downloaded files with their associated error in "missing_files_[tsv_file].tsv"
 
@@ -136,12 +141,12 @@ def download(filenames, result_dir, n_jobs=1, chunk_size=10, base_dir_missing_fi
     try:
         if n_jobs == 1:
             for filename in tqdm(filenames):
-                files_error.append(download_file(filename, result_dir, platform))
+                files_error.append(download_unique_file(filename, result_dir, platform))
         # multiprocessing
         else:
             with closing(Pool(n_jobs)) as p:
                 # Put result_dir and platform as constants variable with result_dir in download_file
-                download_file_alias = functools.partial(download_file, result_dir=result_dir, platform=platform)
+                download_file_alias = functools.partial(download_unique_file, result_dir=result_dir, platform=platform)
 
                 for val in tqdm(p.imap_unordered(download_file_alias, filenames, chunk_size), total=len(filenames)):
                     files_error.append(val)

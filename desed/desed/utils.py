@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import functools
+import glob
 import inspect
 import numbers
 
@@ -9,6 +10,8 @@ import os
 import os.path as osp
 import shutil
 import pprint
+
+import requests
 
 from .logger import create_logger, DesedError
 
@@ -187,3 +190,10 @@ def modify_jams(list_jams, modify_function, out_dir=None, **kwargs):
 
     return new_list_jams
 
+
+def download_file(url, target_destination):
+    response = requests.get(url, stream=True)
+    handle = open(target_destination, "wb")
+    for chunk in response.iter_content(chunk_size=512):
+        if chunk:  # filter out keep-alive new chunks
+            handle.write(chunk)

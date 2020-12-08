@@ -20,8 +20,8 @@ mkdir -p ${DATASET_DIR}
 # If not already installed, install DESED
 pip install desed@git+https://github.com/turpaultn/DESED
 echo "Download and extract soundbank"
-wget -O DESED_synth_soundbank.tar.gz https://zenodo.org/record/3713328/files/DESED_synth_soundbank.tar.gz?download=1
-tar -xzf DESED_synth_soundbank.tar.gz
+wget -O DESED_synth_soundbank.tar.gz https://zenodo.org/record/4307908/files/DESED_synth_soundbank.tar.gz?download=1
+tar -xzf DESED_synth_soundbank.tar.gz -C ${SYNTHETIC_DIR}
 rm DESED_synth_soundbank.tar.gz
 echo "Done"
 
