@@ -9,12 +9,11 @@ Mix of recorded and synthetic data. (used in DCASE task 4 since 2019)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 
-*If you use this dataset, do not hesitate to update [the list](#list-of-papers-and-code-using-desed) of papers below with your paper by doing 
-a pull request. 
-And please cite our papers in your work*
+*If you use this dataset, do not hesitate to update [the list](#list-of-papers-and-code-using-desed) 
+of papers below with your paper by doing a pull request. 
+If you use and like this work, you can [cite it][Please cite us] :blush:*
 
 **Table of contents**
-  - [Updates](#updates)
   - [Requirements](#requirements)
   - [Links](#links)
   - [Description](#description)
@@ -28,29 +27,20 @@ And please cite our papers in your work*
   - [DCASE Task 4](#dcase-task-4)
     - [DCASE19 Task 4](#dcase19-task-4)
     - [DCASE20 Task 4](#dcase20-task-4)
+  - [Important updates](#important-updates)
   - [List of papers/code using DESED](#list-of-papers-and-code-using-desed)
   - [FAQ](#faq)
-  - [Please cite us](#please-cite-us)
+  - [Citing us](#citing-us)
   - [References](#references)
-
-## Important updates
-- 7th December 2020, v1.2.2, ease the download of soundbank (with or without pre-split validation)
-- 23th April 2020, v1.2.0, update the generation procedure (`add_fg_event_non_noff`) to use all parts of files longer than 
-the duration of the soundscapes created + Add possibility to use only background from certain labels (i.e: sins or tut).
-- 18th March 2020, v.1.1.7, update DESED_synth_dcase20_train_jams.tar of DESED_synth. They use pitch shifting, 
-while the others didn't. These are the final JAMS used for dcase2020 baseline. Also commenting reverb since not used 
-for the baseline.
       
-## Requirements:
-**python >= 3.6**, dcase-util >= 0.2.11, scaper >= 1.3.5, numpy >= 1.15.4, pandas >= 0.24.0,
-soundfile >= 0.10.1, youtube-dl >= 2019.4.30 (better with conda-forge).
-
 ## Installation
 #### Recommended install
 Take into account your changes of the code in the `desed/` folder.
 - `git clone https://github.com/turpaultn/DESED`
 - `cd DESED`
 - `pip install -e .`
+
+*In this case, all your changes in `desed` folder will be taken into account*
 
 #### Use desed in other projects
 Copying code from `synthetic/code/` or `real/code/` folders without changing `desed/` content
@@ -329,6 +319,15 @@ Paper                                                                       | Co
 
 *Note: to add it to README.md before doing the pull request, run `python generate_table.py`*
 
+## Important updates
+- 7th December 2020, v1.2.2, ease the download of soundbank (with or without pre-split validation)
+- 23th April 2020, v1.2.0, update the generation procedure (`add_fg_event_non_noff`) to use all parts of files longer than 
+the duration of the soundscapes created + Add possibility to use only background from certain labels (i.e: sins or tut).
+- 18th March 2020, v.1.1.7, update DESED_synth_dcase20_train_jams.tar of DESED_synth. They use pitch shifting, 
+while the others didn't. These are the final JAMS used for dcase2020 baseline. Also commenting reverb since not used 
+for the baseline.
+
+
 ## Licenses
 The python code is publicly available under the MIT license, see the LICENSE file. 
 The matlab code is taken from the Audio degradation toolbox [[6]](#6), see the LICENSE file.
@@ -337,7 +336,7 @@ The different datasets contain a license file at their root for the attribution 
 
 The different platform used are: Freesound [[4]](#4)[[5]](#5), Youtube, MUSAN [[3]](#3) and SINS [[2]](#2).  
 
-## Please cite us
+##  Citing us
 If you use this repository, please cite these papers:
 
 - N. Turpault, R. Serizel, A. Parag Shah, J. Salamon. 
