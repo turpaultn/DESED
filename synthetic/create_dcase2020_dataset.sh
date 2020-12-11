@@ -1,14 +1,14 @@
-#/bin/bash
+#!/bin/bash
 
 #Uncomment this part to run the script line by line
 #echo "Press CTRL+C to proceed after each command."
-set -x #Prints commands and their arguments s they are executed
-trap read debug
+#set -x #Prints commands and their arguments s they are executed
+#trap read debug
 
 # Change with your own environment
 CONDA_ENV=python
 # Path to root directory
-ROOTDIR="path/to/root/directory"
+ROOTDIR=$(realpath ..)
 # Will put dcase2020 dataset in this folder
 DATASET_DIR=${ROOT_DIR}/dataset
 # The path to synthetic where the python files are

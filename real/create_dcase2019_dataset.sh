@@ -9,7 +9,7 @@
 CONDA_ENV=python
 
 # Create directory, and copy data in right folders to have a unique directory with dcase2019 data
-ROOTDIR="path/to/root/directory"
+ROOTDIR=$1
 mkdir -p ${ROOTDIR}
 
 # If not already done
