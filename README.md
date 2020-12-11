@@ -4,7 +4,7 @@
 
 # Desed dataset
 Domestic environment sound event detection (DESED). 
-Mix of recorded and synthetic data. (used in DCASE 2019 task 4)
+Mix of recorded and synthetic data. (used in DCASE task 4 since 2019)
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
@@ -33,11 +33,13 @@ And please cite our papers in your work*
   - [Please cite us](#please-cite-us)
   - [References](#references)
 
-## Updates
-- 23th April 2020, update the generation procedure (`add_fg_event_non_noff`) to use all parts of files longer than 
+## Important updates
+- 7th December 2020, v1.2.2, ease the download of soundbank (with or without pre-split validation)
+- 23th April 2020, v1.2.0, update the generation procedure (`add_fg_event_non_noff`) to use all parts of files longer than 
 the duration of the soundscapes created + Add possibility to use only background from certain labels (i.e: sins or tut).
-- 18th March 2020, update DESED_synth_dcase20_train_jams.tar of DESED_synth. They use pitch shifting, while the others 
-didn't. These are the final JAMS used for dcase2020 baseline. Also commenting reverb since not used for the baseline.
+- 18th March 2020, v.1.1.7, update DESED_synth_dcase20_train_jams.tar of DESED_synth. They use pitch shifting, 
+while the others didn't. These are the final JAMS used for dcase2020 baseline. Also commenting reverb since not used 
+for the baseline.
       
 ## Requirements:
 **python >= 3.6**, dcase-util >= 0.2.11, scaper >= 1.3.5, numpy >= 1.15.4, pandas >= 0.24.0,
@@ -316,9 +318,13 @@ Feel free to add your paper in the file [list_papers_using_desed.md][list_papers
 <!-- include list_papers_using_desed.md -->
 Paper                                                                       | Code
 --------------------------------------------------------------------------- | ---------------------------
-[Turpault et al.][paper-description], DCASE workshop 2019.                  | https://github.com/turpaultn/DCASE2019_task4
-[Serizel et al.][paper-eval], ICASSP 2020                                   | https://github.com/turpaultn/DESED
-[Turpault et al.][paper-turpault-icassp20], ICASSP 2020                     | https://github.com/turpaultn/walle
+[Turpault et al.](https://hal.inria.fr/hal-02160855), DCASE workshop 2019.  | https://github.com/turpaultn/DCASE2019_task4
+[Serizel et al.](https://hal.inria.fr/hal-02355573), ICASSP 2020            | https://github.com/turpaultn/DESED
+[Turpault et al.](https://hal.inria.fr/hal-02467401), ICASSP 2020           | https://github.com/turpaultn/walle
+[Turpault et al.](https://hal.inria.fr/hal-02891665), preprint              | https://github.com/turpaultn/dcase20_task4/tree/papers_code
+[Turpault et al.](https://hal.inria.fr/hal-02891700), preprint              | https://github.com/turpaultn/dcase20_task4/tree/papers_code
+
+
 <!-- end -->
 
 *Note: to add it to README.md before doing the pull request, run `python generate_table.py`*
