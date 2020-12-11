@@ -11,7 +11,7 @@ Mix of recorded and synthetic data. (used in DCASE task 4 since 2019)
 
 *If you use this dataset, do not hesitate to update [the list](#list-of-papers-and-code-using-desed) 
 of papers below with your paper by doing a pull request. 
-If you use and like this work, you can [cite it][Please cite us] :blush:*
+If you use and like this work, you can [cite it](#citing-us) :blush:*
 
 **Table of contents**
   - [Requirements](#requirements)
