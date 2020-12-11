@@ -8,7 +8,7 @@
 # Change with your own environment
 CONDA_ENV=python
 # Path to root directory
-ROOTDIR=$(realpath ..)
+ROOT_DIR=$(realpath ..)
 # Will put dcase2020 dataset in this folder
 DATASET_DIR=${ROOT_DIR}/dataset
 # The path to synthetic where the python files are
