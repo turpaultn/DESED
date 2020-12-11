@@ -1,8 +1,14 @@
-#!/bin/bash
+#/bin/bash
+
+#Uncomment this part to run the script line by line
+#echo "Press CTRL+C to proceed after each command."
+#set -x #Prints commands and their arguments s they are executed
+#trap read debug
 
 # Change with your own environment
 CONDA_ENV=python
-ROOT_DIR=$(realpath ..)
+# Path to root directory
+ROOTDIR="path/to/root/directory"
 # Will put dcase2020 dataset in this folder
 DATASET_DIR=${ROOT_DIR}/dataset
 # The path to synthetic where the python files are
@@ -10,7 +16,6 @@ SYNTHETIC_DIR=${ROOT_DIR}/synthetic
 
 # For reverberation computation
 NPROC=8 # Be careful, if you do not use the same number of processors, you won't reproduce the baseline data.
-
 
 ############### Shouldn't have to change anything after this line
 cd ${ROOT_DIR}

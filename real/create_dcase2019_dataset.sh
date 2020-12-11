@@ -1,10 +1,15 @@
 #!/bin/bash
 
+#Uncomment this part to run the script line by line
+#echo "Press CTRL+C to proceed after each command."
+#set -x #Prints commands and their arguments s they are executed
+#trap read debug
+
 # Change with your own environment
 CONDA_ENV=python
 
 # Create directory, and copy data in right folders to have a unique directory with dcase2019 data
-ROOTDIR=$1
+ROOTDIR="path/to/root/directory"
 mkdir -p ${ROOTDIR}
 
 # If not already done

@@ -43,7 +43,7 @@ See [DESED README][desed-readme] in previous folder.
 
 ## DCASE2019 task 4
 #### Download
-Recommended to open [create_dcase2019_dataset.sh][create2019] and launch line by line in case of bugs.
+Recommended to open [create_dcase2019_dataset.sh][create2019] in order to configure the folder path according to you environment and launch the script line by line in case of bugs.
 
 Otherwise launch `sh create_dcase2019_dataset.sh`.
 
