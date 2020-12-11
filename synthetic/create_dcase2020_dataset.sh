@@ -1,4 +1,4 @@
-#/bin/bash
+#!/bin/bash
 
 #Uncomment this part to run the script line by line
 #echo "Press CTRL+C to proceed after each command."
