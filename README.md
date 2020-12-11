@@ -337,7 +337,7 @@ The different datasets contain a license file at their root for the attribution 
 The different platform used are: Freesound [[4]](#4)[[5]](#5), Youtube, MUSAN [[3]](#3) and SINS [[2]](#2).  
 
 ##  Citing us
-If you use this repository, please cite these papers:
+If you use this repository, like it, and you want to cite us, please cite these papers:
 
 - N. Turpault, R. Serizel, A. Parag Shah, J. Salamon. 
 Sound event detection indomestic environments with weakly labeled data and soundscape synthesis. 
