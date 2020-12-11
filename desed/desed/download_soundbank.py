@@ -45,7 +45,7 @@ def get_sins(destination_folder, classes_kept=["other"], keep_original=False, ar
     df["filename"] = df[0].apply(lambda x: os.path.basename(x))
     df = df[df[1].isin(classes_kept)]
 
-    for i in range(1, 24)
+    for i in range(1, 24):
         logger.info(f"SINS downloading zip {i} / 23 ...")
         # Download the first zip, and keep only other
         zip_file_url = f"https://zenodo.org/record/1247102/files/DCASE2018-task5-dev.audio.{i}.zip?download=1"
