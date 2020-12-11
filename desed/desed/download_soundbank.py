@@ -59,7 +59,7 @@ def get_sins(destination_folder, classes_kept=["other"], keep_original=False, ar
         if not keep_original:
             # Save disk space if limited
             shutil.rmtree(os.path.join(extracted_sins_path, "audio"))
-            #removing "DCASE2018-task5-dev.audio.{i}.zip" folder 
+            #remove "DCASE2018-task5-dev.audio.{i}.zip" files
             os.remove(fpath)
 
     if not keep_original:
