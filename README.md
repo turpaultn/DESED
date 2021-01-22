@@ -14,7 +14,6 @@ of papers below with your paper by doing a pull request.
 If you use and like this work, you can [cite it](#citing-us) :blush:*
 
 **Table of contents**
-  - [Requirements](#requirements)
   - [Links](#links)
   - [Description](#description)
   - [Recorded soundscapes](#1-recorded-soundscapes-aka-real-data)
