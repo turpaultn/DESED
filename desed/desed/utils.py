@@ -78,25 +78,15 @@ def choose_cooccurence_class(co_occur_params, random_state=None):
                   ]
                 }
             classes and probas maps each others
-        random_state: int, or RandomS0tate object
+        random_state: int, or RandomState object
     Returns:
         str, the class name.
     """
-    accumulated_probas = 0
-    inter_acc_probas = []
-    # Accumulate probas until 1
-    for i in range(len(co_occur_params['probas'])):
-        accumulated_probas += co_occur_params['probas'][i]
-        inter_acc_probas.append(accumulated_probas)
     if random_state is not None:
         random_state = _check_random_state(random_state)
-        random_val = random_state.rand()
+        chosen_class = random_state.choice(co_occur_params['classes'], p=co_occur_params['probas'])
     else:
-        # Get a random value between 0-1
-        random_val = np.random.uniform()
-    # Get the index of the chosen class by taking the index of the first accumulated value > random_val
-    idx_chosen_class = np.argmax(np.asarray(inter_acc_probas) > random_val)
-    chosen_class = co_occur_params['classes'][idx_chosen_class]
+        chosen_class = np.random.choice(co_occur_params['classes'], p=co_occur_params['probas'])
     return chosen_class
 
 
