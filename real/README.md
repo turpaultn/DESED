@@ -1,5 +1,5 @@
 # Desed_real
-Real data. (used in DCASE task 4 2018 and 2019).
+Real data. (used in DCASE task 4 since 2018).
 
 Contains the metadata to download the real data.
 

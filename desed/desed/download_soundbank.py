@@ -160,9 +160,12 @@ def download_soundbank(basedir, sins_bg=True, tut_bg=False, split_train_valid=Tr
     tmp_folder = "zip_extracted_folder"
     create_folder(tmp_folder)
 
+    print("downloading soundbank (foregronud)...")
     download_zenodo_soundbank(basedir, archive_folder=tmp_folder)
+    print("Downloading backgrounds...")
     get_backgrounds_train(basedir, sins_bg, tut_bg, keep_original=keep_original_sins_tut, archive_folder=tmp_folder)
     if split_train_valid:
+        print("Splitting train in train and validation...")
         make_validation_sb(basedir)
 
     shutil.rmtree(tmp_folder)

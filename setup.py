@@ -9,7 +9,7 @@ def package_file(fname):
 
 setup(
     name='desed',
-    version='1.2.2',
+    version='1.2.3',
     description="DESED dataset utils",
     author="Nicolas Turpault, Romain Serizel, Ankit Shah, Justin Salamon",
     author_email="turpaultn@gmail.com",
@@ -22,7 +22,7 @@ setup(
         "numpy >= 1.15.4",
         "pandas >= 0.24.0",
         "dcase-util >= 0.2.11",
-        "youtube-dl >= 2019.4.30",
+        "youtube-dl >= 2019.4.30",  # Better with conda install and conda-forge channel
         "soundfile >= 0.10.1",
         "jams >= 0.3.4",
         "tqdm >= 4.29.1",
