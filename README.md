@@ -24,8 +24,8 @@ If you use and like this work, you can [cite it](#citing-us) :blush:*
     - [Download soundbank](#21-download-soundbank)
     - [Soundscapes (existing set or generate new)](#22-soundscapes-existing-set-or-generate-new)
   - [DCASE Task 4](#dcase-task-4)
-    - [DCASE19 Task 4](#dcase19-task-4)
-    - [DCASE20 Task 4](#dcase20-task-4)
+    - [Download](#download)
+    - [Description](#description-of-dcase-2019-and-2020)
   - [Important updates](#important-updates)
   - [List of papers/code using DESED](#list-of-papers-and-code-using-desed)
   - [FAQ](#faq)
@@ -178,63 +178,15 @@ After downloading the data (see below) you should have this tree:
 
 
 ## DCASE task 4
-### DCASE19 task 4
-#### Download
+
+### Download
+#### DCASE19 task 4
 Recommended to open `synthetic/create_dcase2019_dataset.sh` and 
 `real/create_dcase2019_dataset.sh` and launch line by line in case of bugs.
 
 Otherwise launch `sh create_dcase2019_dataset.sh`.
 
-#### Description of Desed for dcase2019 task 4
-[DCASE 2019 task 4 web page][website-dcase19-t4]
-
-* **Recorded soundscapes**
-	* **Training**: 1578 weakly labeled clips, 14412 unlabeled clips
-	* **Public Evaluation**: 692 Youtube files (reported as "eval youtube" in papers)
-	* **Challenge Evaluation**: Youtube and Vimeo files.
-
-* **Synthetic**
-	* **Training**: There are 2060 background files from SINS and 1009 foreground from Freesound.
-We generated 2045 10s files with a FBSNR between 6dB to 30dB.
-	* **Evaluation**: 	There are 12 (Freesound) + 5 (Youtube) background files and 314 foreground files. 
-	Generating different subsets to test robustness against some parameters.
-	
-		Taking a background sound and multiple foreground sounds and associating them in different conditions:
-		* Varying the foreground-background signal to noise ratio (FBSNR).
-		* Varying the onsets: Generating foreground sounds only at the beginning, middle or end of the 10 seconds.
-		* Using long 'foreground' event classes as background, and short events as foreground. 
-		* Degrading the final 10s mixtures.
-
-
-** After running the script `create_dcase2019_dataset.sh`, you should have a folder called `dcase2019`in that way**
-```
-dcase2019/
-└── dataset
-    ├── audio
-    │   ├── eval
-    │   │   ├── 500ms
-    │   │   ├── 5500ms
-    │   │   ├── 9500ms
-    │   │   ├── fbsnr_0dB
-    │   │   ├── fbsnr_15dB
-    │   │   ├── fbsnr_24dB
-    │   │   ├── fbsnr_30dB
-    │   │   ├── ls_0dB
-    │   │   ├── ls_15dB
-    │   │   └── ls_30dB
-    │   ├── train
-    │   │   ├── synthetic
-    │   │   ├── unlabel_in_domain
-    │   │   └── weak
-    │   └── validation
-    └── metadata
-        ├── eval
-        ├── train
-        └── validation
-```
-
-### DCASE20 Task 4
-#### Download
+#### DCASE20 Task 4
 Recorded (real) soundscapes are similar 2019.
 
 Recommended to open `synthetic/create_dcase2020_dataset.sh` and 
@@ -242,30 +194,44 @@ Recommended to open `synthetic/create_dcase2020_dataset.sh` and
 
 Otherwise launch `sh create_dcase2020_dataset.sh`.
 
-#### Description of Desed for dcase2020 task 4
+### Description of dcase 2019 and 2020
 
-DESED is only a subset of DCASE 2020 task 4 dataset.
+DESED is the full set in DCASE 2019 task 4 but only a subset of DCASE 2020 task 4 dataset (FUSS is the other part).
 The task is dealing on sound event detection using DESED, and on source separation using a dataset provided by Google.
 See [DCASE 2020 task 4 web page][website-dcase20-t4] for more info.
 
-DESED part:
 * **Recorded soundscapes**
-	* **Training**: 1578 weakly labeled clips, 14412 unlabeled clips
-	* **Public Evaluation**: 692 Youtube files (reported as "eval youtube" in papers)
-	* **Challenge Evaluation**: Youtube and Vimeo files.
+    * **Training**: 1578 weakly labeled clips, 14412 unlabeled clips.
+    * **Validation**: 1168 strongly labeled clips.
+    * **Public Evaluation**: 692 Youtube files (reported as "eval youtube" in papers).
+    * **Challenge Evaluation**: Youtube and Vimeo files.
 
-* **Synthetic**
+* **Synthetic** 2019
+    * **Training**: There are 2060 background files from SINS and 1009 foreground from Freesound.
+      We generated 2045 10s files with a FBSNR between 6dB to 30dB.
+    * **Evaluation**: 	There are 12 (Freesound) + 5 (Youtube) background files and 314 foreground files.
+      Generating different subsets to test robustness against some parameters.
+
+      Taking a background sound and multiple foreground sounds and associating them in different conditions:
+        * Varying the foreground-background signal to noise ratio (FBSNR).
+        * Varying the onsets: Generating foreground sounds only at the beginning, middle or end of the 10 seconds.
+        * Using long 'foreground' event classes as background, and short events as foreground.
+        * Degrading the final 10s mixtures.
+
+* **Synthetic** 2020
 	* **Training**: There are 2060 background files from SINS and 1009 foreground from Freesound.
 	We generated 2584 10s files with a FBSNR between 6dB to 30dB. Files are reverberated using 
 	room impulse responses (RIR) from [FUSS][fuss_zenodo] dataset.
 	* **Evaluation**: 	There are 12 (Freesound) + 5 (Youtube) background files and 314 foreground files. 
 
-** After running the script `create_dcase2020_dataset.sh`, you should have a folder called `dataset`in that way**
+After running the script `create_dcase2019_dataset.sh`, you should have a folder called `dcase2019`.
+After running the script `create_dcase2020_dataset.sh`, you should have a folder called `dataset`.
+Organised in that way:
 ```
 dataset
 ├── audio
 │   ├── train
-│   │   ├── synthetic20
+│   │   ├── synthetic20 (called synthetic in 2019)
 │	│   │   └── soundscapes
 │   │   ├── unlabel_in_domain
 │   │   └── weak
@@ -273,10 +239,10 @@ dataset
 └── metadata
     ├── eval
     ├── train
-    │   └── synthetic20
     └── validation
 ```
 
+** After running the script `create_dcase2019_dataset.sh`, you should have a folder called `dcase2019`in that way**
 
 ## FAQ
 * Why don't we have a single dataset repository ?
