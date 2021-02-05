@@ -82,7 +82,7 @@ def get_tut(destination_folder, classes_kept=["home", "office", "library"],
     logger = create_logger(__name__ + "/" + inspect.currentframe().f_code.co_name, terminal_level=logging.INFO)
     zip_meta_tut = f"https://zenodo.org/record/400515/files/TUT-acoustic-scenes-2017-development.meta.zip?download=1"
     fpath_meta = os.path.join(archive_folder, "TUT-acoustic-scenes-2017-development.meta.zip")
-    download_file(zip_meta_tut, os.path.join(archive_folder, fpath_meta))
+    download_file(zip_meta_tut, fpath_meta)
     shutil.unpack_archive(fpath_meta, destination_folder)
 
     extracted_tut_path = os.path.join(destination_folder, "TUT-acoustic-scenes-2017-development")
