@@ -34,8 +34,9 @@ def _check_random_state(seed):
     elif isinstance(seed, np.random.RandomState):
         return seed
     else:
-        raise ValueError('%r cannot be used to seed a numpy.random.RandomState'
-                         ' instance' % seed)
+        raise ValueError(
+            "%r cannot be used to seed a numpy.random.RandomState" " instance" % seed
+        )
 
 
 def create_folder(folder, exist_ok=True, delete_if_exists=False):
@@ -57,6 +58,8 @@ def create_folder(folder, exist_ok=True, delete_if_exists=False):
 
 
 pp = pprint.PrettyPrinter()
+
+
 def pprint(x):
     pp.pprint(x)
 
@@ -84,9 +87,13 @@ def choose_cooccurence_class(co_occur_params, random_state=None):
     """
     if random_state is not None:
         random_state = _check_random_state(random_state)
-        chosen_class = random_state.choice(co_occur_params['classes'], p=co_occur_params['probas'])
+        chosen_class = random_state.choice(
+            co_occur_params["classes"], p=co_occur_params["probas"]
+        )
     else:
-        chosen_class = np.random.choice(co_occur_params['classes'], p=co_occur_params['probas'])
+        chosen_class = np.random.choice(
+            co_occur_params["classes"], p=co_occur_params["probas"]
+        )
     return chosen_class
 
 
@@ -100,7 +107,7 @@ def change_snr(jams_path, db_change):
         jam_obj the jams object that has been modified
     """
     jams_obj = jams.load(jams_path)
-    ann = jams_obj.annotations.search(namespace='scaper')[0]
+    ann = jams_obj.annotations.search(namespace="scaper")[0]
     for cnt, obs in enumerate(ann.data):
         if obs.value["role"] == "foreground":
             old_snr = ann.data[cnt].value["snr"]
@@ -120,18 +127,22 @@ def modify_fg_onset(jams_path, slice_seconds):
         jams object that has been modified
     """
     jams_obj = jams.load(jams_path)
-    ann = jams_obj.annotations.search(namespace='scaper')[0]
+    ann = jams_obj.annotations.search(namespace="scaper")[0]
     data = ann.data
     for cnt, obs in enumerate(data):
         if obs.value["role"] == "foreground":
             onset = obs.value["event_time"]
             # Checking the new onset is possible
             if onset + slice_seconds > ann.duration:
-                raise DesedError(f"The new onset is not valid: {onset + slice_seconds} > {ann.duration}, "
-                                 f"for file: {jams_path}")
+                raise DesedError(
+                    f"The new onset is not valid: {onset + slice_seconds} > {ann.duration}, "
+                    f"for file: {jams_path}"
+                )
             elif onset + slice_seconds < 0:
-                raise DesedError(f"The new onset is not valid: {onset + slice_seconds} < 0, "
-                                 f"for file: {jams_path}")
+                raise DesedError(
+                    f"The new onset is not valid: {onset + slice_seconds} < 0, "
+                    f"for file: {jams_path}"
+                )
             else:
                 # Change source time by adding the added value specified
                 ann.data[cnt].value["event_time"] = onset + slice_seconds
