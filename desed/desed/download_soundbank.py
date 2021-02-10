@@ -10,8 +10,8 @@ from .logger import create_logger
 from .utils import download_file, create_folder
 
 
-def copy_files_kept(meta_df, list_sins_files, input_dir, output_dir):
-    df_files = pd.DataFrame(list_sins_files, columns=["filename"])
+def copy_files_kept(meta_df, list_files_available, input_dir, output_dir):
+    df_files = pd.DataFrame(list_files_available, columns=["filename"])
     df_files["filename"] = df_files.filename.apply(lambda x: os.path.basename(x))
 
     merged = meta_df.merge(df_files, on='filename')
@@ -93,8 +93,8 @@ def get_tut(destination_folder, classes_kept=["home", "office", "library"],
     df["filename"] = df[0].apply(lambda x: os.path.basename(x))
     df = df[df[1].isin(classes_kept)]
 
-    for i in range(1, 10):
-        logger.info(f"TUT (scenes-2017-dev) downloading zip {i} / 9 ...")
+    for i in range(1, 11):
+        logger.info(f"TUT (scenes-2017-dev) downloading zip {i} / 10 ...")
         zip_file_url = f"https://zenodo.org/record/400515/files/" \
             f"TUT-acoustic-scenes-2017-development.audio.{i}.zip?download=1"
         fpath = os.path.join(archive_folder, f"TUT-acoustic-scenes-2017-development.audio.{i}.zip")
