@@ -3,7 +3,6 @@ import inspect
 import logging
 import os
 import shutil
-import tempfile
 
 import pandas as pd
 
@@ -43,7 +42,8 @@ def download_sins(destination_folder):
         str, path of TUT extracted database
     """
     logger = create_logger(__name__ + "/" + inspect.currentframe().f_code.co_name, terminal_level=logging.INFO)
-    archive_folder = os.path.join(tempfile.gettempdir(), "desed_soundbank_archives")
+    tmp_dir = os.path.join("tmp", "zip_extracted_sins")  # not using tempdir because too big files for some /tmp folders
+    archive_folder = os.path.join(tmp_dir, "desed_soundbank_archives")
     create_folder(archive_folder)
 
     zip_file_url_meta = f"https://zenodo.org/record/1247102/files/DCASE2018-task5-dev.meta.zip?download=1"
@@ -100,7 +100,8 @@ def download_tut(destination_folder):
         str, path of extracted TUT database
     """
     logger = create_logger(__name__ + "/" + inspect.currentframe().f_code.co_name, terminal_level=logging.INFO)
-    archive_folder = os.path.join(tempfile.gettempdir(), "desed_soundbank_archives")
+    tmp_dir = os.path.join("tmp", "zip_extracted_tut")  # not using tempdir because too big files for some /tmp folders
+    archive_folder = os.path.join(tmp_dir, "desed_soundbank_archives")
     create_folder(archive_folder)
     zip_meta_tut = f"https://zenodo.org/record/400515/files/TUT-acoustic-scenes-2017-development.meta.zip?download=1"
     fpath_meta = os.path.join(archive_folder, "TUT-acoustic-scenes-2017-development.meta.zip")
@@ -174,7 +175,8 @@ def download_zenodo_soundbank(destination_folder):
     Returns:
     """
     zip_meta_tut = "https://zenodo.org/record/4307908/files/DESED_synth_soundbank.tar.gz?download=1"
-    archive_folder = os.path.join(tempfile.gettempdir(), "desed_soundbank_archives")
+    tmp_dir = os.path.join("tmp", "zip_extracted_sb")  # not using tempdir because too big files for some /tmp folders
+    archive_folder = os.path.join(tmp_dir, "desed_soundbank_archives")
     create_folder(archive_folder)
     fname = os.path.join(archive_folder, "DESED_synth_soundbank.tar.gz")
     download_file(zip_meta_tut, fname)
