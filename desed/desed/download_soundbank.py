@@ -29,7 +29,7 @@ def _copy_files_kept(meta_df, input_dir, output_dir):
     merged = meta_df.merge(df_files, on="filename")
     merged.apply(
         lambda x: shutil.copy(
-            os.path.join(input_dir, x[0]), os.path.join(output_dir, x["filename"])
+            os.path.join(input_dir, x["filename"]), os.path.join(output_dir, x["filename"])
         ),
         axis=1,
     )
@@ -196,15 +196,15 @@ def get_backgrounds_train(basedir_soundbank, sins=True, tut=False, keep_original
         sins_path = download_sins(destination_folder)
         filter_sins(
             sins_path,
-            destination_folder=destination_folder,
+            destination_folder=os.path.join(destination_folder, "background", "sins"),
             rm_original_sins=not keep_original,
         )
 
     if tut:
-        tut_path = download_sins(destination_folder)
+        tut_path = download_tut(destination_folder)
         filter_tut(
             tut_path,
-            destination_folder=destination_folder,
+            destination_folder=os.path.join(destination_folder, "background", "tut-scenes-2017-dev"),
             rm_original_tut=not keep_original,
         )
 
