@@ -36,26 +36,26 @@ def download_unique_file(filename, result_dir, platform="youtube"):
     logger = create_logger(__name__ + "/" + inspect.currentframe().f_code.co_name)
     tmp_filename = ""
     fname_no_ext = os.path.splitext(filename)[0]
-    segment_start = fname_no_ext.split('_')[-2]
-    segment_end = fname_no_ext.split('_')[-1]
+    segment_start = fname_no_ext.split("_")[-2]
+    segment_end = fname_no_ext.split("_")[-1]
     audio_container = AudioContainer()
 
     # Define download parameters
     ydl_opts = {
-        'format': 'bestaudio/best',
-        'outtmpl': TMP_FOLDER+'%(id)s.%(ext)s',
-        'noplaylist': True,
-        'quiet': True,
-        'prefer_ffmpeg': True,
-        'logger': MyLogger(),
-        'audioformat': 'wav'
+        "format": "bestaudio/best",
+        "outtmpl": TMP_FOLDER + "%(id)s.%(ext)s",
+        "noplaylist": True,
+        "quiet": True,
+        "prefer_ffmpeg": True,
+        "logger": MyLogger(),
+        "audioformat": "wav",
     }
 
     if platform.lower() == "youtube":
         query_id = filename[1:12]  # Remove the Y in front of the file.
         baseurl = "https://www.youtube.com/watch?v="
     elif platform.lower() == "vimeo":
-        query_id = filename.split('_')[0]
+        query_id = filename.split("_")[0]
         baseurl = "https://vimeo.com/"
     else:
         raise NotImplementedError("platform can only be vimeo or youtube")
@@ -67,15 +67,21 @@ def download_unique_file(filename, result_dir, platform="youtube"):
             with youtube_dl.YoutubeDL(ydl_opts) as ydl:
                 meta = ydl.extract_info(f"{baseurl}{query_id}", download=True)
 
-            audio_formats = [f for f in meta["formats"] if f.get('vcodec') == 'none']
+            audio_formats = [f for f in meta["formats"] if f.get("vcodec") == "none"]
             if audio_formats is []:
                 return [filename, "no audio format available"]
             # get the best audio format
             best_audio_format = audio_formats[-1]
 
             tmp_filename = TMP_FOLDER + query_id + "." + best_audio_format["ext"]
-            audio_container.load(filename=tmp_filename, fs=44100, res_type='kaiser_best',
-                                 start=float(segment_start), stop=float(segment_end), auto_trimming=True)
+            audio_container.load(
+                filename=tmp_filename,
+                fs=44100,
+                res_type="kaiser_best",
+                start=float(segment_start),
+                stop=float(segment_end),
+                auto_trimming=True,
+            )
 
             # Save segmented audio
             audio_container.filename = filename
@@ -111,12 +117,28 @@ def download_unique_file(filename, result_dir, platform="youtube"):
         return []
 
 
-def download(filenames, result_dir, n_jobs=1, chunk_size=10, base_dir_missing_files="..", platform="youtube"):
+def download(
+    filenames,
+    result_dir,
+    n_jobs=1,
+    chunk_size=10,
+    base_dir_missing_files="..",
+    platform="youtube",
+):
     warnings.warn("Depreciated, use 'download_real' instead")
-    return download_real(filenames, result_dir, n_jobs, chunk_size, base_dir_missing_files, platform)
+    return download_real(
+        filenames, result_dir, n_jobs, chunk_size, base_dir_missing_files, platform
+    )
 
 
-def download_real(filenames, result_dir, n_jobs=1, chunk_size=10, base_dir_missing_files="..", platform="youtube"):
+def download_real(
+    filenames,
+    result_dir,
+    n_jobs=1,
+    chunk_size=10,
+    base_dir_missing_files="..",
+    platform="youtube",
+):
     """ download files in parallel from youtube given a tsv file listing files to download.
     It also stores not downloaded files with their associated error in "missing_files_[tsv_file].tsv"
 
@@ -146,26 +168,39 @@ def download_real(filenames, result_dir, n_jobs=1, chunk_size=10, base_dir_missi
         else:
             with closing(Pool(n_jobs)) as p:
                 # Put result_dir and platform as constants variable with result_dir in download_file
-                download_file_alias = functools.partial(download_unique_file, result_dir=result_dir, platform=platform)
+                download_file_alias = functools.partial(
+                    download_unique_file, result_dir=result_dir, platform=platform
+                )
 
-                for val in tqdm(p.imap_unordered(download_file_alias, filenames, chunk_size), total=len(filenames)):
+                for val in tqdm(
+                    p.imap_unordered(download_file_alias, filenames, chunk_size),
+                    total=len(filenames),
+                ):
                     files_error.append(val)
 
         # Store files which gave error
         missing_files = pd.DataFrame(files_error).dropna()
         if not missing_files.empty:
-            base_dir_missing_files = os.path.join(base_dir_missing_files, "missing_files")
+            base_dir_missing_files = os.path.join(
+                base_dir_missing_files, "missing_files"
+            )
             create_folder(base_dir_missing_files)
 
             # Save missing_files to be able to ask them
             missing_files.columns = ["filename", "error"]
             set_name = os.path.basename(result_dir)
-            missing_files.to_csv(os.path.join(base_dir_missing_files,
-                                              "missing_files_" + set_name + ".tsv"),
-                                 index=False, sep="\t")
-            warnings.warn(f"There are missing files at {base_dir_missing_files}, \n"
-                          f"see info on https://github.com/turpaultn/desed#11-download on how to get them",
-                          DesedWarning)
+            missing_files.to_csv(
+                os.path.join(
+                    base_dir_missing_files, "missing_files_" + set_name + ".tsv"
+                ),
+                index=False,
+                sep="\t",
+            )
+            warnings.warn(
+                f"There are missing files at {base_dir_missing_files}, \n"
+                f"see info on https://github.com/turpaultn/desed#11-download on how to get them",
+                DesedWarning,
+            )
 
     except KeyboardInterrupt:
         if p is not None:

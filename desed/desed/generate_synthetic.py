@@ -24,8 +24,18 @@ class SoundscapesGenerator:
         random_state: np.random.RandomState or int, the random_state wanted to be able to reproduce the dataset
         delete_if_exists: bool, whether to delete existing files and folders created with the same name.
     """
-    def __init__(self, duration, fg_folder, bg_folder, ref_db=-55, samplerate=16000, random_state=None,
-                 delete_if_exists=True, logger=None):
+
+    def __init__(
+        self,
+        duration,
+        fg_folder,
+        bg_folder,
+        ref_db=-55,
+        samplerate=16000,
+        random_state=None,
+        delete_if_exists=True,
+        logger=None,
+    ):
         self.duration = duration
         self.ref_db = ref_db
         self.fg_folder = fg_folder
@@ -35,14 +45,30 @@ class SoundscapesGenerator:
         self.delete_if_exists = delete_if_exists
         self.logger = logger
         if self.logger is None:
-            self.logger = create_logger(__name__ + "/" + inspect.currentframe().f_code.co_name)
+            self.logger = create_logger(
+                __name__ + "/" + inspect.currentframe().f_code.co_name
+            )
 
-    def generate(self, number, out_folder, min_events=1, max_events=5,
-                 labels=('choose', []), source_files=('choose', []), sources_time=('const', 0),
-                 events_start=('truncnorm', 5.0, 2.0, 0.0, 10.0), events_duration=('uniform', 0.25, 10.0),
-                 snrs=('const', 30), pitch_shifts=('uniform', -3.0, 3.0), time_stretches=None,
-                 save_isolated_events=False, bg_labels=None,
-                 txt_file=True, start_from=0, **kwargs):
+    def generate(
+        self,
+        number,
+        out_folder,
+        min_events=1,
+        max_events=5,
+        labels=("choose", []),
+        source_files=("choose", []),
+        sources_time=("const", 0),
+        events_start=("truncnorm", 5.0, 2.0, 0.0, 10.0),
+        events_duration=("uniform", 0.25, 10.0),
+        snrs=("const", 30),
+        pitch_shifts=("uniform", -3.0, 3.0),
+        time_stretches=None,
+        save_isolated_events=False,
+        bg_labels=None,
+        txt_file=True,
+        start_from=0,
+        **kwargs,
+    ):
         """ Generate
 
         Args:
@@ -73,18 +99,20 @@ class SoundscapesGenerator:
         """
         create_folder(out_folder)
         params = {
-            'labels': labels,
-            'source_files': source_files,
-            'sources_time': sources_time,
-            'events_start': events_start,
-            'events_duration': events_duration,
-            'snrs': snrs,
-            'pitch_shifts': pitch_shifts,
-            'time_stretches': time_stretches
+            "labels": labels,
+            "source_files": source_files,
+            "sources_time": sources_time,
+            "events_start": events_start,
+            "events_duration": events_duration,
+            "snrs": snrs,
+            "pitch_shifts": pitch_shifts,
+            "time_stretches": time_stretches,
         }
 
         for cnt in range(number):
-            self.logger.debug('Generating soundscape: {:d}/{:d}'.format(cnt + 1, number))
+            self.logger.debug(
+                "Generating soundscape: {:d}/{:d}".format(cnt + 1, number)
+            )
             # create a scaper
             n_events = self.random_state.randint(min_events, max_events + 1)
 
@@ -93,24 +121,45 @@ class SoundscapesGenerator:
             else:
                 filename = str(start_from + cnt)
 
-            sc = Soundscape(self.duration, self.fg_folder, self.bg_folder, self.ref_db, self.samplerate,
-                            random_state=self.random_state, delete_if_exists=self.delete_if_exists)
-            sc.generate_one_bg_multi_fg(out_folder=out_folder,
-                                        filename=filename,
-                                        n_fg_events=n_events,
-                                        **params,
-                                        txt_file=txt_file,
-                                        save_isolated_events=save_isolated_events,
-                                        bg_labels=bg_labels,
-                                        **kwargs)
+            sc = Soundscape(
+                self.duration,
+                self.fg_folder,
+                self.bg_folder,
+                self.ref_db,
+                self.samplerate,
+                random_state=self.random_state,
+                delete_if_exists=self.delete_if_exists,
+            )
+            sc.generate_one_bg_multi_fg(
+                out_folder=out_folder,
+                filename=filename,
+                n_fg_events=n_events,
+                **params,
+                txt_file=txt_file,
+                save_isolated_events=save_isolated_events,
+                bg_labels=bg_labels,
+                **kwargs,
+            )
             if cnt % 200 == 0:
-                self.logger.info(f"generating {cnt} / {number} files (updated every 200)")
+                self.logger.info(
+                    f"generating {cnt} / {number} files (updated every 200)"
+                )
 
-    def generate_balance(self, number, out_folder, min_events, max_events, list_labels=None,
-                         save_isolated_events=False, start_from=0,
-                         snr=('uniform', 6, 30), pitch_shift=None, time_stretch=None,
-                         bg_labels=None,
-                         **kwargs):
+    def generate_balance(
+        self,
+        number,
+        out_folder,
+        min_events,
+        max_events,
+        list_labels=None,
+        save_isolated_events=False,
+        start_from=0,
+        snr=("uniform", 6, 30),
+        pitch_shift=None,
+        time_stretch=None,
+        bg_labels=None,
+        **kwargs,
+    ):
         """ Generate landscapes by taking into account the probabilities of labels and their co-occurence
         Args:
 
@@ -143,11 +192,20 @@ class SoundscapesGenerator:
             self.logger.debug(f"list of labels: {list_labels}")
 
         for label in list_labels:
-            self.logger.debug('Generating soundscape: {:d}/{:d}'.format(cnt + 1, number))
+            self.logger.debug(
+                "Generating soundscape: {:d}/{:d}".format(cnt + 1, number)
+            )
             number_per_class = max(1, round(number // len(list_labels)))
             for i in range(number_per_class):
-                sc = Soundscape(self.duration, self.fg_folder, self.bg_folder, self.ref_db, self.samplerate,
-                                random_state=self.random_state, delete_if_exists=self.delete_if_exists)
+                sc = Soundscape(
+                    self.duration,
+                    self.fg_folder,
+                    self.bg_folder,
+                    self.ref_db,
+                    self.samplerate,
+                    random_state=self.random_state,
+                    delete_if_exists=self.delete_if_exists,
+                )
                 if start_from + cnt < 10:
                     filename = "0" + str(start_from + cnt)
                 else:
@@ -156,29 +214,45 @@ class SoundscapesGenerator:
                     n_events = min_events
                 else:
                     n_events = self.random_state.randint(min_events, max_events)
-                sc.generate_using_non_noff(label=label,
-                                           list_labels=list_labels,
-                                           out_folder=out_folder,
-                                           filename=filename,
-                                           n_events=n_events,
-                                           save_isolated_events=save_isolated_events,
-                                           snr=snr,
-                                           pitch_shift=pitch_shift,
-                                           time_stretch=time_stretch,
-                                           bg_labels=bg_labels,
-                                           **kwargs)
+                sc.generate_using_non_noff(
+                    label=label,
+                    list_labels=list_labels,
+                    out_folder=out_folder,
+                    filename=filename,
+                    n_events=n_events,
+                    save_isolated_events=save_isolated_events,
+                    snr=snr,
+                    pitch_shift=pitch_shift,
+                    time_stretch=time_stretch,
+                    bg_labels=bg_labels,
+                    **kwargs,
+                )
                 if cnt % 200 == 0:
-                    self.logger.info(f"generating {cnt} / {number} files (updated every 200)")
+                    self.logger.info(
+                        f"generating {cnt} / {number} files (updated every 200)"
+                    )
                 cnt += 1
         if cnt != number:
-            self.logger.warn(f"The number of generated examples ({cnt}) is different from the number asked ({number}) "
-                             f"because of probabilities of events.")
+            self.logger.warn(
+                f"The number of generated examples ({cnt}) is different from the number asked ({number}) "
+                f"because of probabilities of events."
+            )
 
-    def generate_by_label_occurence(self, label_occurences, number, out_folder, min_events=0, max_events=None,
-                                    save_isolated_events=False, start_from=0,
-                                    snr=('uniform', 6, 30), pitch_shift=None, time_stretch=None,
-                                    bg_labels=None,
-                                    **kwargs):
+    def generate_by_label_occurence(
+        self,
+        label_occurences,
+        number,
+        out_folder,
+        min_events=0,
+        max_events=None,
+        save_isolated_events=False,
+        start_from=0,
+        snr=("uniform", 6, 30),
+        pitch_shift=None,
+        time_stretch=None,
+        bg_labels=None,
+        **kwargs,
+    ):
         """ Generate landscapes by taking into account the probabilities of labels and their co-occurence
         Args:
             label_occurences: dict, parameters of labels occurences (foreground labels)
@@ -234,37 +308,54 @@ class SoundscapesGenerator:
         create_folder(out_folder)
         cnt = 0
         for label in label_occurences.keys():
-            self.logger.debug('Generating soundscape: {:d}/{:d}'.format(cnt + 1, number))
+            self.logger.debug(
+                "Generating soundscape: {:d}/{:d}".format(cnt + 1, number)
+            )
             label_params = label_occurences[label]
-            for i in range(round(number * label_params['proba'])):
-                sc = Soundscape(self.duration, self.fg_folder, self.bg_folder, self.ref_db, self.samplerate,
-                                random_state=self.random_state, delete_if_exists=self.delete_if_exists)
+            for i in range(round(number * label_params["proba"])):
+                sc = Soundscape(
+                    self.duration,
+                    self.fg_folder,
+                    self.bg_folder,
+                    self.ref_db,
+                    self.samplerate,
+                    random_state=self.random_state,
+                    delete_if_exists=self.delete_if_exists,
+                )
                 if start_from + cnt < 10:
                     filename = "0" + str(start_from + cnt)
                 else:
                     filename = str(start_from + cnt)
 
-                sc.generate_co_occurence(co_occur_params=label_params["co-occurences"],
-                                         label=label,
-                                         out_folder=out_folder,
-                                         filename=filename,
-                                         min_events=min_events,
-                                         max_events=max_events,
-                                         save_isolated_events=save_isolated_events,
-                                         snr=snr,
-                                         pitch_shift=pitch_shift,
-                                         time_stretch=time_stretch,
-                                         bg_labels=bg_labels,
-                                         **kwargs)
+                sc.generate_co_occurence(
+                    co_occur_params=label_params["co-occurences"],
+                    label=label,
+                    out_folder=out_folder,
+                    filename=filename,
+                    min_events=min_events,
+                    max_events=max_events,
+                    save_isolated_events=save_isolated_events,
+                    snr=snr,
+                    pitch_shift=pitch_shift,
+                    time_stretch=time_stretch,
+                    bg_labels=bg_labels,
+                    **kwargs,
+                )
                 if cnt % 200 == 0:
-                    self.logger.info(f"generating {cnt} / {number} files (updated every 200)")
+                    self.logger.info(
+                        f"generating {cnt} / {number} files (updated every 200)"
+                    )
                 cnt += 1
         if cnt != number:
-            self.logger.warn(f"The number of generated examples ({cnt}) is different from the number asked ({number}) "
-                             f"because of probabilities of events.")
+            self.logger.warn(
+                f"The number of generated examples ({cnt}) is different from the number asked ({number}) "
+                f"because of probabilities of events."
+            )
 
 
-def generate_tsv_from_jams(list_jams, tsv_out, post_process=True, background_label=False):
+def generate_tsv_from_jams(
+    list_jams, tsv_out, post_process=True, background_label=False
+):
     """ In scaper.generate they create a txt file for each audio file.
     Using the same idea, we create a single tsv file with all the audio files and their labels.
     Args:
@@ -284,21 +375,30 @@ def generate_tsv_from_jams(list_jams, tsv_out, post_process=True, background_lab
     final_df = pd.DataFrame()
     for jam_file in list_jams:
         fbase = osp.basename(jam_file)
-        df, length = get_labels_from_jams(jam_file, background_label=background_label, return_length=True)
+        df, length = get_labels_from_jams(
+            jam_file, background_label=background_label, return_length=True
+        )
 
         if post_process:
             df, _ = _post_process_labels_file(df, length)
 
         df["filename"] = f"{osp.splitext(fbase)[0]}.wav"
-        final_df = final_df.append(df[['filename', 'onset', 'offset', 'event_label']], ignore_index=True)
+        final_df = final_df.append(
+            df[["filename", "onset", "offset", "event_label"]], ignore_index=True
+        )
 
     final_df = final_df.sort_values(by=["filename", "onset"])
     final_df.to_csv(tsv_out, sep="\t", index=False, float_format="%.3f")
 
 
-def generate_files_from_jams(list_jams, out_folder, out_folder_jams=None,
-                             save_isolated_events=False, overwrite_exist_audio=False,
-                             **kwargs):
+def generate_files_from_jams(
+    list_jams,
+    out_folder,
+    out_folder_jams=None,
+    save_isolated_events=False,
+    overwrite_exist_audio=False,
+    **kwargs,
+):
     """ Generate audio files from jams files generated by Scaper
 
     Args:
@@ -317,15 +417,21 @@ def generate_files_from_jams(list_jams, out_folder, out_folder_jams=None,
     create_folder(out_folder)
     for n, jam_file in enumerate(list_jams):
         logger.debug(jam_file)
-        audiofile = osp.join(out_folder, f"{osp.splitext(osp.basename(jam_file))[0]}.wav")
+        audiofile = osp.join(
+            out_folder, f"{osp.splitext(osp.basename(jam_file))[0]}.wav"
+        )
         if not osp.exists(audiofile) or overwrite_exist_audio:
             if out_folder_jams is not None:
                 jams_outfile = osp.join(out_folder_jams, osp.basename(jam_file))
             else:
                 jams_outfile = None
-            generate_from_jams(jam_file, audiofile, jams_outfile=jams_outfile,
-                               save_isolated_events=save_isolated_events,
-                               **kwargs)
+            generate_from_jams(
+                jam_file,
+                audiofile,
+                jams_outfile=jams_outfile,
+                save_isolated_events=save_isolated_events,
+                **kwargs,
+            )
 
         if n % 200 == 0:
             logger.info(f"generating {n} / {len(list_jams)} files (updated every 200)")
