@@ -116,10 +116,10 @@ It corresponds to "youtube" subset in the [desed eval paper][paper-description].
 ![soundbank-diagram][img-soundbank]
 
 ### 2.1 Download soundbank
-See in [./desed/desed/download_soundbank.py] for more options
+See in [desed/desed/download_soundbank.py](./desed/desed/download_soundbank.py) for more options
 ```python
 import desed
-desed.download_soundbank("./")
+desed.download_soundbank("./soundbank")
 ```
 
 See instructions in the [synthetic folder][synthetic_folder].
