@@ -7,7 +7,7 @@ from pprint import pformat
 
 import pandas as pd
 from desed.logger import create_logger
-from desed.download_real import download
+from desed.download_real import download_real
 
 
 LOG = create_logger("tripletEmbedding", "Triplet.log")
@@ -18,8 +18,8 @@ def download_from_csv(csv_path, result_dir):
     # read metadata file and get only one filename once
     df = pd.read_csv(csv_path, header=0, sep='\t')
     filenames_test = df["filename"].drop_duplicates()
-    download(filenames_test, result_dir, n_jobs=N_JOBS, chunk_size=CHUNK_SIZE,
-             base_dir_missing_files=base_missing_files_folder)
+    download_real(filenames_test, result_dir, n_jobs=N_JOBS, chunk_size=CHUNK_SIZE,
+             base_dir_missing_files=base_missing_files_folder, platform="youtube")
     LOG.info("###### DONE #######")
 
 

@@ -21,6 +21,18 @@ from .utils import create_folder
 TMP_FOLDER = "tmp/"
 
 
+# Needed to not print warning from youtube_dl which cause breaks in the progress bar.
+class MyLogger(object):
+    def debug(self, msg):
+        pass
+
+    def warning(self, msg):
+        pass
+
+    def error(self, msg):
+        pass
+
+
 def download_unique_file(filename, result_dir, platform="youtube"):
     """ download a file from youtube given an audioSet filename. (It takes only a part of the file thanks to
     information provided in the filename)
@@ -117,21 +129,7 @@ def download_unique_file(filename, result_dir, platform="youtube"):
         return []
 
 
-def download(
-    filenames,
-    result_dir,
-    n_jobs=1,
-    chunk_size=10,
-    base_dir_missing_files="..",
-    platform="youtube",
-):
-    warnings.warn("Depreciated, use 'download_real' instead")
-    return download_real(
-        filenames, result_dir, n_jobs, chunk_size, base_dir_missing_files, platform
-    )
-
-
-def download_real(
+def download_real_set(
     filenames,
     result_dir,
     n_jobs=1,
@@ -213,13 +211,37 @@ def download_real(
     return missing_files
 
 
-# Needed to not print warning which cause breaks in the progress bar.
-class MyLogger(object):
-    def debug(self, msg):
-        pass
+def download_from_csv(
+    csv_path, result_dir, dir_missing_files="..", n_jobs=3, chunk_size=10
+):
+    logger = create_logger(__name__ + "/" + inspect.currentframe().f_code.co_name)
+    logger.info(f"downloading data from: {csv_path}")
+    # read metadata file and get only one filename once
+    df = pd.read_csv(csv_path, header=0, sep="\t")
+    filenames_test = df["filename"].drop_duplicates()
+    download_real_set(
+        filenames_test,
+        result_dir,
+        n_jobs=n_jobs,
+        chunk_size=chunk_size,
+        base_dir_missing_files=dir_missing_files,
+    )
+    logger.info("###### DONE #######")
 
-    def warning(self, msg):
-        pass
-
-    def error(self, msg):
-        pass
+def download_real():
+    pass
+    # Todo, do this function
+    # download_from_csv(
+    #     os.path.join(dataset_folder, "metadata", "validation", "validation.tsv"),
+    #     os.path.join(dataset_folder, "audio", "validation")
+    # )
+    #
+    # download_from_csv(
+    #     os.path.join(dataset_folder, "metadata", "train", "weak.tsv"),
+    #     os.path.join(dataset_folder, "audio", "train", "weak")
+    # )
+    #
+    # download_from_csv(
+    #     os.path.join(dataset_folder, "metadata", "train", "unlabel_in_domain.tsv"),
+    #     os.path.join(dataset_folder, "audio", "train", "unlabel_in_domain")
+    # )
