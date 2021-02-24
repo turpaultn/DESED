@@ -3,8 +3,8 @@
 </p>
 
 # Desed dataset
-Domestic environment sound event detection (DESED). 
-Mix of recorded and synthetic data. (used in DCASE task 4 since 2019)
+Domestic environment sound event detection (DESED) dataset utilities. 
+Mix of recorded and synthetic data (used in DCASE task 4 since 2019).
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 

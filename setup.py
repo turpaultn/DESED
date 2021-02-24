@@ -7,11 +7,17 @@ def package_file(fname):
     return os.path.relpath(os.path.join(os.path.dirname(__file__), fname))
 
 
+with open("README.md", encoding="utf-8") as fh:
+    long_description = fh.read()
+
+
 setup(
     name='desed',
     version='1.2.4',
     description="DESED dataset utils",
-    author="Nicolas Turpault, Romain Serizel, Ankit Shah, Justin Salamon",
+    long_description=long_description,
+    long_description_content_type="text/markdown",
+    author="Nicolas Turpault",
     author_email="turpaultn@gmail.com",
     url="https://github.com/turpaultn/DESED",
     license='MIT',
