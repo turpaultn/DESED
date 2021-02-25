@@ -11,11 +11,10 @@ __pycache__/
 */audio/
 
 # Metadata folder
-synthetic/metadata/
+data/generated_soundscapes/
 
 # Download real
 tmp/
-real/missing_files/
 
 # Generated synthetic
 synthetic/src/tests/generated/
