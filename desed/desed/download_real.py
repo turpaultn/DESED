@@ -150,7 +150,7 @@ def download_audioset_files(
            missing_files : pandas.DataFrame, files not downloaded whith associated error.
 
        """
-    warnings.filterwarnings('ignore')
+    warnings.filterwarnings("ignore")
     create_folder(result_dir)
     TMP_FOLDER = "tmp/"
     create_folder(TMP_FOLDER)
@@ -160,13 +160,18 @@ def download_audioset_files(
     try:
         if n_jobs == 1:
             for filename in tqdm(filenames):
-                files_error.append(download_audioset_file(filename, result_dir, platform))
+                files_error.append(
+                    download_audioset_file(filename, result_dir, platform)
+                )
         # multiprocessing
         else:
             with closing(Pool(n_jobs)) as p:
                 # Put result_dir and platform as constants variable with result_dir in download_file
                 download_file_alias = functools.partial(
-                    download_audioset_file, result_dir=result_dir, platform=platform, tmp_folder=TMP_FOLDER
+                    download_audioset_file,
+                    result_dir=result_dir,
+                    platform=platform,
+                    tmp_folder=TMP_FOLDER,
                 )
 
                 for val in tqdm(
@@ -198,7 +203,9 @@ def download_audioset_files(
     return missing_files
 
 
-def download_audioset_files_from_csv(tsv_path, result_dir, missing_files_tsv=None, n_jobs=3, chunk_size=10):
+def download_audioset_files_from_csv(
+    tsv_path, result_dir, missing_files_tsv=None, n_jobs=3, chunk_size=10
+):
     """ Download audioset files from a tsv_path containing a column "filename"
 
     Args:
@@ -216,7 +223,9 @@ def download_audioset_files_from_csv(tsv_path, result_dir, missing_files_tsv=Non
     logger = create_logger(__name__ + "/" + inspect.currentframe().f_code.co_name)
     logger.info(f"downloading data from: {tsv_path}")
     if missing_files_tsv is None:
-        missing_files_tsv = "missing_files" + os.path.basename(os.path.splitext(tsv_path)[0]) + ".tsv"
+        missing_files_tsv = (
+            "missing_files" + os.path.basename(os.path.splitext(tsv_path)[0]) + ".tsv"
+        )
     # read metadata file and get only one filename once
     df = pd.read_csv(tsv_path, header=0, sep="\t")
     filenames_test = df["filename"].drop_duplicates()
@@ -244,14 +253,23 @@ def download_eval_public(dataset_folder):
     archive_folder = os.path.join("tmp", "zip_public")
     create_folder(archive_folder)
     create_folder(dataset_folder)
-    url_public_eval = f"https://zenodo.org/record/4560759/files/DESED_public_eval.tar.gz?download=1"
+    url_public_eval = (
+        f"https://zenodo.org/record/4560759/files/DESED_public_eval.tar.gz?download=1"
+    )
     fpath_tar = os.path.join(archive_folder, "DESED_public_eval.tar.gz")
     download_file(url_public_eval, fpath_tar)
     shutil.unpack_archive(fpath_tar, dataset_folder)
     shutil.rmtree(archive_folder)
 
 
-def download_audioset_data(dataset_folder, weak=True, unlabel_in_domain=True, validation=True, n_jobs=3, chunk_size=10):
+def download_audioset_data(
+    dataset_folder,
+    weak=True,
+    unlabel_in_domain=True,
+    validation=True,
+    n_jobs=3,
+    chunk_size=10,
+):
     """ Download the DESED dataset files from Audioset.
 
     Args:
@@ -275,7 +293,9 @@ def download_audioset_data(dataset_folder, weak=True, unlabel_in_domain=True, va
     # Metadata:
     archive_folder = os.path.join("tmp", "audioset_metadata")
     create_folder(archive_folder)
-    url_metadata = f"https://zenodo.org/record/4560857/files/audioset_metadata.tar.gz?download=1"
+    url_metadata = (
+        f"https://zenodo.org/record/4560857/files/audioset_metadata.tar.gz?download=1"
+    )
     fpath_tar = os.path.join(archive_folder, "audioset_metadata.tar.gz")
     download_file(url_metadata, fpath_tar)
     shutil.unpack_archive(fpath_tar, dataset_folder)
@@ -286,9 +306,11 @@ def download_audioset_data(dataset_folder, weak=True, unlabel_in_domain=True, va
         download_audioset_files_from_csv(
             os.path.join(dataset_folder, "metadata", "train", "weak.tsv"),
             os.path.join(dataset_folder, "audio", "train", "weak"),
-            missing_files_tsv=os.path.join(basedir_missing_files, "missing_files_" + "weak" + ".tsv"),
+            missing_files_tsv=os.path.join(
+                basedir_missing_files, "missing_files_" + "weak" + ".tsv"
+            ),
             n_jobs=n_jobs,
-            chunk_size=chunk_size
+            chunk_size=chunk_size,
         )
 
     if unlabel_in_domain:
@@ -296,9 +318,11 @@ def download_audioset_data(dataset_folder, weak=True, unlabel_in_domain=True, va
         download_audioset_files_from_csv(
             os.path.join(dataset_folder, "metadata", "train", "unlabel_in_domain.tsv"),
             os.path.join(dataset_folder, "audio", "train", "unlabel_in_domain"),
-            missing_files_tsv=os.path.join(basedir_missing_files, "missing_files_" + "unlabel_in_domain" + ".tsv"),
+            missing_files_tsv=os.path.join(
+                basedir_missing_files, "missing_files_" + "unlabel_in_domain" + ".tsv"
+            ),
             n_jobs=n_jobs,
-            chunk_size=chunk_size
+            chunk_size=chunk_size,
         )
 
     if validation:
@@ -306,11 +330,51 @@ def download_audioset_data(dataset_folder, weak=True, unlabel_in_domain=True, va
         download_audioset_files_from_csv(
             os.path.join(dataset_folder, "metadata", "validation", "validation.tsv"),
             os.path.join(dataset_folder, "audio", "validation"),
-            missing_files_tsv=os.path.join(basedir_missing_files, "missing_files_" + "validation" + ".tsv"),
+            missing_files_tsv=os.path.join(
+                basedir_missing_files, "missing_files_" + "validation" + ".tsv"
+            ),
             n_jobs=n_jobs,
-            chunk_size=chunk_size
+            chunk_size=chunk_size,
         )
 
-    logger.info(f"Please check your missing_files: {basedir_missing_files}, "
-                f"you can relaunch 'download_audioset_sets' to try to recude them, "
-                "then, send these missing_files to ")
+    logger.info(
+        f"Please check your missing_files: {basedir_missing_files}, "
+        f"you can relaunch 'download_audioset_sets' to try to recude them, "
+        "then, send these missing_files to "
+    )
+
+
+def download_real(
+    dataset_folder,
+    weak=True,
+    unlabel_in_domain=True,
+    validation=True,
+    eval=True,
+    n_jobs=3,
+    chunk_size=10,
+):
+    """ Download the DESED real part of the dataset.
+
+    Args:
+        dataset_folder: str, the path to the root of the dataset where to download the evaluation files (this folder
+            contains audio and metadata folders).
+        weak: bool, whether to download the weak set or not.
+        unlabel_in_domain: bool, whether to download the unlabel_in_domain set or not.
+        validation: bool, whether to download the validation set or not.
+        eval: bool, whether to download the public eval set or not.
+        n_jobs : int, number of download to execute in parallel
+        chunk_size : int, number of files to download before updating the progress bar. Bigger it is, faster it goes
+            because data is filled in memory but progress bar only updates after a chunk is finished.
+
+    Returns:
+    """
+    if eval:
+        download_eval_public(dataset_folder)
+    download_audioset_data(
+        dataset_folder,
+        weak=weak,
+        unlabel_in_domain=unlabel_in_domain,
+        validation=validation,
+        n_jobs=n_jobs,
+        chunk_size=chunk_size,
+    )
