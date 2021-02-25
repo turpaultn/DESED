@@ -241,7 +241,7 @@ def split_soundbank_train_val(basedir):
     logger = create_logger(
         __name__ + "/" + inspect.currentframe().f_code.co_name,
         terminal_level=logging.INFO,
-        )
+    )
     fname_valid = (
         "https://zenodo.org/record/4307908/files/soundbank_validation.tsv?download=1"
     )
@@ -268,7 +268,7 @@ def unsplit_soundbank(basedir):
     logger = create_logger(
         __name__ + "/" + inspect.currentframe().f_code.co_name,
         terminal_level=logging.INFO,
-        )
+    )
     validation_path = os.path.join(basedir, "audio", "validation")
     for rootdir, subdirs, files in os.walk(validation_path):
         for fname in files:
