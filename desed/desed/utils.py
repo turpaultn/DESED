@@ -10,8 +10,8 @@ import os
 import os.path as osp
 import shutil
 import pprint
-
 import requests
+import tempfile
 
 from .logger import create_logger, DesedError
 
@@ -193,8 +193,39 @@ def modify_jams(list_jams, modify_function, out_dir=None, **kwargs):
 
 
 def download_file(url, target_destination):
+    """ Download a file from a URL.
+
+    Args:
+        url: str, URL to be download.
+        target_destination: str, the file in which to output the content of the URL.
+
+    Returns:
+
+    """
     response = requests.get(url, stream=True)
     handle = open(target_destination, "wb")
     for chunk in response.iter_content(chunk_size=512):
         if chunk:  # filter out keep-alive new chunks
             handle.write(chunk)
+
+
+def download_and_unpack_archive(url, destination_folder, archive_format="gztar"):
+    """ Download and unpack an archive from the internet. Useful for Zenodo archives.
+
+    Args:
+        url: str, URL to be download.
+        destination_folder: str, the folder in which to extract the content of the archive.
+        archive_format: str, the format of the archive to unpack.
+
+    Returns:
+
+    """
+    archive_folder = os.path.join("tmp", "tar_folder")
+    create_folder(archive_folder)
+    tar_name = tempfile.NamedTemporaryFile(
+        suffix="." + os.path.splitext(url.split("?")[0])[1]
+    ).name
+    path_dl_tar = os.path.join(archive_folder, tar_name)
+    download_file(url, path_dl_tar)
+    shutil.unpack_archive(path_dl_tar, destination_folder, format=archive_format)
+    shutil.rmtree(archive_folder)
