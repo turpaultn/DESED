@@ -230,7 +230,7 @@ def download_zenodo_soundbank(destination_folder):
     os.remove(fname)
 
 
-def make_validation_sb(basedir):
+def split_soundbank_train_val(basedir):
     """ Split the training into training and validation (pre-made, 90%/10%) of backgrounds and foregrounds
     Args:
         basedir: str, path where the soundbank is downloaded (parent folder of "audio")
@@ -238,6 +238,10 @@ def make_validation_sb(basedir):
     Returns:
 
     """
+    logger = create_logger(
+        __name__ + "/" + inspect.currentframe().f_code.co_name,
+        terminal_level=logging.INFO,
+        )
     fname_valid = (
         "https://zenodo.org/record/4307908/files/soundbank_validation.tsv?download=1"
     )
@@ -250,13 +254,36 @@ def make_validation_sb(basedir):
             destination_path = os.path.join(basedir, fpath)
             create_folder(os.path.dirname(destination_path))
             shutil.move(source_path, destination_path)
-    print("Splitted files in train and validation")
+    logger.info("Soundbank splitted in train and validation (90%/10%)")
+
+
+def unsplit_soundbank(basedir):
+    """ UnSplit the the soundbank from training and validation (pre-made, 90%/10%) to training only folder.
+    Args:
+        basedir: str, path where the soundbank is downloaded (parent folder of "audio")
+
+    Returns:
+
+    """
+    logger = create_logger(
+        __name__ + "/" + inspect.currentframe().f_code.co_name,
+        terminal_level=logging.INFO,
+        )
+    validation_path = os.path.join(basedir, "audio", "validation")
+    for rootdir, subdirs, files in os.walk(validation_path):
+        for fname in files:
+            source_file = os.path.join(rootdir, fname)
+            destination_file = source_file.replace("validation", "train")
+            create_folder(os.path.dirname(destination_file))
+            shutil.move(source_file, destination_file)
+    shutil.rmtree(validation_path)
+    logger.info("Unsplitted soundbank, validation moved back to train")
 
 
 def download_soundbank(
     basedir,
     sins_bg=True,
-    tut_bg=False,
+    tut_bg=True,
     split_train_valid=True,
     keep_original_sins_tut=False,
 ):
@@ -281,4 +308,4 @@ def download_soundbank(
     )
     if split_train_valid:
         print("Splitting soundbank train into train and validation (90%/10%)...")
-        make_validation_sb(basedir)
+        split_soundbank_train_val(basedir)
