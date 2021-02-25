@@ -12,6 +12,8 @@ __pycache__/
 
 # Metadata folder
 data/generated_soundscapes/
+data/soundbank
+data/real/audio
 
 # Download real
 tmp/
