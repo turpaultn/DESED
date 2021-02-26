@@ -11,6 +11,7 @@ import os.path as osp
 import shutil
 import pprint
 import requests
+import sys
 import tempfile
 
 from .logger import create_logger, DesedError
@@ -192,7 +193,7 @@ def modify_jams(list_jams, modify_function, out_dir=None, **kwargs):
     return new_list_jams
 
 
-def download_file(url, target_destination):
+def download_file_from_url(url, target_destination):
     """ Download a file from a URL.
 
     Args:
@@ -202,11 +203,22 @@ def download_file(url, target_destination):
     Returns:
 
     """
+    print(f"Downloading {os.path.basename(url)}")
     response = requests.get(url, stream=True)
     handle = open(target_destination, "wb")
-    for chunk in response.iter_content(chunk_size=512):
-        if chunk:  # filter out keep-alive new chunks
-            handle.write(chunk)
+    total_length = response.headers.get('content-length')
+    if total_length is None: # no content length header
+        handle.write(response.content)
+    else:
+        size_dl = 0
+        total_length = int(total_length)
+        for chunk in response.iter_content(chunk_size=512):
+            if chunk:  # filter out keep-alive new chunks
+                size_dl += len(chunk)
+                handle.write(chunk)
+                done = int(50 * size_dl / total_length)
+                sys.stdout.write(f"\r[{'=' * done}{' ' * (50-done)}]")
+                sys.stdout.flush()
 
 
 def download_and_unpack_archive(url, destination_folder, archive_format="gztar"):
@@ -220,12 +232,13 @@ def download_and_unpack_archive(url, destination_folder, archive_format="gztar")
     Returns:
 
     """
-    archive_folder = os.path.join("tmp", "tar_folder")
-    create_folder(archive_folder)
+    create_folder(destination_folder)
+    # not using tempdir because too big files for some /tmp folders
+    archive_folder = tempfile.mkdtemp(prefix="tmp_", dir="./")
     tar_name = tempfile.NamedTemporaryFile(
         suffix="." + os.path.splitext(url.split("?")[0])[1]
     ).name
     path_dl_tar = os.path.join(archive_folder, tar_name)
-    download_file(url, path_dl_tar)
+    download_file_from_url(url, path_dl_tar)
     shutil.unpack_archive(path_dl_tar, destination_folder, format=archive_format)
     shutil.rmtree(archive_folder)
