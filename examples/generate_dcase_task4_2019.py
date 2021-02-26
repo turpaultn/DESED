@@ -7,10 +7,11 @@ from pprint import pformat
 import logging
 
 import desed
+import desed.download
 from desed.generate_synthetic import generate_files_from_jams, generate_tsv_from_jams
 from desed.logger import create_logger
 from desed.utils import download_and_unpack_archive
-from desed.download_soundbank import unsplit_soundbank
+from desed.download import unsplit_desed_soundbank
 
 if __name__ == "__main__":
     LOG = create_logger("DESED", terminal_level=logging.INFO)
@@ -20,6 +21,7 @@ if __name__ == "__main__":
     parser.add_argument("--save_jams", action="store_true", default=False)
     parser.add_argument("--basedir", type=str, default="../data/dataset")
     parser.add_argument("--soundbank_dir", type=str, default="../data/soundbank")
+    parser.add_argument("--real_basedir", type=str, default=None)
 
     args = parser.parse_args()
     pformat(vars(args))
@@ -33,7 +35,7 @@ if __name__ == "__main__":
     # ##########
     # Real data
     # ##########
-    desed.download_real(real_basedir)
+    # desed.download_real(real_basedir)
 
     # ##########
     # Synthetic soundbank
@@ -42,13 +44,13 @@ if __name__ == "__main__":
     if not osp.exists(soundbank_dir):
         # Soundbank
         # Be careful, in 2019, we don't have the train-valid split !!
-        desed.download_soundbank(
+        desed.download.download_soundbank(
             soundbank_dir, sins_bg=True, tut_bg=True, split_train_valid=False
         )
     else:
         # If you have the validation split, you should rearrange the soundbank as in 2019 (unsplitted)
         if osp.exists(osp.join(soundbank_dir, "audio", "validation")):
-            unsplit_soundbank(soundbank_dir)
+            unsplit_desed_soundbank(soundbank_dir)
 
     # ##########
     # Synthetic soundscapes
@@ -110,8 +112,8 @@ if __name__ == "__main__":
     #         fg_path_eval = osp.join(soundbank_dir, "audio", "eval", "soundbank", "foreground_short")
     #         bg_path_eval = osp.join(soundbank_dir, "audio", "eval", "soundbank", "background_long")
     #     else:
-    #         fg_path_eval = osp.join(base_folder, "audio", "eval", "soundbank", "foreground")
-    #         bg_path_eval = osp.join(base_folder, "audio", "eval", "soundbank", "background")
+    #         fg_path_eval = osp.join(soundbank_dir, "audio", "eval", "soundbank", "foreground")
+    #         bg_path_eval = osp.join(soundbank_dir, "audio", "eval", "soundbank", "background")
     #
     #     LOG.info(folder)
     #     bn = osp.basename(folder)

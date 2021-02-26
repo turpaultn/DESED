@@ -10,7 +10,6 @@ from desed.utils import create_folder, modify_jams, change_snr
 from desed.post_process import rm_high_polyphony, post_process_txt_labels
 from desed.generate_synthetic import SoundscapesGenerator
 from desed.logger import create_logger
-import config as cfg
 
 
 if __name__ == "__main__":

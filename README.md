@@ -47,10 +47,13 @@ Copying code from `synthetic/code/` or `real/code/` folders without changing `de
 
 ## Usage
 ### Download
+
 ```python
+import desed.download
 import desed
-desed.download_real("./data/dataset")
-desed.download_soundbank("./data/soundbank")
+
+desed.download.download_real("./data/dataset")
+desed.download.download_soundbank("./data/soundbank")
 ```
 ### Generate soundscapes
 * See [examples](./examples)
@@ -154,6 +157,7 @@ Paper                                                                       | Co
 *Note: to add it to README.md before doing the pull request, run `python generate_table.py`*
 
 ## Important updates
+- 26th February 2020, v1.2.5, refactor, get rid of bash files and ease the download through the package.
 - 7th December 2020, v1.2.2, ease the download of soundbank (with or without pre-split validation)
 - 23th April 2020, v1.2.0, update the generation procedure (`add_fg_event_non_noff`) to use all parts of files longer than 
 the duration of the soundscapes created + Add possibility to use only background from certain labels (i.e: sins or tut).

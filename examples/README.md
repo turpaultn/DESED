@@ -5,15 +5,21 @@
 ## Download
 
 ### Real data
+
 ```python
+import desed.download
 import desed
-desed.download_real("./data/dataset")
+
+desed.download.download_real("./data/dataset")
 ```
 
 ### Soundbank
+
 ```python
+import desed.download
 import desed
-desed.download_soundbank("./data/soundbank", split_train_valid=True)
+
+desed.download.download_soundbank("./data/soundbank", split_train_valid=True)
 ```
 `split_train_valid` allows to use the pregenerated split train/valid (90%/10%) next to evaluation folder.
 Otherwise, you only get train and evaluation folders.
