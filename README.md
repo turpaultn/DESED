@@ -53,7 +53,7 @@ import desed.download
 import desed
 
 desed.download.download_real("./data/dataset")
-desed.download.download_soundbank("./data/soundbank")
+desed.download.download_desed_soundbank("./data/soundbank")
 ```
 ### Generate soundscapes
 * See [examples](./examples)

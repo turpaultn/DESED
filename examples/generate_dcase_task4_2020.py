@@ -4,7 +4,6 @@ import os
 from pprint import pformat
 
 import desed
-import desed.download
 from desed.utils import download_and_unpack_archive
 from desed.download import split_desed_soundbank_train_val
 
@@ -32,7 +31,7 @@ if __name__ == "__main__":
     # ##########
     # Download the soundbank if needed
     if not os.path.exists(soundbank_dir):
-        desed.download.download_soundbank(soundbank_dir, sins_bg=True, tut_bg=True)
+        desed.download.download_desed_soundbank(soundbank_dir, sins_bg=True, tut_bg=True)
     else:
         # If you don't have the validation split, rearrange the soundbank in train-valid (split in 90%/10%)
         if not os.path.exists(os.path.join(soundbank_dir, "audio", "validation")):

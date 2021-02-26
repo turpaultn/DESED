@@ -44,7 +44,7 @@ if __name__ == "__main__":
     if not osp.exists(soundbank_dir):
         # Soundbank
         # Be careful, in 2019, we don't have the train-valid split !!
-        desed.download.download_soundbank(
+        desed.download.download_desed_soundbank(
             soundbank_dir, sins_bg=True, tut_bg=True, split_train_valid=False
         )
     else:

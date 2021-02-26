@@ -4,18 +4,21 @@ import inspect
 import logging
 import os
 import shutil
+import subprocess
 import warnings
+
 from contextlib import closing
 from multiprocessing import Pool
-
 import pandas as pd
 import youtube_dl
+
 from dcase_util.containers import AudioContainer
-from desed.logger import create_logger, DesedWarning
-from desed.utils import create_folder, download_file
 from tqdm import tqdm
 from youtube_dl import DownloadError
 from youtube_dl.utils import ExtractorError
+
+from .logger import create_logger, DesedWarning
+from .utils import create_folder, download_file_from_url, download_and_unpack_archive
 
 
 class LoggerYtdlWarnings(object):
@@ -250,16 +253,11 @@ def download_eval_public(dataset_folder):
     Returns:
 
     """
-    archive_folder = os.path.join("tmp", "zip_public")
-    create_folder(archive_folder)
     create_folder(dataset_folder)
     url_public_eval = (
         f"https://zenodo.org/record/4560759/files/DESED_public_eval.tar.gz?download=1"
     )
-    fpath_tar = os.path.join(archive_folder, "DESED_public_eval.tar.gz")
-    download_file(url_public_eval, fpath_tar)
-    shutil.unpack_archive(fpath_tar, dataset_folder)
-    shutil.rmtree(archive_folder)
+    download_and_unpack_archive(url_public_eval, dataset_folder)
 
 
 def download_audioset_data(
@@ -291,15 +289,10 @@ def download_audioset_data(
     create_folder(dataset_folder)
 
     # Metadata:
-    archive_folder = os.path.join("tmp", "audioset_metadata")
-    create_folder(archive_folder)
     url_metadata = (
         f"https://zenodo.org/record/4560857/files/audioset_metadata.tar.gz?download=1"
     )
-    fpath_tar = os.path.join(archive_folder, "audioset_metadata.tar.gz")
-    download_file(url_metadata, fpath_tar)
-    shutil.unpack_archive(fpath_tar, dataset_folder)
-    shutil.rmtree(archive_folder)
+    download_and_unpack_archive(url_metadata, dataset_folder)
 
     if weak:
         logger.info("Downloading Weakly labeled data...")
@@ -419,26 +412,15 @@ def download_sins(destination_folder):
         __name__ + "/" + inspect.currentframe().f_code.co_name,
         terminal_level=logging.INFO,
     )
-    archive_folder = os.path.join(
-        "tmp", "zip_extracted_sins"
-    )  # not using tempdir because too big files for some /tmp folders
-    create_folder(archive_folder)
-
+    create_folder(destination_folder)
     zip_file_url_meta = f"https://zenodo.org/record/1247102/files/DCASE2018-task5-dev.meta.zip?download=1"
-    fpath_meta = os.path.join(archive_folder, "DCASE2018-task5-dev.meta.zip")
-    download_file(zip_file_url_meta, fpath_meta)
-    shutil.unpack_archive(fpath_meta, destination_folder)
-    os.remove(fpath_meta)
+    download_and_unpack_archive(zip_file_url_meta, destination_folder, archive_format="zip")
 
     for i in range(1, 24):
         logger.info(f"SINS downloading zip {i} / 23 ...")
         zip_file_url = f"https://zenodo.org/record/1247102/files/DCASE2018-task5-dev.audio.{i}.zip?download=1"
-        fpath = os.path.join(archive_folder, f"DCASE2018-task5-dev.audio.{i}.zip")
-        download_file(zip_file_url, fpath)
-        shutil.unpack_archive(fpath, destination_folder)
-        os.remove(fpath)
+        download_and_unpack_archive(zip_file_url, destination_folder, archive_format="zip")
 
-    shutil.rmtree(archive_folder)
     return os.path.join(destination_folder, "DCASE2018-task5-dev")
 
 
@@ -463,7 +445,6 @@ def filter_sins(
         terminal_level=logging.INFO,
     )
     logger.info("Filtering SINS...")
-    create_folder(destination_folder)
 
     df = pd.read_csv(os.path.join(sins_basedir, "meta.txt"), sep="\t", header=None)
     df["filename"] = df[0].apply(lambda x: os.path.basename(x))
@@ -490,16 +471,9 @@ def download_tut(destination_folder):
         __name__ + "/" + inspect.currentframe().f_code.co_name,
         terminal_level=logging.INFO,
     )
-    archive_folder = os.path.join(
-        "tmp", "zip_extracted_tut"
-    )  # not using tempdir because too big files for some /tmp folders
-    create_folder(archive_folder)
+    create_folder(destination_folder)
     zip_meta_tut = f"https://zenodo.org/record/400515/files/TUT-acoustic-scenes-2017-development.meta.zip?download=1"
-    fpath_meta = os.path.join(
-        archive_folder, "TUT-acoustic-scenes-2017-development.meta.zip"
-    )
-    download_file(zip_meta_tut, fpath_meta)
-    shutil.unpack_archive(fpath_meta, destination_folder)
+    download_and_unpack_archive(zip_meta_tut, destination_folder, archive_format="zip")
 
     for i in range(1, 11):
         logger.info(f"TUT (scenes-2017-dev) downloading zip {i} / 10 ...")
@@ -507,14 +481,8 @@ def download_tut(destination_folder):
             f"https://zenodo.org/record/400515/files/"
             f"TUT-acoustic-scenes-2017-development.audio.{i}.zip?download=1"
         )
-        fpath = os.path.join(
-            archive_folder, f"TUT-acoustic-scenes-2017-development.audio.{i}.zip"
-        )
-        download_file(zip_file_url, fpath)
-        shutil.unpack_archive(fpath, destination_folder)
-        os.remove(fpath)
+        download_and_unpack_archive(zip_file_url, destination_folder, archive_format="zip")
 
-    shutil.rmtree(archive_folder)
     return os.path.join(destination_folder, "TUT-acoustic-scenes-2017-development")
 
 
@@ -539,7 +507,6 @@ def filter_tut(
         terminal_level=logging.INFO,
     )
     logger.info("Filtering SINS...")
-    create_folder(destination_folder)
 
     df = pd.read_csv(os.path.join(tut_basedir, "meta.txt"), sep="\t", header=None)
     df["filename"] = df[0].apply(lambda x: os.path.basename(x))
@@ -589,15 +556,9 @@ def download_zenodo_soundbank(destination_folder):
 
     Returns:
     """
+    create_folder(destination_folder)
     zip_meta_tut = "https://zenodo.org/record/4307908/files/DESED_synth_soundbank.tar.gz?download=1"
-    archive_folder = os.path.join(
-        "tmp", "zip_extracted_sb"
-    )  # not using tempdir because too big files for some /tmp folders
-    create_folder(archive_folder)
-    fname = os.path.join(archive_folder, "DESED_synth_soundbank.tar.gz")
-    download_file(zip_meta_tut, fname)
-    shutil.unpack_archive(fname, destination_folder)
-    os.remove(fname)
+    download_and_unpack_archive(zip_meta_tut, destination_folder)
 
 
 def split_desed_soundbank_train_val(basedir):
@@ -616,7 +577,7 @@ def split_desed_soundbank_train_val(basedir):
         "https://zenodo.org/record/4307908/files/soundbank_validation.tsv?download=1"
     )
     fpath = os.path.join(basedir, "soundbank_validation.tsv")
-    download_file(fname_valid, fpath)
+    download_file_from_url(fname_valid, fpath)
     df = pd.read_csv(fpath, sep="\t")
     for fpath in df.filepath:
         source_path = os.path.join(basedir, fpath.replace("validation", "train"))
@@ -650,7 +611,56 @@ def unsplit_desed_soundbank(basedir):
     logger.info("Unsplitted soundbank, validation moved back to train")
 
 
-def download_soundbank(
+def download_fsd50k(destination_folder, gtruth_only=False):
+    """ Download FSD50k dataset from Zenodo.
+    Args:
+        destination_folder: str, path where the FSD50k is extracted.
+    """
+    logger = create_logger(
+        __name__ + "/" + inspect.currentframe().f_code.co_name,
+        terminal_level=logging.INFO,
+        )
+    create_folder(destination_folder)
+    if not gtruth_only:
+        archive_folder = os.path.join("tmp_fsd50k")
+        create_folder(archive_folder)
+        # Train
+        for id in ["01", "02", "03", "04", "05", "ip"]:
+            logger.info(f"Downloading zip file: FSD50K.dev_audio.z{id}")
+            url_dev = f"https://zenodo.org/record/4060432/files/FSD50K.dev_audio.z{id}?download=1"
+            download_file_from_url(url_dev, os.path.join(archive_folder, f"FSD50K.dev_audio.z{id}"))
+        logger.info("Unpacking files")
+        subprocess.call(f"zip -s 0 {os.path.join(archive_folder,'FSD50K.dev_audio.zip')} "
+                        f"--out {os.path.join(archive_folder, 'unsplit_dev.zip')}")
+        shutil.unpack_archive(os.path.join(archive_folder, 'unsplit_dev.zip'), destination_folder)
+
+        # Eval
+        for id in ["01", "ip"]:
+            logger.info(f"Downloading zip file: FSD50K.eval_audio.z{id}")
+            url_eval = f"https://zenodo.org/record/4060432/files/FSD50K.eval_audio.z{id}?download=1"
+            download_file_from_url(url_eval, os.path.join(archive_folder, f"FSD50K.eval_audio.z{id}"))
+        logger.info("Unpacking files")
+        subprocess.call(f"zip -s 0 {os.path.join(archive_folder,'FSD50K.eval_audio.zip')} "
+                        f"--out {os.path.join(archive_folder, 'unsplit_eval.zip')}")
+        shutil.unpack_archive(os.path.join(archive_folder, 'unsplit_eval.zip'), destination_folder)
+
+    url_doc = "https://zenodo.org/record/4060432/files/FSD50K.doc.zip?download=1"
+    url_gtruth = "https://zenodo.org/record/4060432/files/FSD50K.ground_truth.zip?download=1"
+    url_meta = "https://zenodo.org/record/4060432/files/FSD50K.metadata.zip?download=1"
+    for url in [url_doc, url_gtruth, url_meta]:
+        download_and_unpack_archive(url, destination_folder, archive_format="zip")
+
+
+def download_fuss(destination_folder):
+    """ Download FUSS freesound data. These data are a subset of FSD50k, where each file should be a single event.
+    Args:
+        destination_folder: str, the folder in which to extract FUSS data.
+    """
+    url = "https://zenodo.org/record/3743844/files/FUSS_fsd_data.tar.gz?download=1"
+    download_and_unpack_archive(url, destination_folder)
+
+
+def download_desed_soundbank(
     basedir,
     sins_bg=True,
     tut_bg=True,
@@ -666,9 +676,6 @@ def download_soundbank(
         split_train_valid: bool, whether to split the training foregrounds and backgrounds in training and validation
             (90%/10%). Default since DCASE task 4 2020.
         keep_original_sins_tut: bool, whether to keep the original versions of TUT and SINS.
-
-    Returns:
-
     """
     print("downloading soundbank (foregrounds)...")
     download_zenodo_soundbank(basedir)

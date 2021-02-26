@@ -12,7 +12,7 @@ import pandas as pd
 from desed.soundscape import Soundscape
 from desed.utils import create_folder, pprint, choose_cooccurence_class
 from desed.utils import change_snr, modify_fg_onset, modify_jams
-from desed.utils import download_file
+from desed.utils import download_file_from_url
 
 absolute_dir_path = os.path.abspath(os.path.dirname(__file__))
 
@@ -97,7 +97,7 @@ def test_download_file():
     fname_valid = "https://zenodo.org/record/4307908/files/soundbank_validation.tsv?download=1"
     fpath = os.path.join(absolute_dir_path, "generated", "utils", "soundbank_validation.tsv")
     create_folder(osp.dirname(fpath))
-    download_file(fname_valid, fpath)
+    download_file_from_url(fname_valid, fpath)
     material = os.path.join(absolute_dir_path, "material", "utils", "soundbank_validation.tsv")
     df_download = pd.read_csv(fpath)
     df_material = pd.read_csv(material)
