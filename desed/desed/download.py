@@ -630,8 +630,8 @@ def download_fsd50k(destination_folder, gtruth_only=False):
             url_dev = f"https://zenodo.org/record/4060432/files/FSD50K.dev_audio.z{id}?download=1"
             download_file_from_url(url_dev, os.path.join(archive_folder, f"FSD50K.dev_audio.z{id}"))
         logger.info("Unpacking files")
-        subprocess.call(f"zip -s 0 {os.path.join(archive_folder,'FSD50K.dev_audio.zip')} "
-                        f"--out {os.path.join(archive_folder, 'unsplit_dev.zip')}")
+        subprocess.call(["zip", "-s", "0", os.path.join(archive_folder,'FSD50K.dev_audio.zip'),
+                         "--out", os.path.join(archive_folder, 'unsplit_dev.zip')])
         shutil.unpack_archive(os.path.join(archive_folder, 'unsplit_dev.zip'), destination_folder)
 
         # Eval
@@ -640,8 +640,8 @@ def download_fsd50k(destination_folder, gtruth_only=False):
             url_eval = f"https://zenodo.org/record/4060432/files/FSD50K.eval_audio.z{id}?download=1"
             download_file_from_url(url_eval, os.path.join(archive_folder, f"FSD50K.eval_audio.z{id}"))
         logger.info("Unpacking files")
-        subprocess.call(f"zip -s 0 {os.path.join(archive_folder,'FSD50K.eval_audio.zip')} "
-                        f"--out {os.path.join(archive_folder, 'unsplit_eval.zip')}")
+        subprocess.call(["zip", "-s", "0", os.path.join(archive_folder,'FSD50K.eval_audio.zip'),
+                         "--out", os.path.join(archive_folder, 'unsplit_eval.zip')])
         shutil.unpack_archive(os.path.join(archive_folder, 'unsplit_eval.zip'), destination_folder)
 
     url_doc = "https://zenodo.org/record/4060432/files/FSD50K.doc.zip?download=1"
