@@ -659,6 +659,8 @@ def download_fuss(destination_folder):
     """
     url = "https://zenodo.org/record/3743844/files/FUSS_fsd_data.tar.gz?download=1"
     download_and_unpack_archive(url, destination_folder)
+    url_doc = "https://zenodo.org/record/4012661/files/FUSS_license_doc.tar.gz?download=1"
+    download_and_unpack_archive(url_doc, destination_folder)
 
 
 def download_desed_soundbank(
