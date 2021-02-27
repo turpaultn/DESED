@@ -49,11 +49,12 @@ Copying code from `synthetic/code/` or `real/code/` folders without changing `de
 ### Download
 
 ```python
-import desed.download
 import desed
-
-desed.download.download_real("./data/dataset")
-desed.download.download_desed_soundbank("./data/soundbank")
+desed.download_real("./data/dataset")
+desed.download_desed_soundbank("./data/soundbank")
+# Additional sets:
+desed.download_fuss("./data/FUSS")
+desed.download_fsd50k("./data/fsd50k", gtruth_only=True) # groundtruth only to use FUSS with annotations
 ```
 ### Generate soundscapes
 * See [examples](./examples)
