@@ -23,6 +23,7 @@ from .utils import create_folder, download_file_from_url, download_and_unpack_ar
 
 class LoggerYtdlWarnings(object):
     """ Class needed to avoid printing warnings from youtube_dl which cause breaks in the progress bar."""
+
     def debug(self, msg):
         pass
 
@@ -414,12 +415,16 @@ def download_sins(destination_folder):
     )
     create_folder(destination_folder)
     zip_file_url_meta = f"https://zenodo.org/record/1247102/files/DCASE2018-task5-dev.meta.zip?download=1"
-    download_and_unpack_archive(zip_file_url_meta, destination_folder, archive_format="zip")
+    download_and_unpack_archive(
+        zip_file_url_meta, destination_folder, archive_format="zip"
+    )
 
     for i in range(1, 24):
         logger.info(f"SINS downloading zip {i} / 23 ...")
         zip_file_url = f"https://zenodo.org/record/1247102/files/DCASE2018-task5-dev.audio.{i}.zip?download=1"
-        download_and_unpack_archive(zip_file_url, destination_folder, archive_format="zip")
+        download_and_unpack_archive(
+            zip_file_url, destination_folder, archive_format="zip"
+        )
 
     return os.path.join(destination_folder, "DCASE2018-task5-dev")
 
@@ -481,7 +486,9 @@ def download_tut(destination_folder):
             f"https://zenodo.org/record/400515/files/"
             f"TUT-acoustic-scenes-2017-development.audio.{i}.zip?download=1"
         )
-        download_and_unpack_archive(zip_file_url, destination_folder, archive_format="zip")
+        download_and_unpack_archive(
+            zip_file_url, destination_folder, archive_format="zip"
+        )
 
     return os.path.join(destination_folder, "TUT-acoustic-scenes-2017-development")
 
@@ -619,7 +626,7 @@ def download_fsd50k(destination_folder, gtruth_only=False):
     logger = create_logger(
         __name__ + "/" + inspect.currentframe().f_code.co_name,
         terminal_level=logging.INFO,
-        )
+    )
     create_folder(destination_folder)
     if not gtruth_only:
         archive_folder = os.path.join("tmp_fsd50k")
@@ -628,25 +635,51 @@ def download_fsd50k(destination_folder, gtruth_only=False):
         for id in ["01", "02", "03", "04", "05", "ip"]:
             logger.info(f"Downloading zip file: FSD50K.dev_audio.z{id}")
             url_dev = f"https://zenodo.org/record/4060432/files/FSD50K.dev_audio.z{id}?download=1"
-            download_file_from_url(url_dev, os.path.join(archive_folder, f"FSD50K.dev_audio.z{id}"))
+            download_file_from_url(
+                url_dev, os.path.join(archive_folder, f"FSD50K.dev_audio.z{id}")
+            )
         logger.info("Unpacking files")
-        subprocess.call(["zip", "-s", "0", os.path.join(archive_folder,'FSD50K.dev_audio.zip'),
-                         "--out", os.path.join(archive_folder, 'unsplit_dev.zip')])
-        shutil.unpack_archive(os.path.join(archive_folder, 'unsplit_dev.zip'), destination_folder)
+        subprocess.call(
+            [
+                "zip",
+                "-s",
+                "0",
+                os.path.join(archive_folder, "FSD50K.dev_audio.zip"),
+                "--out",
+                os.path.join(archive_folder, "unsplit_dev.zip"),
+            ]
+        )
+        shutil.unpack_archive(
+            os.path.join(archive_folder, "unsplit_dev.zip"), destination_folder
+        )
 
         # Eval
         for id in ["01", "ip"]:
             logger.info(f"Downloading zip file: FSD50K.eval_audio.z{id}")
             url_eval = f"https://zenodo.org/record/4060432/files/FSD50K.eval_audio.z{id}?download=1"
-            download_file_from_url(url_eval, os.path.join(archive_folder, f"FSD50K.eval_audio.z{id}"))
+            download_file_from_url(
+                url_eval, os.path.join(archive_folder, f"FSD50K.eval_audio.z{id}")
+            )
         logger.info("Unpacking files")
-        subprocess.call(["zip", "-s", "0", os.path.join(archive_folder,'FSD50K.eval_audio.zip'),
-                         "--out", os.path.join(archive_folder, 'unsplit_eval.zip')])
-        shutil.unpack_archive(os.path.join(archive_folder, 'unsplit_eval.zip'), destination_folder)
+        subprocess.call(
+            [
+                "zip",
+                "-s",
+                "0",
+                os.path.join(archive_folder, "FSD50K.eval_audio.zip"),
+                "--out",
+                os.path.join(archive_folder, "unsplit_eval.zip"),
+            ]
+        )
+        shutil.unpack_archive(
+            os.path.join(archive_folder, "unsplit_eval.zip"), destination_folder
+        )
         shutil.rmtree(archive_folder)
 
     url_doc = "https://zenodo.org/record/4060432/files/FSD50K.doc.zip?download=1"
-    url_gtruth = "https://zenodo.org/record/4060432/files/FSD50K.ground_truth.zip?download=1"
+    url_gtruth = (
+        "https://zenodo.org/record/4060432/files/FSD50K.ground_truth.zip?download=1"
+    )
     url_meta = "https://zenodo.org/record/4060432/files/FSD50K.metadata.zip?download=1"
     for url in [url_doc, url_gtruth, url_meta]:
         download_and_unpack_archive(url, destination_folder, archive_format="zip")
@@ -659,7 +692,9 @@ def download_fuss(destination_folder):
     """
     url = "https://zenodo.org/record/3743844/files/FUSS_fsd_data.tar.gz?download=1"
     download_and_unpack_archive(url, destination_folder)
-    url_doc = "https://zenodo.org/record/4012661/files/FUSS_license_doc.tar.gz?download=1"
+    url_doc = (
+        "https://zenodo.org/record/4012661/files/FUSS_license_doc.tar.gz?download=1"
+    )
     download_and_unpack_archive(url_doc, destination_folder)
 
 

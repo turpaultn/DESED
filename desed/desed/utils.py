@@ -206,8 +206,8 @@ def download_file_from_url(url, target_destination):
     print(f"Downloading {os.path.basename(url)}")
     response = requests.get(url, stream=True)
     handle = open(target_destination, "wb")
-    total_length = response.headers.get('content-length')
-    if total_length is None: # no content length header
+    total_length = response.headers.get("content-length")
+    if total_length is None:  # no content length header
         handle.write(response.content)
     else:
         size_dl = 0
@@ -220,6 +220,7 @@ def download_file_from_url(url, target_destination):
                 sys.stdout.write(f"\r[{'=' * done}{' ' * (50-done)}]")
                 sys.stdout.flush()
     print("\n")
+
 
 def download_and_unpack_archive(url, destination_folder, archive_format="gztar"):
     """ Download and unpack an archive from the internet. Useful for Zenodo archives.
@@ -235,8 +236,8 @@ def download_and_unpack_archive(url, destination_folder, archive_format="gztar")
     create_folder(destination_folder)
     # not using tempdir because too big files for some /tmp folders
     archive_folder = tempfile.mkdtemp(prefix="tmp_", dir="./")
-    path_dl_tar = tempfile.NamedTemporaryFile(dir=archive_folder,
-        suffix="." + os.path.splitext(url.split("?")[0])[1]
+    path_dl_tar = tempfile.NamedTemporaryFile(
+        dir=archive_folder, suffix="." + os.path.splitext(url.split("?")[0])[1]
     ).name
     download_file_from_url(url, path_dl_tar)
     shutil.unpack_archive(path_dl_tar, destination_folder, format=archive_format)
