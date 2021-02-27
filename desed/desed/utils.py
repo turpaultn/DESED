@@ -235,10 +235,9 @@ def download_and_unpack_archive(url, destination_folder, archive_format="gztar")
     create_folder(destination_folder)
     # not using tempdir because too big files for some /tmp folders
     archive_folder = tempfile.mkdtemp(prefix="tmp_", dir="./")
-    tar_name = tempfile.NamedTemporaryFile(
+    path_dl_tar = tempfile.NamedTemporaryFile(dir=archive_folder,
         suffix="." + os.path.splitext(url.split("?")[0])[1]
     ).name
-    path_dl_tar = os.path.join(archive_folder, tar_name)
     download_file_from_url(url, path_dl_tar)
     shutil.unpack_archive(path_dl_tar, destination_folder, format=archive_format)
     shutil.rmtree(archive_folder)

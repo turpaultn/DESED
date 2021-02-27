@@ -643,6 +643,7 @@ def download_fsd50k(destination_folder, gtruth_only=False):
         subprocess.call(["zip", "-s", "0", os.path.join(archive_folder,'FSD50K.eval_audio.zip'),
                          "--out", os.path.join(archive_folder, 'unsplit_eval.zip')])
         shutil.unpack_archive(os.path.join(archive_folder, 'unsplit_eval.zip'), destination_folder)
+        shutil.rmtree(archive_folder)
 
     url_doc = "https://zenodo.org/record/4060432/files/FSD50K.doc.zip?download=1"
     url_gtruth = "https://zenodo.org/record/4060432/files/FSD50K.ground_truth.zip?download=1"
