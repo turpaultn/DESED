@@ -219,7 +219,7 @@ def download_file_from_url(url, target_destination):
                 done = int(50 * size_dl / total_length)
                 sys.stdout.write(f"\r[{'=' * done}{' ' * (50-done)}]")
                 sys.stdout.flush()
-
+    print("\n")
 
 def download_and_unpack_archive(url, destination_folder, archive_format="gztar"):
     """ Download and unpack an archive from the internet. Useful for Zenodo archives.
