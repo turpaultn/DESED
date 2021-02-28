@@ -1,4 +1,7 @@
+import argparse
 import glob
+import time
+from pprint import pformat
 
 import pandas as pd
 import numpy as np
@@ -292,7 +295,7 @@ def add_bg(sc):
 
 
 def instantiate_soundscape(
-    sc, event_parameters, event_dist, stats_events_per_file, event_cooc
+    sc, event_parameters, event_dist, event_cooc, use_class_probas=False
 ):
     """ Instantiate a soundscape without generating it. Allows to control the different parameters needed for the
     soundscape.
@@ -300,11 +303,14 @@ def instantiate_soundscape(
     Args:
         sc: scaper.Scaper object.
         event_parameters: dict, the parameters to give to sc.add_event()
-        event_dist: pd.DataFrame, an "event_class" column associated to an "event_prob" column to get distribution
-            of initial class in each soundscapes.
-        stats_events_per_file: pd.DataFrame, the stats of number of events depending on the initial class in the
-            soundscape.
+        event_dist: pd.DataFrame, an "event_class" column associated to an "class_prob" column to get distribution
+            of initial class in each soundscapes. The other stats are for the number of events per clip.
         event_cooc: pd.DataFrame, the proba of co-occurence of each events (not just the initial ones).
+        use_class_probas: bool, whether to choose the initial class from classes distributions in real life dataset
+            or not. (The bias generated when not using the class probabilities is present in our real recordings
+            because the acquisition of data has been made by choosing the same number of files N containing class C
+            (at least class C, without taking into account the co-occuring events which were bringing the unbalanced
+            class distribution after annotations).
 
     Returns:
         scaper.Scaper object instantiated with the soundscape to create.
@@ -313,16 +319,18 @@ def instantiate_soundscape(
     sc.reset_bg_event_spec()
     sc.reset_fg_event_spec()
     tgt_classes = event_dist["event_class"].tolist()
-    # normalize according to present classes
-    tgt_dist = event_dist["event_prob"] / event_dist["event_prob"].sum()
-    tgt_dist = tgt_dist.tolist()
-
-    event_parameters["label"] = ("choose_weighted", tgt_classes, tgt_dist)
+    if use_class_probas:
+        # normalize according to present classes
+        tgt_dist = event_dist["class_prob"] / event_dist["class_prob"].sum()
+        tgt_dist = tgt_dist.tolist()
+        event_parameters["label"] = ("choose_weighted", tgt_classes, tgt_dist)
+    else:
+        event_parameters["label"] = ("choose", tgt_classes)
     sc.add_event(**event_parameters)
     events_list[0] = get_checked_event_parameters(sc, event_parameters)
     event_class = events_list[0]["label"][1]
 
-    class_stats = stats_events_per_file.loc[stats_events_per_file["event_class"] == event_class].iloc[0]
+    class_stats = event_dist.loc[event_dist["event_class"] == event_class].iloc[0]
     nb_events = draw_file_nb(class_stats)
     event_cooc = event_cooc[event_class]
     event_cooc_dist = (
@@ -400,8 +408,19 @@ def generate_soundscapes(
     out_dcase2021_soundscapes,
     out_sources_dir=None,
     out_metadata_tsv=None,
-    target_classes=['Alarm_bell_ringing', 'Blender', 'Cat', 'Dishes', 'Dog', 'Electric_shaver_toothbrush',
-                    'Frying', 'Running_water', 'Speech', 'Vacuum_cleaner']
+    target_classes=[
+        "Alarm_bell_ringing",
+        "Blender",
+        "Cat",
+        "Dishes",
+        "Dog",
+        "Electric_shaver_toothbrush",
+        "Frying",
+        "Running_water",
+        "Speech",
+        "Vacuum_cleaner",
+    ],
+    use_class_probas=False,
 ):
     """ Generate soundscapes for 2021 set
 
@@ -419,6 +438,11 @@ def generate_soundscapes(
         out_metadata_tsv: str, the path to the output metadata (.tsv) file containing the labels of the soundscapes.
         target_classes: list, the list of target classes to keep in the metadata tsv file, the other classes are
             discarded.
+        use_class_probas: bool, whether to choose the initial class from classes distributions in real life dataset
+            or not. (The bias generated when not using the class probabilities is present in our real recordings
+            because the acquisition of data has been made by choosing the same number of files N containing class C
+            (at least class C, without taking into account the co-occuring events which were bringing the unbalanced
+            class distribution after annotations).
 
     Returns:
 
@@ -428,16 +452,13 @@ def generate_soundscapes(
     if out_sources_dir is not None:
         os.makedirs(out_sources_dir, exist_ok=True)
 
-    events_probas = target_nb_df[["event_class"]]
-    events_probas["event_prob"] = target_nb_df["count"] / target_nb_df["count"].sum()
-
     classes = os.listdir(fg_path)
     classes = event_cooc.columns.intersection(classes).tolist()
     event_cooc = event_cooc[event_cooc["label"].isin(classes)]
     event_cooc.set_index("label", inplace=True)
     event_cooc = event_cooc[classes]
-    classes_event_dist = events_probas[
-        events_probas["event_class"].isin(classes)
+    tgt_classes_nb_events_dist = target_nb_events[
+        target_nb_events["event_class"].isin(classes)
     ].reset_index(drop=True)
 
     # Soundscapes parameters
@@ -485,12 +506,15 @@ def generate_soundscapes(
         "pitch_shift": (pitch_dist, pitch_min, pitch_max),
         "time_stretch": (time_stretch_dist, time_stretch_min, time_stretch_max),
     }
-
     # Generated soundscapes
     for i in range(n_soundscapes):
 
         events = instantiate_soundscape(
-            sc, event_parameters, classes_event_dist, target_nb_events, event_cooc
+            sc,
+            event_parameters,
+            tgt_classes_nb_events_dist,
+            event_cooc,
+            use_class_probas=use_class_probas,
         )
 
         audiofile = os.path.join(out_dcase2021_soundscapes, f"{i:d}.wav")
@@ -518,7 +542,7 @@ def generate_soundscapes(
         )
 
     if out_sources_dir is not None:
-        sort_sources(classes_event_dist, target_classes)
+        sort_sources(tgt_classes_nb_events_dist, target_classes)
 
     if out_metadata_tsv is not None:
         list_jams = glob.glob(os.path.join(out_folder, "*.jams"))
@@ -528,15 +552,51 @@ def generate_soundscapes(
 
 
 if __name__ == "__main__":
-    bdir = "../data"
+    t = time.time()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--basedir", type=str, default="../data")
+    parser.add_argument("--out_folder", type=str, default="../data/dcase2021/dataset")
+    parser.add_argument(
+        "--out_soundbank", type=str, default="../data/dcase2021/soundbank"
+    )
+
     # Existing/downloaded paths
-    desed_soundbank_folder = os.path.join(bdir, "soundbank")
-    fsd50k_folder = os.path.join(bdir, "fsd50k")
-    fuss_folder = os.path.join(bdir, "FUSS")
+    parser.add_argument("--desed_soundbank", type=str, default=None)
+    parser.add_argument("--fsd50k", type=str, default=None)
+    parser.add_argument("--fuss", type=str, default=None)
+
+    parser.add_argument("--n_train", type=int, default=10000)
+    parser.add_argument("--n_validation", type=int, default=2500)
+
+    args = parser.parse_args()
+    pformat(vars(args))
+
+    # #########
+    # Paths
+    # #########
+    bdir = args.basedir
+    desed_soundbank_folder = args.desed_soundbank
+    fsd50k_folder = args.fsd50k
+    fuss_folder = args.fuss
+
+    # Default paths if None (using basedir)
+    if desed_soundbank_folder is None:
+        desed_soundbank_folder = os.path.join(bdir, "soundbank")
+    if fsd50k_folder is None:
+        fsd50k_folder = os.path.join(bdir, "fsd50k")
+    if fuss_folder is None:
+        fuss_folder = os.path.join(bdir, "FUSS")
+
     # Sepcific dcase21
     meta_classes_folder = os.path.join(bdir, "meta_infos")
 
+    # Output paths
+    dcase21_soundbank_folder = args.out_soundbank
+    dcase21_dataset_folder = args.out_folder
+
+    # #########
     # Download if not exists the different datasets
+    # #########
     if not os.path.exists(desed_soundbank_folder):
         desed.download_desed_soundbank(desed_soundbank_folder)
     if not os.path.exists(fsd50k_folder):
@@ -546,13 +606,9 @@ if __name__ == "__main__":
 
     if not os.path.exists(meta_classes_folder):
         url_meta = (
-            "https://zenodo.org/record/4568876/files/meta_infos_2021.tar.gz?download=1"
+            "https://zenodo.org/record/4569096/files/meta_infos_2021.tar.gz?download=1"
         )
         desed.download.download_and_unpack_archive(url_meta, meta_classes_folder)
-
-    # Output paths
-    dcase21_soundbank_folder = os.path.join(bdir, "dcase2021", "soundbank")
-    dcase21_dataset_folder = os.path.join(bdir, "dcase2021", "dataset")
 
     # Just in case the desed soundbank is not splitted into train/validation yet
     if not os.path.exists(os.path.join(desed_soundbank_folder, "audio", "validation")):
@@ -580,10 +636,10 @@ if __name__ == "__main__":
     )
 
     for split_subset in ["train", "validation"]:
-        number = 10000 if split_subset == "train" else 2500
+        number = args.n_train if split_subset == "train" else args.n_validation
 
         fg_folder = sb_paths[split_subset]["fg_tgt_ntgt"]
-        # fg_folder = sb_paths[split]["fg_target"]
+        # fg_folder = sb_paths[split_subset]["fg_target"]
         bg_folder = sb_paths[split_subset]["background"]
 
         # sources_folder = os.path.join(dcase21_dataset_folder, "audio", split, "synthetic21_" + split, "sources")
@@ -611,5 +667,8 @@ if __name__ == "__main__":
             bg_path=bg_folder,
             out_dcase2021_soundscapes=out_folder,
             out_sources_dir=sources_folder,
-            out_metadata_tsv=out_tsv
+            out_metadata_tsv=out_tsv,
+            use_class_probas=True,
         )
+
+    print(f"Time of the program: {time.time() - t} s")
