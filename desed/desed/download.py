@@ -5,6 +5,7 @@ import logging
 import os
 import shutil
 import subprocess
+import tempfile
 import warnings
 
 from contextlib import closing
@@ -13,12 +14,13 @@ import pandas as pd
 import youtube_dl
 
 from dcase_util.containers import AudioContainer
+from desed.utils import create_folder, download_file_from_url
 from tqdm import tqdm
 from youtube_dl import DownloadError
 from youtube_dl.utils import ExtractorError
 
 from .logger import create_logger, DesedWarning
-from .utils import create_folder, download_file_from_url, download_and_unpack_archive
+from .utils import create_folder, download_file_from_url
 
 
 class LoggerYtdlWarnings(object):
@@ -34,7 +36,7 @@ class LoggerYtdlWarnings(object):
         pass
 
 
-def download_audioset_file(filename, result_dir, platform="youtube", tmp_folder="tmp"):
+def _download_audioset_file(filename, result_dir, platform="youtube", tmp_folder="tmp"):
     """ download a file from youtube given an audioSet filename. (It takes only a part of the file thanks to
     information provided in the filename)
     Args:
@@ -165,14 +167,14 @@ def download_audioset_files(
         if n_jobs == 1:
             for filename in tqdm(filenames):
                 files_error.append(
-                    download_audioset_file(filename, result_dir, platform)
+                    _download_audioset_file(filename, result_dir, platform)
                 )
         # multiprocessing
         else:
             with closing(Pool(n_jobs)) as p:
                 # Put result_dir and platform as constants variable with result_dir in download_file
                 download_file_alias = functools.partial(
-                    download_audioset_file,
+                    _download_audioset_file,
                     result_dir=result_dir,
                     platform=platform,
                     tmp_folder=TMP_FOLDER,
@@ -398,6 +400,28 @@ def _copy_files_kept(meta_df, input_dir, output_dir):
         ),
         axis=1,
     )
+
+
+def download_and_unpack_archive(url, destination_folder, archive_format="gztar"):
+    """ Download and unpack an archive from the internet. Useful for Zenodo archives.
+
+    Args:
+        url: str, URL to be download.
+        destination_folder: str, the folder in which to extract the content of the archive.
+        archive_format: str, the format of the archive to unpack.
+
+    Returns:
+
+    """
+    create_folder(destination_folder)
+    # not using tempdir because too big files for some /tmp folders
+    archive_folder = tempfile.mkdtemp(prefix="tmp_", dir="./")
+    path_dl_tar = tempfile.NamedTemporaryFile(
+        dir=archive_folder, suffix="." + os.path.splitext(url.split("?")[0])[1]
+    ).name
+    download_file_from_url(url, path_dl_tar)
+    shutil.unpack_archive(path_dl_tar, destination_folder, format=archive_format)
+    shutil.rmtree(archive_folder)
 
 
 def download_sins(destination_folder):

@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import functools
-import glob
 import inspect
 import numbers
 
@@ -12,7 +11,6 @@ import shutil
 import pprint
 import requests
 import sys
-import tempfile
 
 from .logger import create_logger, DesedError
 
@@ -220,25 +218,3 @@ def download_file_from_url(url, target_destination):
                 sys.stdout.write(f"\r[{'=' * done}{' ' * (50-done)}]")
                 sys.stdout.flush()
     print("\n")
-
-
-def download_and_unpack_archive(url, destination_folder, archive_format="gztar"):
-    """ Download and unpack an archive from the internet. Useful for Zenodo archives.
-
-    Args:
-        url: str, URL to be download.
-        destination_folder: str, the folder in which to extract the content of the archive.
-        archive_format: str, the format of the archive to unpack.
-
-    Returns:
-
-    """
-    create_folder(destination_folder)
-    # not using tempdir because too big files for some /tmp folders
-    archive_folder = tempfile.mkdtemp(prefix="tmp_", dir="./")
-    path_dl_tar = tempfile.NamedTemporaryFile(
-        dir=archive_folder, suffix="." + os.path.splitext(url.split("?")[0])[1]
-    ).name
-    download_file_from_url(url, path_dl_tar)
-    shutil.unpack_archive(path_dl_tar, destination_folder, format=archive_format)
-    shutil.rmtree(archive_folder)
