@@ -17,7 +17,7 @@ if __name__ == "__main__":
     t = time.time()
     parser = argparse.ArgumentParser()
     parser.add_argument("--save_jams", action="store_true", default=False)
-    parser.add_argument("--basedir", type=str, default="../data/dataset")
+    parser.add_argument("--basedir", type=str, default="../data/dcase19")
     parser.add_argument("--soundbank_dir", type=str, default="../data/soundbank")
     parser.add_argument("--real_basedir", type=str, default=None)
 
@@ -76,9 +76,7 @@ if __name__ == "__main__":
         out_folder_jams_train = out_train_folder
     else:
         out_folder_jams_train = None
-    out_train_tsv = osp.join(
-        base_folder, "metadata", "train", "soundscapes", "synthetic.tsv"
-    )
+    out_train_tsv = osp.join(base_folder, "metadata", "train", "synthetic.tsv")
 
     list_jams_train = glob.glob(osp.join(train_folder, "*.jams"))
     fg_path_train = osp.join(soundbank_dir, "audio", "train", "soundbank", "foreground")
