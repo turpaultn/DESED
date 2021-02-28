@@ -7,11 +7,9 @@ from pprint import pformat
 import logging
 
 import desed
-import desed.download
 from desed.generate_synthetic import generate_files_from_jams, generate_tsv_from_jams
 from desed.logger import create_logger
-from desed.utils import download_and_unpack_archive
-from desed.download import unsplit_desed_soundbank
+from desed.download import unsplit_desed_soundbank, download_and_unpack_archive
 
 if __name__ == "__main__":
     LOG = create_logger("DESED", terminal_level=logging.INFO)

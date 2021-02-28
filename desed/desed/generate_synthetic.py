@@ -353,25 +353,12 @@ class SoundscapesGenerator:
             )
 
 
-def generate_tsv_from_jams(
-    list_jams, tsv_out, post_process=True, background_label=False
-):
-    """ In scaper.generate they create a txt file for each audio file.
-    Using the same idea, we create a single tsv file with all the audio files and their labels.
-    Args:
-        list_jams: list, list of paths of JAMS files. Assume WAV files have the same name as JAMS files.
-        tsv_out: str, path of the tsv to be saved
-        post_process: bool, post_process removes small blanks, clean the overlapping same events in the labels and
-        make the smallest event 250ms long.
-        background_label: bool, include the background label in the annotations.
-        # source_sep_path: str, the path to save the csv of separated source files. Assume
-
-    Returns:
-        None
-    """
+def generate_df_from_jams(list_jams, post_process=True, background_label=False):
     if len(list_jams) == 0:
-        raise IndexError("Cannot generate a tsv file, the list of jams given is empty")
-    create_folder(osp.dirname(tsv_out))
+        raise IndexError(
+            "Cannot generate df from JAMS, the list of jams given is empty"
+        )
+
     final_df = pd.DataFrame()
     for jam_file in list_jams:
         fbase = osp.basename(jam_file)
@@ -388,6 +375,27 @@ def generate_tsv_from_jams(
         )
 
     final_df = final_df.sort_values(by=["filename", "onset"])
+    return final_df
+
+
+def generate_tsv_from_jams(
+    list_jams, tsv_out, post_process=True, background_label=False
+):
+    """ In scaper.generate they create a txt file for each audio file.
+    Using the same idea, we create a single tsv file with all the audio files and their labels.
+    Args:
+        list_jams: list, list of paths of JAMS files. Assume WAV files have the same name as JAMS files.
+        tsv_out: str, path of the tsv to be saved
+        post_process: bool, post_process removes small blanks, clean the overlapping same events in the labels and
+        make the smallest event 250ms long.
+        background_label: bool, include the background label in the annotations.
+        # source_sep_path: str, the path to save the csv of separated source files. Assume
+
+    Returns:
+        None
+    """
+    create_folder(osp.dirname(tsv_out))
+    final_df = generate_df_from_jams(list_jams, post_process, background_label)
     final_df.to_csv(tsv_out, sep="\t", index=False, float_format="%.3f")
 
 

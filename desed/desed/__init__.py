@@ -8,5 +8,6 @@ from .generate_synthetic import (
     SoundscapesGenerator,
     generate_files_from_jams,
     generate_tsv_from_jams,
+    generate_df_from_jams,
 )
 from . import post_process, utils
