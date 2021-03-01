@@ -34,23 +34,32 @@ def create_real_dcase2021(desed_real_path, destination_folder):
     for split_set in ["train", "validation", "eval"]:
         # AUDIO
         split_audio_folder = os.path.join(desed_real_path, "audio", split_set)
-        audio_subfolders = [d for d in os.listdir(split_audio_folder)
-                            if os.path.isdir(os.path.join(desed_real_path, d))]
+        audio_subfolders = [
+            d
+            for d in os.listdir(split_audio_folder)
+            if os.path.isdir(os.path.join(desed_real_path, d))
+        ]
         # Manage the validation case which changed from 2020
         if split_set == "validation" and not len(audio_subfolders):
             split_audio_folder = os.path.join(desed_real_path, "audio")
             audio_subfolders = ["validation"]
 
         for subfolder in audio_subfolders:
-            abs_src_folder = os.path.abspath(os.path.join(split_audio_folder, subfolder))
-            dest_folder = os.path.join(destination_folder, "audio", split_set, subfolder)
+            abs_src_folder = os.path.abspath(
+                os.path.join(split_audio_folder, subfolder)
+            )
+            dest_folder = os.path.join(
+                destination_folder, "audio", split_set, subfolder
+            )
             _create_symlink(abs_src_folder, dest_folder)
 
         # META
         split_meta_folder = os.path.join(desed_real_path, "audio", split_set)
         meta_files = glob.glob(os.path.join(split_meta_folder, "*.tsv"))
         for meta_file in meta_files:
-            dest_file = os.path.join(destination_folder, "metadata", split_set, os.path.basename(meta_file))
+            dest_file = os.path.join(
+                destination_folder, "metadata", split_set, os.path.basename(meta_file)
+            )
             _create_symlink(meta_file, dest_file)
 
 
@@ -130,23 +139,17 @@ def _create_2021_soundbank_split(
     """
     audio_split_folder = os.path.join(destination_folder, "audio", split, "soundbank")
 
-    non_target_fg_dir = os.path.join(
-        audio_split_folder, "non_target_fg"
-    )
-    target_fg_dir = os.path.join(
-        audio_split_folder, "fg_target"
-    )
-    destination_fg_tgt_ntgt_dir = os.path.join(
-        audio_split_folder, "fg_tgt_ntgt"
-    )
-    destination_bg_dir = os.path.join(
-        audio_split_folder, "background"
-    )
+    non_target_fg_dir = os.path.join(audio_split_folder, "non_target_fg")
+    target_fg_dir = os.path.join(audio_split_folder, "fg_target")
+    destination_fg_tgt_ntgt_dir = os.path.join(audio_split_folder, "fg_tgt_ntgt")
+    destination_bg_dir = os.path.join(audio_split_folder, "background")
 
     if os.path.exists(audio_split_folder):
-        warnings.warn(f"2021 soundbank split {split} already exists, "
-                      f"if you want to regenerate it (very fast, only symlinks), delete"
-                      f"the folder: {destination_folder} \n or give another destination_folder.\n")
+        warnings.warn(
+            f"2021 soundbank split {split} already exists, "
+            f"if you want to regenerate it (very fast, only symlinks), delete"
+            f"the folder: {destination_folder} \n or give another destination_folder.\n"
+        )
 
     else:
         print(
@@ -209,9 +212,7 @@ def _create_2021_soundbank_split(
         ]
         for class_dir in list_classes_dir:
             dest_dir = os.path.join(destination_fg_tgt_ntgt_dir, class_dir)
-            _create_symlink(
-                os.path.join(non_target_fg_dir, class_dir), dest_dir
-            )
+            _create_symlink(os.path.join(non_target_fg_dir, class_dir), dest_dir)
 
         # background from DESED
         background_dir = os.path.join(
@@ -608,29 +609,72 @@ def generate_soundscapes(
 if __name__ == "__main__":
     t = time.time()
     parser = argparse.ArgumentParser()
-    parser.add_argument("--basedir", type=str, default="../data",
-                        help="The base data folder in which we'll create the different datasets."
-                             "Useful when you don't have any dataset, provide this one and the output folder")
-    parser.add_argument("--out_dir", type=str, default="../data/dcase2021/dataset",
-                        help="Output basefolder in which to put the created 2021 dataset (with real and soundscapes)")
     parser.add_argument(
-        "--out_soundbank", type=str, default="../data/dcase2021/soundbank",
+        "--basedir",
+        type=str,
+        default="../data",
+        help="The base data folder in which we'll create the different datasets."
+        "Useful when you don't have any dataset, provide this one and the output folder",
+    )
+    parser.add_argument(
+        "--out_dir",
+        type=str,
+        default="../data/dcase2021/dataset",
+        help="Output basefolder in which to put the created 2021 dataset (with real and soundscapes)",
+    )
+    parser.add_argument(
+        "--out_soundbank",
+        type=str,
+        default="../data/dcase2021/soundbank",
         help="Output folder in which to store the created soundbank (reorganised foregrounds and bakcground from fuss"
-             "and desed) of dcase 2021"
+        "and desed) of dcase 2021",
     )
 
     # Existing/downloaded paths
-    parser.add_argument("--desed_soundbank", type=str, default=None,
-                        help="Path to desed original soundbank, useful if already downloaded")
-    parser.add_argument("--fsd50k", type=str, default=None, help="Path to FSD50k, useful if already downloaded")
-    parser.add_argument("--fuss", type=str, default=None, help="Path to FUSS, useful if already downloaded")
-    parser.add_argument("--desed_real", type=str, default=None, help="Path to desed_real, useful if already downloaded")
-    parser.add_argument("--meta_infos", type=str, default=None, help="Path to meta_infos, this is specific to 2021,"
-                                                                     "so you shouldn't have to specify the path")
+    parser.add_argument(
+        "--desed_soundbank",
+        type=str,
+        default=None,
+        help="Path to desed original soundbank, useful if already downloaded",
+    )
+    parser.add_argument(
+        "--fsd50k",
+        type=str,
+        default=None,
+        help="Path to FSD50k, useful if already downloaded",
+    )
+    parser.add_argument(
+        "--fuss",
+        type=str,
+        default=None,
+        help="Path to FUSS, useful if already downloaded",
+    )
+    parser.add_argument(
+        "--desed_real",
+        type=str,
+        default=None,
+        help="Path to desed_real, useful if already downloaded",
+    )
+    parser.add_argument(
+        "--meta_infos",
+        type=str,
+        default=None,
+        help="Path to meta_infos, this is specific to 2021,"
+        "so you shouldn't have to specify the path",
+    )
 
-    parser.add_argument("--n_train", type=int, default=10000, help="Number of synthetic train soundscapes to generate")
-    parser.add_argument("--n_validation", type=int, default=2500, help="Number of synthetic validation soundscapes to "
-                                                                       "generate")
+    parser.add_argument(
+        "--n_train",
+        type=int,
+        default=10000,
+        help="Number of synthetic train soundscapes to generate",
+    )
+    parser.add_argument(
+        "--n_validation",
+        type=int,
+        default=2500,
+        help="Number of synthetic validation soundscapes to " "generate",
+    )
 
     args = parser.parse_args()
     pformat(vars(args))
@@ -745,7 +789,9 @@ if __name__ == "__main__":
             out_metadata_tsv=out_tsv,
             use_class_probas=True,
         )
-        print(f"Time to generate the subset {split_subset}: {time.time() - t_gen:.3f} s")
+        print(
+            f"Time to generate the subset {split_subset}: {time.time() - t_gen:.3f} s"
+        )
 
     print(f"Time of the program: {time.time() - t} s")
     if not os.path.exists(desed_real_folder):
@@ -755,4 +801,5 @@ if __name__ == "__main__":
             f"Please try to redownload desed_real again: \n"
             f"import desed\n"
             f"desed.download_real('{desed_real_folder}', n_jobs=3, chunk_size=10)\n\n"
-            f"Please, send your missing_files_xx.tsv to the task organisers to get your missing files.\n")
+            f"Please, send your missing_files_xx.tsv to the task organisers to get your missing files.\n"
+        )
