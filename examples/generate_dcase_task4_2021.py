@@ -800,6 +800,6 @@ if __name__ == "__main__":
             f"You have missing files: {missing_files}.\n\n"
             f"Please try to redownload desed_real again: \n"
             f"import desed\n"
-            f"desed.download_real('{desed_real_folder}', n_jobs=3, chunk_size=10)\n\n"
+            f"desed.download_audioset_data('{desed_real_folder}', n_jobs=3, chunk_size=10)\n\n"
             f"Please, send your missing_files_xx.tsv to the task organisers to get your missing files.\n"
         )

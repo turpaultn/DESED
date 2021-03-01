@@ -1,5 +1,6 @@
 from .download import (
     download_real,
+    download_audioset_data,
     download_desed_soundbank,
     download_fuss,
     download_fsd50k,
