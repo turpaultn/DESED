@@ -1,6 +1,7 @@
 import argparse
 import glob
 import time
+import warnings
 from pprint import pformat
 
 import pandas as pd
@@ -20,15 +21,59 @@ random.seed(seed)
 np.random.seed(seed)
 
 
-def create_non_target_fg_dir(
-    meta_classes_dir, fsd50k_dir, fuss_dir, destination_folder, split="train"
+def _create_symlink(src, dest, **kwargs):
+    if os.path.exists(dest):
+        warnings.warn(f"Symlink already exists : {dest}, skipping.\n")
+    else:
+        os.makedirs(os.path.dirname(dest), exist_ok=True)
+        os.symlink(os.path.abspath(src), dest, **kwargs)
+
+
+def create_real_dcase2021(desed_real_path, destination_folder):
+    print("Creating symlinks for real data")
+    for split_set in ["train", "validation", "eval"]:
+        # AUDIO
+        split_audio_folder = os.path.join(desed_real_path, "audio", split_set)
+        audio_subfolders = [d for d in os.listdir(split_audio_folder)
+                            if os.path.isdir(os.path.join(desed_real_path, d))]
+        # Manage the validation case which changed from 2020
+        if split_set == "validation" and not len(audio_subfolders):
+            split_audio_folder = os.path.join(desed_real_path, "audio")
+            audio_subfolders = ["validation"]
+
+        for subfolder in audio_subfolders:
+            abs_src_folder = os.path.abspath(os.path.join(split_audio_folder, subfolder))
+            dest_folder = os.path.join(destination_folder, "audio", split_set, subfolder)
+            _create_symlink(abs_src_folder, dest_folder)
+
+        # META
+        split_meta_folder = os.path.join(desed_real_path, "audio", split_set)
+        meta_files = glob.glob(os.path.join(split_meta_folder, "*.tsv"))
+        for meta_file in meta_files:
+            dest_file = os.path.join(destination_folder, "metadata", split_set, os.path.basename(meta_file))
+            _create_symlink(meta_file, dest_file)
+
+
+def _create_non_target_fg_dir(
+    meta_infos_dir, fsd50k_dir, fuss_dir, destination_folder, split="train"
 ):
-    non_target_tsv = os.path.join(meta_classes_dir, "non_target_classes.tsv")
-    mid_to_class_tsv = os.path.join(meta_classes_dir, "mid_to_class_name.tsv")
+    """ Create the non target foreground directory from FUSS
+    Args:
+        meta_infos_dir: str, the path to the meta_infos directory.
+        fsd50k_dir: str, the path to fsd50k directory (only groundtruth is needed from it).
+        fuss_dir: str, the path to the fuss directory (symlinks from it will be created).
+        destination_folder: str, path of the directory in which to put the non_target foregrounds.
+        split: str, the split for which to create the non target foregrounds ("train" or "validation")
+
+    Returns:
+
+    """
+    non_target_tsv = os.path.join(meta_infos_dir, "non_target_classes.tsv")
+    mid_to_class_tsv = os.path.join(meta_infos_dir, "mid_to_class_name.tsv")
     fuss_dir_split = os.path.join(fuss_dir, "fsd_data", split, "sound")
     fuss_ids = [os.path.splitext(fname)[0] for fname in os.listdir(fuss_dir_split)]
 
-    print("Creating non target dir ... Creating symlink from FUSS dataset")
+    print("Creating non target dir ... Creating symlinks from FUSS dataset")
     non_target_classes = pd.read_csv(non_target_tsv, sep="\t")
     converter = pd.read_csv(mid_to_class_tsv, sep="\t")
     fsd_gt_dev = pd.read_csv(
@@ -55,118 +100,128 @@ def create_non_target_fg_dir(
             0
         ]  # 0 because gives only one value
         out_dir = os.path.join(destination_folder, str(class_name))
-        os.makedirs(out_dir, exist_ok=True)
 
         for file_id in files:
             fname = str(file_id) + ".wav"
             out_fname = os.path.join(out_dir, fname)
-            if not os.path.exists(out_fname):
-                os.symlink(
-                    os.path.abspath(os.path.join(fuss_dir_split, fname)), out_fname
-                )
+            _create_symlink(os.path.join(fuss_dir_split, fname), out_fname)
 
 
 def _create_2021_soundbank_split(
     split,
     desed_soundbank_dir,
-    meta_classes_dir,
+    meta_infos_dir,
     fsd50k_dir,
     fuss_dir,
     destination_folder,
 ):
+    """ Create the soundbank split ("train" or "validation") thanks to symlinks from original datasets (desed, fuss)
+    Args:
+        split: str, the split name ("train" or "validation").
+        desed_soundbank_dir: str, the path to the desed soundbank basedir (folder containing "audio" and "metadata")
+        meta_infos_dir: str, the path to the meta_infos directory
+        fsd50k_dir: str, the path to FSD50K directory (only groundtruth needed).
+        fuss_dir: str, the path to FUSS directory.
+        destination_folder: str, the destination folder of dcase 2021 soundbank.
+
+    Returns:
+        dict, the paths to the different "background" and "foreground" folders.
+            fg_tgt_ntgt stands for: "foreground target and non_target" grouping all the foregrounds used.
+    """
+    audio_split_folder = os.path.join(destination_folder, "audio", split, "soundbank")
 
     non_target_fg_dir = os.path.join(
-        destination_folder, "audio", split, "soundbank", "non_target_fg"
+        audio_split_folder, "non_target_fg"
     )
     target_fg_dir = os.path.join(
-        destination_folder, "audio", split, "soundbank", "fg_target"
+        audio_split_folder, "fg_target"
     )
     destination_fg_tgt_ntgt_dir = os.path.join(
-        destination_folder, "audio", split, "soundbank", "fg_tgt_ntgt"
+        audio_split_folder, "fg_tgt_ntgt"
     )
     destination_bg_dir = os.path.join(
-        destination_folder, "audio", split, "soundbank", "background"
+        audio_split_folder, "background"
     )
 
-    print(
-        f"Creating 2021 soundbank (split: {split})... Creating symlinks other datasets foregrounds, backgrounds"
-    )
-    os.makedirs(non_target_fg_dir, exist_ok=True)
-    os.makedirs(target_fg_dir, exist_ok=True)
-    os.makedirs(destination_fg_tgt_ntgt_dir, exist_ok=True)
-    os.makedirs(destination_bg_dir, exist_ok=True)
+    if os.path.exists(audio_split_folder):
+        warnings.warn(f"2021 soundbank split {split} already exists, "
+                      f"if you want to regenerate it (very fast, only symlinks), delete"
+                      f"the folder: {destination_folder} \n or give another destination_folder.\n")
 
-    # #
-    # Non target foregrounds
-    create_non_target_fg_dir(
-        meta_classes_dir=meta_classes_dir,
-        fsd50k_dir=fsd50k_dir,
-        fuss_dir=fuss_dir,
-        destination_folder=non_target_fg_dir,
-        split=split,
-    )
-    # #
-    # Target foregrounds
-    foreground_dir_desed = os.path.join(
-        desed_soundbank_dir, "audio", split, "soundbank", "foreground"
-    )
-    for class_name in os.listdir(foreground_dir_desed):
-        if "nO" in class_name:
-            out_class_dir = os.path.join(target_fg_dir, class_name.split("_nO")[0])
-        else:
-            out_class_dir = os.path.join(target_fg_dir, class_name)
-        os.makedirs(out_class_dir, exist_ok=True)
+    else:
+        print(
+            f"Creating 2021 soundbank (split: {split})... Creating symlinks from other datasets (desed, fuss)"
+        )
+        os.makedirs(non_target_fg_dir, exist_ok=True)
+        os.makedirs(target_fg_dir, exist_ok=True)
+        os.makedirs(destination_fg_tgt_ntgt_dir, exist_ok=True)
+        os.makedirs(destination_bg_dir, exist_ok=True)
 
-        files = glob.glob(os.path.join(foreground_dir_desed, class_name, "*.wav"))
-        for file_name in files:
-            basename = os.path.basename(file_name)
+        # #
+        # Non target foregrounds
+        _create_non_target_fg_dir(
+            meta_infos_dir=meta_infos_dir,
+            fsd50k_dir=fsd50k_dir,
+            fuss_dir=fuss_dir,
+            destination_folder=non_target_fg_dir,
+            split=split,
+        )
+        # #
+        # Target foregrounds
+        foreground_dir_desed = os.path.join(
+            desed_soundbank_dir, "audio", split, "soundbank", "foreground"
+        )
+        for class_name in os.listdir(foreground_dir_desed):
             if "nO" in class_name:
-                fname_suffix = "_nO" + class_name.split("_nO")[1] + ".wav"
-                dest_file = os.path.join(
-                    out_class_dir, os.path.splitext(basename)[0] + fname_suffix
-                )
+                out_class_dir = os.path.join(target_fg_dir, class_name.split("_nO")[0])
             else:
-                dest_file = os.path.join(out_class_dir, basename)
+                out_class_dir = os.path.join(target_fg_dir, class_name)
 
-            if not os.path.exists(dest_file):
-                os.symlink(os.path.abspath(file_name), dest_file)
+            files = glob.glob(os.path.join(foreground_dir_desed, class_name, "*.wav"))
+            for file_name in files:
+                basename = os.path.basename(file_name)
+                if "nO" in class_name:
+                    fname_suffix = "_nO" + class_name.split("_nO")[1] + ".wav"
+                    dest_file = os.path.join(
+                        out_class_dir, os.path.splitext(basename)[0] + fname_suffix
+                    )
+                else:
+                    dest_file = os.path.join(out_class_dir, basename)
 
-    # #
-    # Foregeround target and non target grouped in a folder
-    # target foregrounds from DESED
-    for class_name in os.listdir(target_fg_dir):
-        dest_class_dir = os.path.join(destination_fg_tgt_ntgt_dir, class_name)
-        os.makedirs(dest_class_dir, exist_ok=True)
+                _create_symlink(file_name, dest_file)
 
-        files = glob.glob(os.path.join(target_fg_dir, class_name, "*.wav"))
-        for file_name in files:
-            dest_file = os.path.join(dest_class_dir, os.path.basename(file_name))
-            if not os.path.exists(dest_file):
-                os.symlink(os.path.abspath(file_name), dest_file)
+        # #
+        # Foregeround target and non target grouped in a folder
+        # target foregrounds from DESED
+        for class_name in os.listdir(target_fg_dir):
+            dest_class_dir = os.path.join(destination_fg_tgt_ntgt_dir, class_name)
 
-    # foreground from FUSS
-    list_classes_dir = [
-        d
-        for d in os.listdir(non_target_fg_dir)
-        if os.path.isdir(os.path.join(non_target_fg_dir, d))
-    ]
-    for class_dir in list_classes_dir:
-        dest_dir = os.path.join(destination_fg_tgt_ntgt_dir, class_dir)
-        if not os.path.exists(dest_dir):
-            os.symlink(
-                os.path.abspath(os.path.join(non_target_fg_dir, class_dir)), dest_dir
+            files = glob.glob(os.path.join(target_fg_dir, class_name, "*.wav"))
+            for file_name in files:
+                dest_file = os.path.join(dest_class_dir, os.path.basename(file_name))
+                _create_symlink(file_name, dest_file)
+
+        # foreground from FUSS
+        list_classes_dir = [
+            d
+            for d in os.listdir(non_target_fg_dir)
+            if os.path.isdir(os.path.join(non_target_fg_dir, d))
+        ]
+        for class_dir in list_classes_dir:
+            dest_dir = os.path.join(destination_fg_tgt_ntgt_dir, class_dir)
+            _create_symlink(
+                os.path.join(non_target_fg_dir, class_dir), dest_dir
             )
 
-    # background from DESED
-    background_dir = os.path.join(
-        desed_soundbank_dir, "audio", split, "soundbank", "background"
-    )
-    # os.symlink(background_dir, destination_bg_dir)
-    for rootdir, dirs, files in os.walk(background_dir):
-        for subdir in dirs:
-            if not os.path.exists(os.path.join(destination_bg_dir, subdir)):
-                os.symlink(
-                    os.path.abspath(os.path.join(rootdir, subdir)),
+        # background from DESED
+        background_dir = os.path.join(
+            desed_soundbank_dir, "audio", split, "soundbank", "background"
+        )
+        # os.symlink(background_dir, destination_bg_dir)
+        for rootdir, dirs, files in os.walk(background_dir):
+            for subdir in dirs:
+                _create_symlink(
+                    os.path.join(rootdir, subdir),
                     os.path.join(destination_bg_dir, subdir),
                 )
 
@@ -186,26 +241,24 @@ def create_2021_soundbank(
 
     Args:
         desed_soundbank_dir: str, the folder of the downloaded desed soundbank.
-        meta_classes_dir:
-        fsd50k_dir:
-        fuss_dir:
-        destination_folder:
+        meta_classes_dir: str, "meta_infos" folder path.
+        fsd50k_dir: str, FSD50K dataset folder path.
+        fuss_dir: str, FUSS dataset folder path.
+        destination_folder: str, dcase 2021 soundbank output folder
 
     Returns:
-
+        dict, paths to the different background and foreground paths (per split)
     """
-
     print(
         "Creating 2021 soundbank ... Creating symlinks from soundbank and non_target_dir"
     )
-    os.makedirs(destination_folder, exist_ok=True)
 
     soundbank_dirs = {"soundbank": destination_folder}
     for split in ["train", "validation"]:
         soundbank_dirs[split] = _create_2021_soundbank_split(
             split,
             desed_soundbank_dir=desed_soundbank_dir,
-            meta_classes_dir=meta_classes_dir,
+            meta_infos_dir=meta_classes_dir,
             fsd50k_dir=fsd50k_dir,
             fuss_dir=fuss_dir,
             destination_folder=destination_folder,
@@ -230,7 +283,7 @@ def draw_file_nb(series_class):
     mu = series_class["mean"]
     a, b = (trunc_min - mu) / float(sigma), (trunc_max - mu) / float(sigma)
     sample = scipy.stats.truncnorm.rvs(a, b, mu, sigma)
-    return np.int(np.around(np.array(sample).item()))
+    return int(np.around(np.array(sample).item()))
 
 
 def get_checked_event_parameters(sc, event_parameters):
@@ -545,28 +598,39 @@ def generate_soundscapes(
         sort_sources(tgt_classes_nb_events_dist, target_classes)
 
     if out_metadata_tsv is not None:
-        list_jams = glob.glob(os.path.join(out_folder, "*.jams"))
+        list_jams = glob.glob(os.path.join(out_soundscapes_folder, "*.jams"))
         metadata_df = desed.generate_df_from_jams(list_jams)
         metadata_df = metadata_df[metadata_df.event_label.isin(target_classes)]
+        os.makedirs(os.path.dirname(out_metadata_tsv), exist_ok=True)
         metadata_df.to_csv(out_metadata_tsv, sep="\t", index=False, float_format="%.3f")
 
 
 if __name__ == "__main__":
     t = time.time()
     parser = argparse.ArgumentParser()
-    parser.add_argument("--basedir", type=str, default="../data")
-    parser.add_argument("--out_folder", type=str, default="../data/dcase2021/dataset")
+    parser.add_argument("--basedir", type=str, default="../data",
+                        help="The base data folder in which we'll create the different datasets."
+                             "Useful when you don't have any dataset, provide this one and the output folder")
+    parser.add_argument("--out_dir", type=str, default="../data/dcase2021/dataset",
+                        help="Output basefolder in which to put the created 2021 dataset (with real and soundscapes)")
     parser.add_argument(
-        "--out_soundbank", type=str, default="../data/dcase2021/soundbank"
+        "--out_soundbank", type=str, default="../data/dcase2021/soundbank",
+        help="Output folder in which to store the created soundbank (reorganised foregrounds and bakcground from fuss"
+             "and desed) of dcase 2021"
     )
 
     # Existing/downloaded paths
-    parser.add_argument("--desed_soundbank", type=str, default=None)
-    parser.add_argument("--fsd50k", type=str, default=None)
-    parser.add_argument("--fuss", type=str, default=None)
+    parser.add_argument("--desed_soundbank", type=str, default=None,
+                        help="Path to desed original soundbank, useful if already downloaded")
+    parser.add_argument("--fsd50k", type=str, default=None, help="Path to FSD50k, useful if already downloaded")
+    parser.add_argument("--fuss", type=str, default=None, help="Path to FUSS, useful if already downloaded")
+    parser.add_argument("--desed_real", type=str, default=None, help="Path to desed_real, useful if already downloaded")
+    parser.add_argument("--meta_infos", type=str, default=None, help="Path to meta_infos, this is specific to 2021,"
+                                                                     "so you shouldn't have to specify the path")
 
-    parser.add_argument("--n_train", type=int, default=10000)
-    parser.add_argument("--n_validation", type=int, default=2500)
+    parser.add_argument("--n_train", type=int, default=10000, help="Number of synthetic train soundscapes to generate")
+    parser.add_argument("--n_validation", type=int, default=2500, help="Number of synthetic validation soundscapes to "
+                                                                       "generate")
 
     args = parser.parse_args()
     pformat(vars(args))
@@ -578,25 +642,30 @@ if __name__ == "__main__":
     desed_soundbank_folder = args.desed_soundbank
     fsd50k_folder = args.fsd50k
     fuss_folder = args.fuss
-
-    # Default paths if None (using basedir)
-    if desed_soundbank_folder is None:
-        desed_soundbank_folder = os.path.join(bdir, "soundbank")
-    if fsd50k_folder is None:
-        fsd50k_folder = os.path.join(bdir, "fsd50k")
-    if fuss_folder is None:
-        fuss_folder = os.path.join(bdir, "FUSS")
-
-    # Sepcific dcase21
-    meta_classes_folder = os.path.join(bdir, "meta_infos")
+    desed_real_folder = args.desed_real
+    meta_classes_folder = args.meta_infos
 
     # Output paths
     dcase21_soundbank_folder = args.out_soundbank
-    dcase21_dataset_folder = args.out_folder
+    dcase21_dataset_folder = args.out_dir
+
+    # Default paths if not defined (using basedir)
+    if desed_soundbank_folder is None:
+        desed_soundbank_folder = os.path.join(bdir, "raw_datasets", "desed_soundbank")
+    if fsd50k_folder is None:
+        fsd50k_folder = os.path.join(bdir, "raw_datasets", "fsd50k")
+    if fuss_folder is None:
+        fuss_folder = os.path.join(bdir, "raw_datasets", "FUSS")
+    if desed_real_folder is None:
+        desed_real_folder = os.path.join(bdir, "raw_datasets", "desed_real")
+    if meta_classes_folder is None:
+        meta_classes_folder = os.path.join(bdir, "meta_infos")
 
     # #########
     # Download if not exists the different datasets
     # #########
+    if not os.path.exists(desed_real_folder):
+        missing_files = desed.download_real(desed_real_folder, n_jobs=3, chunk_size=10)
     if not os.path.exists(desed_soundbank_folder):
         desed.download_desed_soundbank(desed_soundbank_folder)
     if not os.path.exists(fsd50k_folder):
@@ -613,6 +682,11 @@ if __name__ == "__main__":
     # Just in case the desed soundbank is not splitted into train/validation yet
     if not os.path.exists(os.path.join(desed_soundbank_folder, "audio", "validation")):
         desed.download.split_desed_soundbank_train_val(desed_soundbank_folder)
+
+    # ###########
+    # Real data
+    # ###########
+    create_real_dcase2021(desed_real_folder, dcase21_dataset_folder)
 
     # #########
     # Organise soundbank
@@ -636,6 +710,7 @@ if __name__ == "__main__":
     )
 
     for split_subset in ["train", "validation"]:
+        t_gen = time.time()
         number = args.n_train if split_subset == "train" else args.n_validation
 
         fg_folder = sb_paths[split_subset]["fg_tgt_ntgt"]
@@ -644,7 +719,7 @@ if __name__ == "__main__":
 
         # sources_folder = os.path.join(dcase21_dataset_folder, "audio", split, "synthetic21_" + split, "sources")
         sources_folder = None
-        out_folder = os.path.join(
+        out_soundscapes_folder = os.path.join(
             dcase21_dataset_folder,
             "audio",
             split_subset,
@@ -665,10 +740,19 @@ if __name__ == "__main__":
             event_cooc=event_cooc_df,
             fg_path=fg_folder,
             bg_path=bg_folder,
-            out_dcase2021_soundscapes=out_folder,
+            out_dcase2021_soundscapes=out_soundscapes_folder,
             out_sources_dir=sources_folder,
             out_metadata_tsv=out_tsv,
             use_class_probas=True,
         )
+        print(f"Time to generate the subset {split_subset}: {time.time() - t_gen:.3f} s")
 
     print(f"Time of the program: {time.time() - t} s")
+    if not os.path.exists(desed_real_folder):
+        warnings.warn(
+            f"The DESED real didn't exist: {desed_real_folder}.\n"
+            f"You have missing files: {missing_files}.\n\n"
+            f"Please try to redownload desed_real again: \n"
+            f"import desed\n"
+            f"desed.download_real('{desed_real_folder}', n_jobs=3, chunk_size=10)\n\n"
+            f"Please, send your missing_files_xx.tsv to the task organisers to get your missing files.\n")

@@ -284,7 +284,7 @@ def download_audioset_data(
             because data is filled in memory but progress bar only updates after a chunk is finished.
 
     Returns:
-
+        list, list of missing files paths
     """
     logger = create_logger(__name__ + "/" + inspect.currentframe().f_code.co_name)
     basedir_missing_files = "missing_files"
@@ -297,47 +297,55 @@ def download_audioset_data(
     )
     download_and_unpack_archive(url_metadata, dataset_folder)
 
+    missing_files_paths = []
     if weak:
         logger.info("Downloading Weakly labeled data...")
+        path_missing_files_weak = os.path.join(
+            basedir_missing_files, "missing_files_" + "weak" + ".tsv"
+        )
         download_audioset_files_from_csv(
             os.path.join(dataset_folder, "metadata", "train", "weak.tsv"),
             os.path.join(dataset_folder, "audio", "train", "weak"),
-            missing_files_tsv=os.path.join(
-                basedir_missing_files, "missing_files_" + "weak" + ".tsv"
-            ),
+            missing_files_tsv=path_missing_files_weak,
             n_jobs=n_jobs,
             chunk_size=chunk_size,
         )
+        missing_files_paths.append(path_missing_files_weak)
 
     if unlabel_in_domain:
         logger.info("Downloading Unlabeled (in_domain) labeled data...")
+        path_missing_files_unlabel = os.path.join(
+            basedir_missing_files, "missing_files_" + "unlabel_in_domain" + ".tsv"
+        )
         download_audioset_files_from_csv(
             os.path.join(dataset_folder, "metadata", "train", "unlabel_in_domain.tsv"),
             os.path.join(dataset_folder, "audio", "train", "unlabel_in_domain"),
-            missing_files_tsv=os.path.join(
-                basedir_missing_files, "missing_files_" + "unlabel_in_domain" + ".tsv"
-            ),
+            missing_files_tsv=path_missing_files_unlabel,
             n_jobs=n_jobs,
             chunk_size=chunk_size,
         )
+        missing_files_paths.append(path_missing_files_unlabel)
 
     if validation:
         logger.info("Downloading validation, strongly labeled data...")
+        path_missing_files_valid = os.path.join(
+            basedir_missing_files, "missing_files_" + "validation" + ".tsv"
+        )
         download_audioset_files_from_csv(
             os.path.join(dataset_folder, "metadata", "validation", "validation.tsv"),
-            os.path.join(dataset_folder, "audio", "validation"),
-            missing_files_tsv=os.path.join(
-                basedir_missing_files, "missing_files_" + "validation" + ".tsv"
-            ),
+            os.path.join(dataset_folder, "audio", "validation", "validation"),
+            missing_files_tsv=path_missing_files_valid,
             n_jobs=n_jobs,
             chunk_size=chunk_size,
         )
+        missing_files_paths.append(path_missing_files_valid)
 
     logger.info(
         f"Please check your missing_files: {basedir_missing_files}, "
         f"you can relaunch 'download_audioset_sets' to try to recude them, "
         "then, send these missing_files to "
     )
+    return missing_files_paths
 
 
 def download_real(
@@ -363,10 +371,11 @@ def download_real(
             because data is filled in memory but progress bar only updates after a chunk is finished.
 
     Returns:
+        list, list of missing files paths
     """
     if eval:
         download_eval_public(dataset_folder)
-    download_audioset_data(
+    missing_files_paths = download_audioset_data(
         dataset_folder,
         weak=weak,
         unlabel_in_domain=unlabel_in_domain,
@@ -374,6 +383,7 @@ def download_real(
         n_jobs=n_jobs,
         chunk_size=chunk_size,
     )
+    return missing_files_paths
 
 
 def _copy_files_kept(meta_df, input_dir, output_dir):
