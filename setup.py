@@ -12,15 +12,15 @@ with open("README.md", encoding="utf-8") as fh:
 
 
 setup(
-    name='desed',
-    version='1.3.2',
+    name="desed",
+    version="1.3.3",
     description="DESED dataset utils",
     long_description=long_description,
     long_description_content_type="text/markdown",
     author="Nicolas Turpault",
     author_email="turpaultn@gmail.com",
     url="https://github.com/turpaultn/DESED",
-    license='MIT',
+    license="MIT",
     package_dir={"": package_file("desed")},
     packages=find_packages(package_file("desed")),
     install_requires=[
@@ -32,6 +32,6 @@ setup(
         "soundfile >= 0.10.1",
         "jams >= 0.3.4",
         "tqdm >= 4.29.1",
-        "requests >= 2.21.0"
-    ]
+        "requests >= 2.21.0",
+    ],
 )
