@@ -1,6 +1,6 @@
 [run]
 omit =
-	desed/desed/get_backgroung_training.py
+	desed/desed/download.py
 	desed/desed/__init__.py
 [report]
 fail_under = 50
