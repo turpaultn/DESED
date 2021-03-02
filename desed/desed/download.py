@@ -398,6 +398,7 @@ def _copy_files_kept(meta_df, input_dir, output_dir):
     Returns:
 
     """
+    os.makedirs(output_dir, exist_ok=True)
     list_files_available = glob.glob(os.path.join(input_dir, "*"))
     df_files = pd.DataFrame(list_files_available, columns=["filename"])
     df_files["filename"] = df_files.filename.apply(lambda x: os.path.basename(x))
