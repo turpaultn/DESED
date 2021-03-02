@@ -12,7 +12,7 @@ import pandas as pd
 from desed.soundscape import Soundscape
 from desed.utils import create_folder, pprint, choose_cooccurence_class
 from desed.utils import change_snr, modify_fg_onset, modify_jams
-from desed.utils import download_file
+from desed.utils import download_file_from_url
 
 absolute_dir_path = os.path.abspath(os.path.dirname(__file__))
 
@@ -33,30 +33,52 @@ def test_pprint():
 
 
 def test_choose_class():
-    param_json = osp.join(absolute_dir_path, "material",
-                          "event_occurences", "event_occurences_train.json")
+    param_json = osp.join(
+        absolute_dir_path, "material", "event_occurences", "event_occurences_train.json"
+    )
     with open(param_json) as json_file:
         params = json.load(json_file)
     label = choose_cooccurence_class(params["label"]["co-occurences"])
-    assert label in ["label", "label_nOn", "label_nOff", "label_nOn_nOff"], "Wrong class given"
+    assert label in [
+        "label",
+        "label_nOn",
+        "label_nOff",
+        "label_nOn_nOff",
+    ], "Wrong class given"
 
 
 def test_choose_class_random_state():
-    param_json = osp.join(absolute_dir_path, "material",
-                          "event_occurences", "event_occurences_train.json")
+    param_json = osp.join(
+        absolute_dir_path, "material", "event_occurences", "event_occurences_train.json"
+    )
     with open(param_json) as json_file:
         params = json.load(json_file)
     label = choose_cooccurence_class(params["label"]["co-occurences"], random_state=2)
-    label_rep = choose_cooccurence_class(params["label"]["co-occurences"], random_state=2)
+    label_rep = choose_cooccurence_class(
+        params["label"]["co-occurences"], random_state=2
+    )
     assert label == label_rep, "Random state not working, having different values"
 
 
 def test_choose_file():
-    sc = Soundscape(1, os.path.join(absolute_dir_path, "material", "soundbank", "foreground"),
-                    os.path.join(absolute_dir_path, "material", "soundbank", "background"),
-                    random_state=2020, delete_if_exists=True)
-    label_pth = os.path.join(absolute_dir_path, "material", "soundbank", "background", "label")
-    fpath = os.path.join(absolute_dir_path, "material", "soundbank", "background", "label", "noise-free-sound-0055.wav")
+    sc = Soundscape(
+        1,
+        os.path.join(absolute_dir_path, "material", "soundbank", "foreground"),
+        os.path.join(absolute_dir_path, "material", "soundbank", "background"),
+        random_state=2020,
+        delete_if_exists=True,
+    )
+    label_pth = os.path.join(
+        absolute_dir_path, "material", "soundbank", "background", "label"
+    )
+    fpath = os.path.join(
+        absolute_dir_path,
+        "material",
+        "soundbank",
+        "background",
+        "label",
+        "noise-free-sound-0055.wav",
+    )
     assert sc._choose_file(label_pth) == fpath
 
 
@@ -67,7 +89,10 @@ def test_modify_bg_snr():
     for cnt, obs in enumerate(data):
         if obs.value["role"] == "foreground":
             # Changing manually the jams to have the snr desired
-            assert jam_obj["annotations"][0].data[cnt].value["snr"] == 7.396362733436883 - 15
+            assert (
+                jam_obj["annotations"][0].data[cnt].value["snr"]
+                == 7.396362733436883 - 15
+            )
 
 
 def test_generate_new_bg_snr_files():
@@ -94,11 +119,19 @@ def test_fg_onset():
 
 
 def test_download_file():
-    fname_valid = "https://zenodo.org/record/4307908/files/soundbank_validation.tsv?download=1"
-    fpath = os.path.join(absolute_dir_path, "generated", "utils", "soundbank_validation.tsv")
+    fname_valid = (
+        "https://zenodo.org/record/4307908/files/soundbank_validation.tsv?download=1"
+    )
+    fpath = os.path.join(
+        absolute_dir_path, "generated", "utils", "soundbank_validation.tsv"
+    )
     create_folder(osp.dirname(fpath))
-    download_file(fname_valid, fpath)
-    material = os.path.join(absolute_dir_path, "material", "utils", "soundbank_validation.tsv")
+    download_file_from_url(fname_valid, fpath)
+    material = os.path.join(
+        absolute_dir_path, "material", "utils", "soundbank_validation.tsv"
+    )
     df_download = pd.read_csv(fpath)
     df_material = pd.read_csv(material)
-    assert df_download.equals(df_material), "Wrong file downloaded, not matching: soundbank_validation.tsv"
+    assert df_download.equals(
+        df_material
+    ), "Wrong file downloaded, not matching: soundbank_validation.tsv"

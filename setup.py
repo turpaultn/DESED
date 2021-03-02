@@ -12,26 +12,26 @@ with open("README.md", encoding="utf-8") as fh:
 
 
 setup(
-    name='desed',
-    version='1.2.4',
+    name="desed",
+    version="1.3.3",
     description="DESED dataset utils",
     long_description=long_description,
     long_description_content_type="text/markdown",
     author="Nicolas Turpault",
     author_email="turpaultn@gmail.com",
     url="https://github.com/turpaultn/DESED",
-    license='MIT',
+    license="MIT",
     package_dir={"": package_file("desed")},
     packages=find_packages(package_file("desed")),
     install_requires=[
-        "scaper >= 1.3.5",
+        "scaper >= 1.6.5rc0",
         "numpy >= 1.15.4",
         "pandas >= 0.24.0",
         "dcase-util >= 0.2.11",
-        "youtube-dl >= 2019.4.30",  # Better with conda install and conda-forge channel
+        "youtube-dl >= 2021.2.22",  # Better with conda install and conda-forge channel
         "soundfile >= 0.10.1",
         "jams >= 0.3.4",
         "tqdm >= 4.29.1",
-        "requests >= 2.21.0"
-    ]
+        "requests >= 2.21.0",
+    ],
 )

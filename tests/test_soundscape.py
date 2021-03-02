@@ -17,7 +17,9 @@ duration = 1
 
 @pytest.fixture
 def sc():
-    soundscape = Soundscape(duration, fg_folder, bg_folder, random_state=2020, delete_if_exists=True)
+    soundscape = Soundscape(
+        duration, fg_folder, bg_folder, random_state=2020, delete_if_exists=True
+    )
     return soundscape
 
 
@@ -31,8 +33,9 @@ def test_generate_simple(sc):
 
 
 def test_generate_from_json(sc):
-    param_json = os.path.join(absolute_dir_path, "material",
-                              "event_occurences", "event_occurences_train.json")
+    param_json = os.path.join(
+        absolute_dir_path, "material", "event_occurences", "event_occurences_train.json"
+    )
     with open(param_json) as json_file:
         params = json.load(json_file)
     sc.generate_co_occurence(params["label"]["co-occurences"], "label", out_dir, "0")
@@ -40,7 +43,7 @@ def test_generate_from_json(sc):
 
 def get_dict_values(jams_path):
     jams_obj = jams.load(jams_path)
-    ann = jams_obj.annotations.search(namespace='scaper')[0]
+    ann = jams_obj.annotations.search(namespace="scaper")[0]
     assert len(ann.data) == 1
     dict_values = ann.data[0].value
     return dict_values
@@ -49,7 +52,9 @@ def get_dict_values(jams_path):
 def test_add_label(sc):
     sc.add_fg_event_non_noff("label")
     jams_path = os.path.join(out_dir, "add_fg_label.jams")
-    sc.generate(os.path.join(out_dir, "add_fg_label.wav"), jams_path, save_isolated_events=True)
+    sc.generate(
+        os.path.join(out_dir, "add_fg_label.wav"), jams_path, save_isolated_events=True
+    )
     dict_values = get_dict_values(jams_path)
     assert dict_values["source_time"] == 0
 
@@ -66,7 +71,9 @@ def test_add_label_long(sc):
         if dict_values["event_duration"] == duration:  # middle
             assert duration < dict_values["source_time"] < dur
         else:
-            assert round(dict_values["source_time"] + dict_values["event_duration"], 4) == round(dur, 4)
+            assert round(
+                dict_values["source_time"] + dict_values["event_duration"], 4
+            ) == round(dur, 4)
     else:  # onset
         assert dict_values["source_time"] == 0
 

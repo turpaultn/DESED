@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import functools
-import glob
 import inspect
 import numbers
 
@@ -10,8 +9,8 @@ import os
 import os.path as osp
 import shutil
 import pprint
-
 import requests
+import sys
 
 from .logger import create_logger, DesedError
 
@@ -192,9 +191,30 @@ def modify_jams(list_jams, modify_function, out_dir=None, **kwargs):
     return new_list_jams
 
 
-def download_file(url, target_destination):
+def download_file_from_url(url, target_destination):
+    """ Download a file from a URL.
+
+    Args:
+        url: str, URL to be download.
+        target_destination: str, the file in which to output the content of the URL.
+
+    Returns:
+
+    """
+    print(f"Downloading {os.path.basename(url)}")
     response = requests.get(url, stream=True)
     handle = open(target_destination, "wb")
-    for chunk in response.iter_content(chunk_size=512):
-        if chunk:  # filter out keep-alive new chunks
-            handle.write(chunk)
+    total_length = response.headers.get("content-length")
+    if total_length is None:  # no content length header
+        handle.write(response.content)
+    else:
+        size_dl = 0
+        total_length = int(total_length)
+        for chunk in response.iter_content(chunk_size=512):
+            if chunk:  # filter out keep-alive new chunks
+                size_dl += len(chunk)
+                handle.write(chunk)
+                done = int(50 * size_dl / total_length)
+                sys.stdout.write(f"\r[{'=' * done}{' ' * (50-done)}]")
+                sys.stdout.flush()
+    print("\n")
