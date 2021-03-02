@@ -47,7 +47,7 @@ def test_download_file_fail():
         "ERROR: This video is unavailable.\nSorry about that.",
     ]
     fname = "Y4U2-ZMKWgD0_380.000_390.000.wav"
-    res = download_unique_file(fname, result_dir)
+    res = _download_audioset_file(fname, result_dir)
     print(res)
     assert res[0] == fname
     # assert res[1] in errors , "Download did not fail with the right exception"
