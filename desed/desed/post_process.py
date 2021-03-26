@@ -329,16 +329,16 @@ def post_process_txt_labels(
             df[["onset", "offset", "event_label"]].to_csv(
                 osp.join(output_folder, filepath), header=False, index=False, sep="\t"
             )
-        if output_tsv is not None:
-            df["filename"] = osp.join(osp.splitext(osp.basename(fn))[0] + ".wav")
-            df_single = df_single.append(
-                df[["filename", "onset", "offset", "event_label"]], ignore_index=True
-            )
+        df["filename"] = osp.join(osp.splitext(osp.basename(fn))[0] + ".wav")
+        df_single = df_single.append(
+            df[["filename", "onset", "offset", "event_label"]], ignore_index=True
+        )
 
     if output_tsv:
         save_tsv(df_single, output_tsv)
 
     logger.info(f"{fix_count} problems Fixed")
+    return df_single
 
 
 def get_labels_from_jams(jam_file, background_label=False, return_length=False):

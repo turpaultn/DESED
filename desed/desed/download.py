@@ -236,7 +236,7 @@ def download_audioset_files_from_csv(
     df = pd.read_csv(tsv_path, header=0, sep="\t")
     filenames_test = df["filename"].drop_duplicates()
 
-    download_audioset_files(
+    missing_files = download_audioset_files(
         filenames_test,
         result_dir,
         n_jobs=n_jobs,
@@ -244,6 +244,7 @@ def download_audioset_files_from_csv(
         missing_files_tsv=missing_files_tsv,
     )
     logger.info("###### DONE #######")
+    return missing_files
 
 
 def download_eval_public(dataset_folder):
@@ -293,7 +294,7 @@ def download_audioset_data(
 
     # Metadata:
     url_metadata = (
-        f"https://zenodo.org/record/4560857/files/audioset_metadata.tar.gz?download=1"
+        f"https://zenodo.org/record/4639776/files/audioset_metadata.tar.gz?download=1"
     )
     download_and_unpack_archive(url_metadata, dataset_folder)
 

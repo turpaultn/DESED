@@ -48,12 +48,13 @@ def create_folder(folder, exist_ok=True, delete_if_exists=False):
     Returns:
         None
     """
-    if delete_if_exists:
-        if os.path.exists(folder):
-            shutil.rmtree(folder)
-            os.mkdir(folder)
+    if not folder == "":
+        if delete_if_exists:
+            if os.path.exists(folder):
+                shutil.rmtree(folder)
+                os.mkdir(folder)
 
-    os.makedirs(folder, exist_ok=exist_ok)
+        os.makedirs(folder, exist_ok=exist_ok)
 
 
 pp = pprint.PrettyPrinter()
