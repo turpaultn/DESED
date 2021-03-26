@@ -3,14 +3,14 @@
 </p>
 
 # Desed dataset
-Domestic environment sound event detection (DESED) dataset utilities. 
+Domestic environment sound event detection (DESED) dataset utilities.
 Mix of recorded and synthetic data (used in DCASE task 4 since 2019).
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 
-*If you use this dataset, do not hesitate to update [the list](#list-of-papers-and-code-using-desed) 
-of papers below with your paper by doing a pull request. 
+*If you use this dataset, do not hesitate to update [the list](#list-of-papers-and-code-using-desed)
+of papers below with your paper by doing a pull request.
 If you use and like this work, you can [cite it](#citing-us) :blush:*
 
 ## Links
@@ -31,7 +31,7 @@ If you use and like this work, you can [cite it](#citing-us) :blush:*
   - [Important updates](#important-updates)
   - [Citing us](#citing-us)
   - [References](#references)
-      
+
 ## Installation
 #### Recommended install
 Take into account your changes of the code in the `desed/` folder.
@@ -77,12 +77,12 @@ DESED dataset is for now composed of 10 event classes in domestic environment.
 
 
 ## Long Description
-There are 3 different datasets: 
-* Recorded soundscapes (a.k.a., real). 
+There are 3 different datasets:
+* Recorded soundscapes (a.k.a., real).
 * Synthetic soundbank + DCASE task 4 soundscapes: [DESED_synthetic][desed-synthetic]
 * Public evaluation (recorded soundscapes) (a.k.a., Youtube in DCASE19, Vimeo is not available): [DESED public eval][desed-public-eval]
 
-*All these datasets contain an "audio" folder associated with a "metadata" folder 
+*All these datasets contain an "audio" folder associated with a "metadata" folder
 so they can all be grouped together by merging them*
 
 DESED dataset is for now composed of 10 event classes in domestic environment.
@@ -96,20 +96,20 @@ The soundbank can include annotated data outside of the 10 classes to allow the 
 		* Validation data have their labels with time boundaries (strong labels): *1168 files*.
 		* Evaluation public files: Youtube files *692 files*
 * Soundbank:
-	* Background files are extracted from SINS [[2]](#2), TUT[[7]](#7), MUSAN [[3]](#3) or Youtube and have been selected because they 
+	* Background files are extracted from SINS [[2]](#2), TUT[[7]](#7), MUSAN [[3]](#3) or Youtube and have been selected because they
 	contain a very low amount of our sound event classes.
-	* Foreground files are extracted from Freesound [[4]](#4)[[5]](#5) and manually verified to check the quality 
+	* Foreground files are extracted from Freesound [[4]](#4)[[5]](#5) and manually verified to check the quality
 	and segmented to remove silences.
 	* Mixtures are described in [Generating new synthetic soundscapes](#gendata) below.
 	* Soundbank:
 		* Training: *2060 background files* (SINS) and *1009 foreground files* (Freesound).
-		* Eval: *12* (Freesound) + *5* (Youtube) *background files* and *314 foreground files* (Freesound). 
+		* Eval: *12* (Freesound) + *5* (Youtube) *background files* and *314 foreground files* (Freesound).
 
 * DCASE 2019
 	* It uses synthetic soundbank, recorded soundscapes, and public evaluation data (a.k.a., Youtube eval during DCASE19).
 	* If you want more information about DCASE19 dataset visit [DCASE 2019 task 4 web page][website-dcase19-t4]
 	* If you only want to download DCASE19 files, go to [dcase2019 task 4](#dcase2019-task-4).
-	
+
 
 ### Example of DESED dataset in 2019
 ![dcase19-diagram][img-desed2019]
@@ -120,7 +120,7 @@ The soundbank can include annotated data outside of the 10 classes to allow the 
 ## FAQ
 * Why don't we have a single dataset repository ?
 
-The synthetic sounbank or recorded soundscapes can be used independently for different purposes. 
+The synthetic sounbank or recorded soundscapes can be used independently for different purposes.
 For example, one can create new synthetic soundscapes and evaluate his system on synthetic data only to focus on a specific problem.
 
 * Why audio is not always included in the repository ?
@@ -131,13 +131,15 @@ We do not have the problem for evaluation data because we try to overcome the pr
 * I have a problem downloading the recorded soundscapes. How do I do ?
 
 If you're in a country with youtube restrictions, you can try to use a VPN and the --proxy option from youtube-dl.
-You can also try to upgrade youtube-dl since it is regularly updated. 
-Finally, if you succeeded to download most of the files, you can send the missing files as stated in the `real/README.md.
+You can also try to upgrade youtube-dl since it is regularly updated.
+Finally, if you succeeded to download most of the files, you can send your missing files (`missing_files_XXX.tsv`)
+**by mail** to [Francesca Ronchini](mailto:francesca.ronchini@inria.fr), [Romain Serizel](mailto:romain.serizel@loria.fr)
+and/or Nicolas Turpault.
 
 * How do I evaluate and compare my system with other methods using this dataset ?
 
 In [this paper][paper-description] you can refer to the column 'Youtube' and for further study, you can
-cite the DESED public evaluation set. 
+cite the DESED public evaluation set.
 
 
 ## List of papers and code using DESED
@@ -160,30 +162,30 @@ Paper                                                                       | Co
 ## Important updates
 - 26th February 2020, v1.2.5, refactor, get rid of bash files and ease the download through the package.
 - 7th December 2020, v1.2.2, ease the download of soundbank (with or without pre-split validation)
-- 23th April 2020, v1.2.0, update the generation procedure (`add_fg_event_non_noff`) to use all parts of files longer than 
+- 23th April 2020, v1.2.0, update the generation procedure (`add_fg_event_non_noff`) to use all parts of files longer than
 the duration of the soundscapes created + Add possibility to use only background from certain labels (i.e: sins or tut).
-- 18th March 2020, v.1.1.7, update DESED_synth_dcase20_train_jams.tar of DESED_synth. They use pitch shifting, 
-while the others didn't. These are the final JAMS used for dcase2020 baseline. Also commenting reverb since not used 
+- 18th March 2020, v.1.1.7, update DESED_synth_dcase20_train_jams.tar of DESED_synth. They use pitch shifting,
+while the others didn't. These are the final JAMS used for dcase2020 baseline. Also commenting reverb since not used
 for the baseline.
 
 
 ## Licenses
-The python code is publicly available under the MIT license, see the LICENSE file. 
+The python code is publicly available under the MIT license, see the LICENSE file.
 The matlab code is taken from the Audio degradation toolbox [[6]](#6), see the LICENSE file.
 
 The different datasets contain a license file at their root for the attribution of each file.
 
-The different platform used are: Freesound [[4]](#4)[[5]](#5), Youtube, MUSAN [[3]](#3) and SINS [[2]](#2).  
+The different platform used are: Freesound [[4]](#4)[[5]](#5), Youtube, MUSAN [[3]](#3) and SINS [[2]](#2).
 
 ##  Citing us
 Using this repository and happy to give attribution ? Here is how to cite us:
 
-- N. Turpault, R. Serizel, A. Parag Shah, J. Salamon. 
-Sound event detection indomestic environments with weakly labeled data and soundscape synthesis. 
+- N. Turpault, R. Serizel, A. Parag Shah, J. Salamon.
+Sound event detection indomestic environments with weakly labeled data and soundscape synthesis.
 Workshop on Detectionand Classification of Acoustic Scenes and Events, Oct 2019, New York City, USA.
 
-- R. Serizel, N. Turpault, A. Shah, J. Salamon. 
-Sound event detection in synthetic domestic environments. 
+- R. Serizel, N. Turpault, A. Shah, J. Salamon.
+Sound event detection in synthetic domestic environments.
 ICASSP, May 2020, Barcelona, Spain.
 
 ## References
@@ -200,11 +202,11 @@ arXiv, 1510.08484, 2015.
 
 <a id="4">[4]</a> F. Font, G. Roma & X. Serra. Freesound technical demo. In Proceedings of the 21st ACM international conference on Multimedia. ACM, 2013.
 
-<a id="5">[5]</a> E. Fonseca, J. Pons, X. Favory, F. Font, D. Bogdanov, A. Ferraro, S. Oramas, A. Porter & X. Serra. 
+<a id="5">[5]</a> E. Fonseca, J. Pons, X. Favory, F. Font, D. Bogdanov, A. Ferraro, S. Oramas, A. Porter & X. Serra.
 Freesound Datasets: A Platform for the Creation of Open Audio Datasets.
 In Proceedings of the 18th International Society for Music Information Retrieval Conference, Suzhou, China, 2017.
 
- <a id="6">[6]</a> M. Mauch and S. Ewert, “The Audio Degradation Toolbox and its Application to Robustness Evaluation”. 
+ <a id="6">[6]</a> M. Mauch and S. Ewert, “The Audio Degradation Toolbox and its Application to Robustness Evaluation”.
 In Proceedings of the 14th International Society for Music Information Retrieval Conference (ISMIR 2013), Curitiba, Brazil, 2013.
 
 <a id="7">[7]</a> A. Mesaros and T. Heittola, T. Virtanen, “TUT database for acoustic scene classification and sound event detection”.
