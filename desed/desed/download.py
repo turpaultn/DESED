@@ -293,7 +293,7 @@ def download_audioset_data(
 
     # Metadata:
     url_metadata = (
-        f"https://zenodo.org/record/4560857/files/audioset_metadata.tar.gz?download=1"
+        f"https://zenodo.org/record/4639776/files/audioset_metadata.tar.gz?download=1"
     )
     download_and_unpack_archive(url_metadata, dataset_folder)
 
