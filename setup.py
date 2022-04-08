@@ -28,7 +28,7 @@ setup(
         "numpy >= 1.15.4",
         "pandas >= 0.24.0",
         "dcase-util >= 0.2.11",
-        "youtube-dl >= 2021.2.22",  # Better with conda install and conda-forge channel
+        "yt-dlp >= 2022.3.8.2",  # Better with conda install and conda-forge channel
         "soundfile >= 0.10.1",
         "jams >= 0.3.4",
         "tqdm >= 4.29.1",
