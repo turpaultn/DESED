@@ -52,3 +52,17 @@ class DesedError(Exception):
     """The root DESED exception class"""
 
     pass
+
+
+class DownloadDesedError(DesedError):
+    """Download Error exception.
+
+    This exception may be thrown by FileDownloader objects if they are not
+    configured to continue on errors. They will contain the appropriate
+    error message.
+    """
+
+    def __init__(self, msg, exc_info=None):
+        """ exc_info, if given, is the original exception that caused the trouble (as returned by sys.exc_info()). """
+        super(DownloadError, self).__init__(msg)
+        self.exc_info = exc_info
