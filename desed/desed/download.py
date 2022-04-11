@@ -1,3 +1,4 @@
+from asyncio import FastChildWatcher
 import functools
 import glob
 import inspect
@@ -14,7 +15,7 @@ import pandas as pd
 import youtube_dl
 
 from dcase_util.containers import AudioContainer
-from desed.utils import create_folder, download_file_from_url
+from desed.utils import create_folder, download_file_from_url 
 from tqdm import tqdm
 from youtube_dl import DownloadError
 from youtube_dl.utils import ExtractorError
@@ -269,6 +270,7 @@ def download_audioset_data(
     weak=True,
     unlabel_in_domain=True,
     validation=True,
+    audioset=False,
     n_jobs=3,
     chunk_size=10,
 ):
@@ -297,6 +299,7 @@ def download_audioset_data(
         f"https://zenodo.org/record/4639776/files/audioset_metadata.tar.gz?download=1"
     )
     download_and_unpack_archive(url_metadata, dataset_folder)
+
 
     missing_files_paths = []
     if weak:
@@ -341,6 +344,29 @@ def download_audioset_data(
         )
         missing_files_paths.append(path_missing_files_valid)
 
+    # audioset data
+    if audioset:
+        audioset_metadata_path = os.path.join(dataset_folder, "metadata", "train", "audioset_strong.tsv")
+        url_audioset = (
+            "https://zenodo.org/record/6444477/files/audioset_strong.tsv?download=1"
+        )
+        download_file_from_url(url_audioset, audioset_metadata_path)
+        #print(f"File saved in {audioset_metadata_path}")
+            
+        print("Downloading strong-label Audioset dataset...")
+        path_missing_files_audioset = os.path.join(
+            basedir_missing_files, "missing_files_" + "strong_label_real" + ".tsv"
+        )
+        download_audioset_files_from_csv(
+            audioset_metadata_path,
+            os.path.join(dataset_folder, "audio", "train", "strong_label_real"),
+            missing_files_tsv=path_missing_files_audioset,
+            n_jobs=n_jobs,
+            chunk_size=chunk_size
+        )
+        missing_files_paths.append(path_missing_files_audioset)
+
+
     logger.info(
         f"Please check your missing_files: {basedir_missing_files}, "
         f"you can relaunch 'download_audioset_sets' to try to recude them, "
@@ -354,6 +380,7 @@ def download_real(
     weak=True,
     unlabel_in_domain=True,
     validation=True,
+    audioset=False,
     eval=True,
     n_jobs=3,
     chunk_size=10,
@@ -381,6 +408,7 @@ def download_real(
         weak=weak,
         unlabel_in_domain=unlabel_in_domain,
         validation=validation,
+        audioset=audioset,
         n_jobs=n_jobs,
         chunk_size=chunk_size,
     )
