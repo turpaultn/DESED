@@ -19,7 +19,7 @@ from tqdm import tqdm
 from youtube_dl import DownloadError
 from youtube_dl.utils import ExtractorError
 
-from .logger import create_logger, DesedWarning
+from .logger import create_logger, DesedWarning, DownloadDesedError
 from .utils import create_folder, download_file_from_url
 
 
@@ -575,11 +575,16 @@ def get_backgrounds_train(basedir_soundbank, sins=True, tut=False, keep_original
     destination_folder = os.path.join(basedir_soundbank, "audio", "train", "soundbank")
     if sins:
         sins_path = download_sins(destination_folder)
+        final_sins_folder = os.path.join(destination_folder, "background", "sins")
         filter_sins(
             sins_path,
-            destination_folder=os.path.join(destination_folder, "background", "sins"),
+            destination_folder=final_sins_folder,
             rm_original_sins=not keep_original,
         )
+        if not len(glob.glob(os.path.join(final_sins_folder, "*.wav"))) == 2060:
+            raise DownloadDesedError("Problem downloading SINS, check the DESED FAQ: "
+                                     "https://github.com/turpaultn/DESED#faq")
+
 
     if tut:
         tut_path = download_tut(destination_folder)

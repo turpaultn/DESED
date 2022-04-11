@@ -118,17 +118,7 @@ The soundbank can include annotated data outside of the 10 classes to allow the 
 ![soundbank-diagram][img-soundbank]
 
 ## FAQ
-* Why don't we have a single dataset repository ?
-
-The synthetic sounbank or recorded soundscapes can be used independently for different purposes.
-For example, one can create new synthetic soundscapes and evaluate his system on synthetic data only to focus on a specific problem.
-
-* Why audio is not always included in the repository ?
-
-Because of licenses issues. (Example of SINS in the training soundbank)
-We do not have the problem for evaluation data because we try to overcome the problem after running into this issue.
-
-* I have a problem downloading the recorded soundscapes. How do I do ?
+* **I have a problem downloading the recorded soundscapes. How do I do ?**
 
 If you're in a country with youtube restrictions, you can try to use a VPN and the --proxy option from youtube-dl.
 You can also try to upgrade youtube-dl since it is regularly updated.
@@ -136,7 +126,20 @@ Finally, if you succeeded to download most of the files, you can send your missi
 **by mail** to [Francesca Ronchini](mailto:francesca.ronchini@inria.fr), [Romain Serizel](mailto:romain.serizel@loria.fr)
 and/or Nicolas Turpault.
 
-* How do I evaluate and compare my system with other methods using this dataset ?
+* **I have a problem with SINS download. How do I do ?**
+
+
+* **Why don't we have a single dataset repository ?**
+
+The synthetic sounbank or recorded soundscapes can be used independently for different purposes.
+For example, one can create new synthetic soundscapes and evaluate his system on synthetic data only to focus on a specific problem.
+
+* **Why audio is not always included in the repository ?**
+
+Because of licenses issues. (Example of SINS in the training soundbank)
+We do not have the problem for evaluation data because we try to overcome the problem after running into this issue.
+
+* **How do I evaluate and compare my system with other methods using this dataset ?**
 
 In [this paper][paper-description] you can refer to the column 'Youtube' and for further study, you can
 cite the DESED public evaluation set.
