@@ -350,7 +350,6 @@ def download_audioset_data(
             "https://zenodo.org/record/6444477/files/audioset_strong.tsv?download=1"
         )
         download_file_from_url(url_audioset, audioset_metadata_path)
-        #print(f"File saved in {audioset_metadata_path}")
             
         print("Downloading strong-label Audioset dataset...")
         path_missing_files_audioset = os.path.join(
