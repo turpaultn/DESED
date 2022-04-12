@@ -12,13 +12,13 @@ import warnings
 from contextlib import closing
 from multiprocessing import Pool
 import pandas as pd
-import youtube_dl
+import yt_dlp
 
 from dcase_util.containers import AudioContainer
 from desed.utils import create_folder, download_file_from_url 
 from tqdm import tqdm
-from youtube_dl import DownloadError
-from youtube_dl.utils import ExtractorError
+from yt_dlp import DownloadError
+from yt_dlp.utils import ExtractorError
 
 from .logger import create_logger, DesedWarning, DownloadDesedError
 from .utils import create_folder, download_file_from_url
@@ -80,7 +80,7 @@ def _download_audioset_file(filename, result_dir, platform="youtube", tmp_folder
         try:
             logger.debug(filename)
             # Download file
-            with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+            with yt_dlp.YoutubeDL(ydl_opts) as ydl:
                 meta = ydl.extract_info(f"{baseurl}{query_id}", download=True)
 
             audio_formats = [f for f in meta["formats"] if f.get("vcodec") == "none"]
