@@ -344,7 +344,6 @@ def download_audioset_data(
         )
         missing_files_paths.append(path_missing_files_valid)
 
-    # audioset data
     if audioset:
         audioset_metadata_path = os.path.join(dataset_folder, "metadata", "train", "audioset_strong.tsv")
         url_audioset = (
