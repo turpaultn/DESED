@@ -6,6 +6,7 @@ import os
 import shutil
 import subprocess
 import tempfile
+import time
 import warnings
 
 from contextlib import closing
@@ -765,3 +766,135 @@ def download_desed_soundbank(
     if split_train_valid:
         print("Splitting soundbank train into train and validation (90%/10%)...")
         split_desed_soundbank_train_val(basedir)
+
+
+def freesound_query(client, query, max_pages=-1, **params):
+    """ Get text results of a query to Freesound.
+    A Freesound client with authorization is required to do this action: https://freesound.org/docs/api/authentication.html#oauth2-authentication
+    ```python
+    print("be careful, to use this, you need to install freesound: pip install git+https://github.com/MTG/freesound-python")
+    token = "YOUR_TOKEN_from_link_above"
+    client = freesound.FreesoundClient()
+    client.set_token(token, "oauth")
+    ```
+    For freesound creation, you need to:
+    - Create a token here: https://freesound.org/apiv2/apply
+    - Put the generated CLIENT_ID in this URL: https://freesound.org/apiv2/oauth2/authorize/?client_id=YOUR_CLIENT_ID&response_type=code&state=xyz
+    - Authorize the application to get a code (THE_GIVEN_CODE in the next line).
+    - Replace the codes in the next line and launch it: `curl -X POST -d "client_id=YOUR_CLIENT_ID&client_secret=YOUR_CLIENT_SECRET&grant_type=authorization_code&code=THE_GIVEN_CODE" https://freesound.org/apiv2/oauth2/access_token/`
+    - access_token is the the "token" to be used by the freesound API in the code example above.
+
+    Args:
+        client: freesound.FreesoundClient, a Freesound client to access the API.
+        max_pages: int, the number maximum of results to be printed.
+        **params: args given to freesound.FreesoundClient().text_search() (query, filter, ...).
+
+    Example:
+        ```python
+        fields_to_save = ["id", "name", "type", "license", "username", "duration"]
+        query = "mixer,blender kitchen"
+        files_list, count = get_queries(client,
+                                        query=query,
+                                        filter='duration:[5.5 TO *]',
+                                        sort="score",
+                                        fields=",".join(fields_to_save))
+        ```
+
+    Returns:
+        A list of Freesound metadata and a count
+    """
+    list_results = []
+    page = 1
+    next_page = True
+    dict_results = None
+    count = 0
+    while next_page and page > max_pages:
+        results = client.text_search(query=query, **params, page_size=150, page=page)  # 150 is the maximum
+        dict_results = results.as_dict()
+        list_results += [l for l in results]
+        if dict_results["next"] is None:
+            next_page = False
+        page += 1
+    if dict_results is not None:
+        count += dict_results["count"]
+
+    return list_results, count
+
+
+def download_freesound_file(result_dir, sound):
+    """ Download a single Freesound file
+
+    Args:
+        result_dir: str, path in which the freesound file will be saved
+        sound: freesound.Sound, a sound collected by the freesound API
+        cnt: int, the number of
+
+    Returns:
+        a dictionnary with the sound information
+    """
+    filename = "{}.{}".format(sound.id, sound.type)
+    result_dict = sound.json_dict
+    os.makedirs(result_dir, exist_ok=True)
+    if not os.path.exists(os.path.join(result_dir, filename)):
+        try:
+            print("\t\tDownloading:", sound.name)
+            sound.retrieve(result_dir, name=filename)
+        except Exception as e:
+            print('Error while downloading ' + filename)
+            time.sleep(60)
+            warnings.warn("Temporary solution, to be replaced by FreesoundException")
+            result_dict = {"error": filename}
+        # TODO replace the exception by Freesound exception once a pip package is available
+        # except freesound.FreesoundException:
+        #     print('Error while downloading ' + filename)
+        #     time.sleep(60)
+    else:
+        print("\t" + sound.name + " already downloaded")
+
+    return result_dict
+
+
+def parallel_freesound_download(list_sounds, result_dir, n_jobs=6, chunk_size=5):
+    """ Download multiple freesound.Sound files in a parallel way.
+
+   Args:
+       result_dir: str, the directory where to save the downloaded files.
+       list_sounds: list, list of freesound.Sound that we want to download.
+       n_jobs: int, the number of parallel jobs.
+       chunk_size: int, the number of sounds to be given each job at a time.
+
+   Returns:
+       list, a list of dictionary with the infos of the downloaded sounds
+   """
+    infos = []
+    with closing(Pool(n_jobs)) as p:
+        download_file_alias = functools.partial(download_freesound_file, result_dir)
+        for val, _ in tqdm(p.imap_unordered(download_file_alias, list_sounds, chunk_size),
+                           total=len(list_sounds)):
+            infos.append(val)
+
+    return infos
+
+
+def serial_download(list_of_sounds, saving_dir):
+    """ Download multiple freesound.Sound files in an iterative way.
+
+    Args:
+        list_of_sounds: list, list of freesound.Sound that we want to download.
+        saving_dir: str, the directory where to save the downloaded files.
+
+    Returns:
+        list, a list of dictionary with the infos of the downloaded sounds
+    """
+    infos = []
+    cnt = 1
+    for sound in list_of_sounds:
+        f_dict = download_freesound_file(saving_dir, sound)
+        infos.append(f_dict)
+        cnt += 1
+
+        if cnt % 50 == 0:
+            time.sleep(60)
+            print("sleep")
+
+    return infos
