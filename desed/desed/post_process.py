@@ -49,7 +49,7 @@ def rm_high_polyphony(
             df_tmp = pd.DataFrame(
                 np.array([[fname, bg, ",".join(fg)]]), columns=["scaper", "bg", "fg"]
             )
-            df = df.append(df_tmp, ignore_index=True)
+            df = pd.concat([df, df_tmp], ignore_index=True)
             i += 1
         else:
             fnames_to_rmv.append(jam_file)
@@ -77,7 +77,7 @@ def sanity_check(df, length_sec=None):
     Returns:
         pandas.DataFrame, the updated dataframe.
     """
-    if not df["onset"].dtype == np.float and df["offset"].dtype == np.float:
+    if not df["onset"].dtype == float and df["offset"].dtype == float:
         df[["onset", "offset"]] = df[["onset", "offset"]].astype(float)
     if length_sec is not None:
         df["offset"].clip(upper=length_sec, inplace=True)
@@ -249,8 +249,9 @@ def post_process_df_labels(
         )
         fix_count += fc
 
-        result_df = result_df.append(
-            df_ann[["filename", "onset", "offset", "event_label"]], ignore_index=True
+        result_df = pd.concat([result_df,
+                               df_ann[["filename", "onset", "offset", "event_label"]]
+                               ], ignore_index=True
         )
 
     if output_tsv:
@@ -330,8 +331,9 @@ def post_process_txt_labels(
                 osp.join(output_folder, filepath), header=False, index=False, sep="\t"
             )
         df["filename"] = osp.join(osp.splitext(osp.basename(fn))[0] + ".wav")
-        df_single = df_single.append(
-            df[["filename", "onset", "offset", "event_label"]], ignore_index=True
+        df_single = pd.concat([df_single,
+                               df[["filename", "onset", "offset", "event_label"]]
+                               ], ignore_index=True
         )
 
     if output_tsv:
