@@ -33,5 +33,6 @@ setup(
         "jams >= 0.3.4",
         "tqdm >= 4.29.1",
         "requests >= 2.21.0",
+        "resampy >= 0.4.3"
     ],
 )

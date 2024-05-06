@@ -370,8 +370,7 @@ def generate_df_from_jams(list_jams, post_process=True, background_label=False):
             df, _ = _post_process_labels_file(df, length)
 
         df["filename"] = f"{osp.splitext(fbase)[0]}.wav"
-        final_df = final_df.append(
-            df[["filename", "onset", "offset", "event_label"]], ignore_index=True
+        final_df = pd.concat([final_df, df[["filename", "onset", "offset", "event_label"]]], ignore_index=True
         )
 
     final_df = final_df.sort_values(by=["filename", "onset"])
