@@ -57,7 +57,7 @@ def rm_high_polyphony(
         df.to_csv(save_tsv_associated, sep="\t", index=False)
 
     logger.warning(
-        f"{i} files with less than {max_polyphony} overlapping events. Deleting others..."
+        f"{i} files with less than {max_polyphony} overlapping events. Delting others..."
     )
     for fname in fnames_to_rmv:
         names = glob.glob(osp.splitext(fname)[0] + ".*")

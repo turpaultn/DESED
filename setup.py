@@ -13,7 +13,7 @@ with open("README.md", encoding="utf-8") as fh:
 
 setup(
     name="desed",
-    version="1.3.7",
+    version="1.3.8",
     description="DESED dataset utils",
     long_description=long_description,
     long_description_content_type="text/markdown",
